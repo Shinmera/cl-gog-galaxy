@@ -174,6 +174,26 @@ void gog_IListenerRegistrar_Unregister(gog_Interface registrar, enum gog_Listene
 gog_Interface gog_ListenerRegistrar();
 gog_Interface gog_GameServerListenerRegistrar();
 
+enum gog_BasicFailureReason {
+  GOG_BASIC_FAILURE_REASON_UNDEFINED, 
+  GOG_BASIC_FAILURE_REASON_CONNECTION_FAILURE 
+};
+
+// IEncryptedAppTicketListener
+// IPlayFabCreateOpenIDConnectionListener
+// IPlayFabLoginWithOpenIDConnectListener
+// IUserInformationRetrieveListener
+// IFriendListListener
+// IFriendInvitationListRetrieveListener
+// ISentFriendInvitationListRetrieveListener
+// IFriendDeleteListener
+// IRichPresenceChangeListener
+// IRichPresenceRetrieveListener
+struct gog_BasicListener {
+  void (*OnSuccess)();
+  void (*OnFailure)(enum gog_BasicFailureReason reason);
+};
+
 //// IUser.h
 typedef uint64_t gog_SessionID;
 
@@ -219,58 +239,190 @@ struct gog_IAccessTokenListener {
   void (*OnAccessTokenChanged)();
 };
 
-enum gog_BasicFailureReason {
-  GOG_BASIC_FAILURE_REASON_UNDEFINED, 
-  GOG_BASIC_FAILURE_REASON_CONNECTION_FAILURE 
-};
-
-// IEncryptedAppTicketListener
-// IPlayFabCreateOpenIDConnectionListener
-// IPlayFabLoginWithOpenIDConnectListener
-struct gog_BasicListener {
-  void (*OnEncryptedAppTicketRetrieveSuccess)();
-  void (*OnEncryptedAppTicketRetrieveFailure)(enum gog_BasicFailureReason reason);
-};
-
-bool gog_IUser_SignedIn();
-gog_ID gog_IUser_GetGalaxyID();
-void gog_IUser_SignInCredentials(char* login, char* password, gog_Interface listener);
-void gog_IUser_SignInToken(char* refreshToken, gog_Interface listener);
-void gog_IUser_SignInLauncher(gog_Interface listener);
-void gog_IUser_SignInSteam(void* steamAppTicket, uint32_t steamAppTicketSize, char* personaName, gog_Interface listener);
-void gog_IUser_SignInGalaxy(bool requireOnline, uint32_t timeout, gog_Interface listener);
-void gog_IUser_SignInPS4(char* ps4ClientID, gog_Interface listener);
-void gog_IUser_SignInXB1(char* xboxOneUserID, gog_Interface listener);
-void gog_IUser_SignInXbox(uint64_t xboxID, gog_Interface listener);
-void gog_IUser_SignInXBLive(char* token, char* signature, char* marketplaceID, char* locale, gog_Interface listener);
-void gog_IUser_SignInAnonymous(gog_Interface listener);
-void gog_IUser_SignInAnonymousTelemetry(gog_Interface listener);
-void gog_IUser_SignInServerKey(char* serverKey, gog_Interface listener);
-void gog_IUser_SignInAuthorizationCode(char* authorizationCode, char* redirectURI, gog_Interface listener);
-void gog_IUser_SignOut();
-void gog_IUser_RequestUserData(gog_ID userID, gog_Interface listener);
-bool gog_IUser_IsUserDataAvailable(gog_ID userID);
-char* gog_IUser_GetUserData(char* key, gog_ID userID);
-void gog_IUser_GetUserDataCopy(char* key, char* buffer, uint32_t bufferLength, gog_ID userID);
-void gog_IUser_SetUserData(char* key, char* value, gog_Interface listener);
-uint32_t gog_IUser_GetUserDataCount(gog_ID userID);
-bool gog_IUser_GetUserDataByIndex(uint32_t index, char* key, uint32_t keyLength, char* value, uint32_t valueLength, gog_ID userID);
-void gog_IUser_DeleteUserData(char* key, gog_Interface listener);
-bool gog_IUser_IsLoggedOn();
-void gog_IUser_RequestEncryptedAppTicket(void* data, uint32_t dataSize, gog_Interface listener);
-void gog_IUser_GetEncryptedAppTicket(void* encryptedAppTicket, uint32_t maxEncryptedAppTicketSize, uint32_t* currentEncryptedAppTicketSize);
-void gog_IUser_CreateOpenIDConnection(char* secretKey, char* titleID, char* connectionID, bool ignoreNonce, gog_Interface listener);
-void gog_IUser_LoginWithOpenIDConnect(char* titleID, char* connectionID, char* idToken, bool createAccount, char* encryptedRequest, char* playerSecret, gog_Interface listener);
-gog_SessionID gog_IUser_GetSessionID();
-char* gog_IUser_GetAccessToken();
-void gog_IUser_GetAccessTokenCopy(char* buffer, uint32_t bufferLength);
-char* gog_IUser_GetRefreshToken();
-void gog_IUser_GetRefreshTokenCopy(char* buffer, uint32_t bufferLength);
-char* gog_IUser_GetIDToken();
-void gog_IUser_GetIDTokenCopy(char* buffer, uint32_t bufferLength);
-bool gog_IUser_ReportInvalidAccessToken(char* accessToken, char* info);
+bool gog_IUser_SignedIn(gog_Interface user);
+gog_ID gog_IUser_GetGalaxyID(gog_Interface user);
+void gog_IUser_SignInCredentials(gog_Interface user, char* login, char* password, gog_Interface listener);
+void gog_IUser_SignInToken(gog_Interface user, char* refreshToken, gog_Interface listener);
+void gog_IUser_SignInLauncher(gog_Interface user, gog_Interface listener);
+void gog_IUser_SignInSteam(gog_Interface user, void* steamAppTicket, uint32_t steamAppTicketSize, char* personaName, gog_Interface listener);
+void gog_IUser_SignInGalaxy(gog_Interface user, bool requireOnline, uint32_t timeout, gog_Interface listener);
+void gog_IUser_SignInPS4(gog_Interface user, char* ps4ClientID, gog_Interface listener);
+void gog_IUser_SignInXB1(gog_Interface user, char* xboxOneUserID, gog_Interface listener);
+void gog_IUser_SignInXbox(gog_Interface user, uint64_t xboxID, gog_Interface listener);
+void gog_IUser_SignInXBLive(gog_Interface user, char* token, char* signature, char* marketplaceID, char* locale, gog_Interface listener);
+void gog_IUser_SignInAnonymous(gog_Interface user, gog_Interface listener);
+void gog_IUser_SignInAnonymousTelemetry(gog_Interface user, gog_Interface listener);
+void gog_IUser_SignInServerKey(gog_Interface user, char* serverKey, gog_Interface listener);
+void gog_IUser_SignInAuthorizationCode(gog_Interface user, char* authorizationCode, char* redirectURI, gog_Interface listener);
+void gog_IUser_SignOut(gog_Interface user);
+void gog_IUser_RequestUserData(gog_Interface user, gog_ID userID, gog_Interface listener);
+bool gog_IUser_IsUserDataAvailable(gog_Interface user, gog_ID userID);
+char* gog_IUser_GetUserData(gog_Interface user, char* key, gog_ID userID);
+void gog_IUser_GetUserDataCopy(gog_Interface user, char* key, char* buffer, uint32_t bufferLength, gog_ID userID);
+void gog_IUser_SetUserData(gog_Interface user, char* key, char* value, gog_Interface listener);
+uint32_t gog_IUser_GetUserDataCount(gog_Interface user, gog_ID userID);
+bool gog_IUser_GetUserDataByIndex(gog_Interface user, uint32_t index, char* key, uint32_t keyLength, char* value, uint32_t valueLength, gog_ID userID);
+void gog_IUser_DeleteUserData(gog_Interface user, char* key, gog_Interface listener);
+bool gog_IUser_IsLoggedOn(gog_Interface user);
+void gog_IUser_RequestEncryptedAppTicket(gog_Interface user, void* data, uint32_t dataSize, gog_Interface listener);
+void gog_IUser_GetEncryptedAppTicket(gog_Interface user, void* encryptedAppTicket, uint32_t maxEncryptedAppTicketSize, uint32_t* currentEncryptedAppTicketSize);
+void gog_IUser_CreateOpenIDConnection(gog_Interface user, char* secretKey, char* titleID, char* connectionID, bool ignoreNonce, gog_Interface listener);
+void gog_IUser_LoginWithOpenIDConnect(gog_Interface user, char* titleID, char* connectionID, char* idToken, bool createAccount, char* encryptedRequest, char* playerSecret, gog_Interface listener);
+gog_SessionID gog_IUser_GetSessionID(gog_Interface user);
+char* gog_IUser_GetAccessToken(gog_Interface user);
+void gog_IUser_GetAccessTokenCopy(gog_Interface user, char* buffer, uint32_t bufferLength);
+char* gog_IUser_GetRefreshToken(gog_Interface user);
+void gog_IUser_GetRefreshTokenCopy(gog_Interface user, char* buffer, uint32_t bufferLength);
+char* gog_IUser_GetIDToken(gog_Interface user);
+void gog_IUser_GetIDTokenCopy(gog_Interface user, char* buffer, uint32_t bufferLength);
+bool gog_IUser_ReportInvalidAccessToken(gog_Interface user, char* accessToken, char* info);
 
 //// IFriends.h
+enum gog_AvatarType {
+  GOG_AVATAR_TYPE_NONE = 0x0000,
+  GOG_AVATAR_TYPE_SMALL = 0x0001,
+  GOG_AVATAR_TYPE_MEDIUM = 0x0002,
+  GOG_AVATAR_TYPE_LARGE = 0x0004
+};
+
+enum gog_PersonaState {
+  GOG_PERSONA_STATE_OFFLINE,
+  GOG_PERSONA_STATE_ONLINE
+};
+
+typedef uint32_t gog_AvatarCriteria;
+
+enum gog_PersonaStateChange {
+  GOG_PERSONA_CHANGE_NONE = 0x0000,
+  GOG_PERSONA_CHANGE_NAME = 0x0001,
+  GOG_PERSONA_CHANGE_AVATAR = 0x0002,
+  GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_SMALL = 0x0004,
+  GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_MEDIUM = 0x0008,
+  GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_LARGE = 0x0010,
+  GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_ANY = GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_SMALL | GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_MEDIUM | GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_LARGE
+};
+
+struct gog_IPersonaDataChangedListener {
+  void (*OnPersonaDataChanged)(gog_ID userID, uint32_t personaStateChange);
+};
+
+enum gog_FriendInvitationFailureReason {
+  GOG_FRIENDINVITATION_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_FRIENDINVITATION_FAILURE_REASON_USER_DOES_NOT_EXIST, ///< User does not exist.
+  GOG_FRIENDINVITATION_FAILURE_REASON_USER_ALREADY_INVITED, ///< Friend invitation already sent to the user.
+  GOG_FRIENDINVITATION_FAILURE_REASON_USER_ALREADY_FRIEND, ///< User already on the friend list.
+  GOG_FRIENDINVITATION_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+struct gog_IFriendInvitationSendListener {
+  void (*OnFriendInvitationSendSuccess)(gog_ID userID);
+  void (*OnFriendInvitationSendFailure)(gog_ID userID, enum gog_FriendInvitationFailureReason failureReason);
+};
+
+struct gog_IFriendInvitationListener {
+  void (*OnFriendInvitationReceived)(gog_ID userID, uint32_t sendTime);
+};
+
+enum gog_FriendInvitationRespondFailureReason {
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_USER_DOES_NOT_EXIST, ///< User does not exist.
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_FRIEND_INVITATION_DOES_NOT_EXIST, ///< Friend invitation does not exist.
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_USER_ALREADY_FRIEND, ///< User already on the friend list.
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+struct gog_IFriendInvitationRespondToListener {
+  void (*OnFriendInvitationRespondToSuccess)(gog_ID userID, bool accept);
+  void (*OnFriendInvitationRespondToFailure)(gog_ID userID, enum gog_FriendInvitationRespondFailureReason failureReason);
+};
+
+enum gog_InvitationDirection{
+  GOG_INVITATION_DIRECTION_INCOMING, ///< The user indicated in the notification was the inviter.
+  GOG_INVITATION_DIRECTION_OUTGOING ///< The user indicated in the notification was the invitee.
+};
+
+struct gog_IFriendAddListener {
+  void (*OnFriendAdded)(gog_ID userID, enum gog_InvitationDirection invitationDirection);
+};
+
+struct gog_IRichPresenceListener {
+  void (*OnRichPresenceUpdated)(gog_ID userID);
+};
+
+struct gog_IGameJoinRequestedListener {
+  void (*OnGameJoinRequested)(gog_ID userID, const char* connectionString);
+};
+
+struct gog_IGameInvitationReceivedListener {
+  void (*OnGameInvitationReceived)(gog_ID userID, const char* connectionString);
+};
+
+enum gog_SendInvitationFailureReason{
+  GOG_SENDINVITATION_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_SENDINVITATION_FAILURE_REASON_USER_DOES_NOT_EXIST, ///< Receiver does not exist.
+  GOG_SENDINVITATION_FAILURE_REASON_RECEIVER_DOES_NOT_ALLOW_INVITING, ///< Receiver does not allow inviting
+  GOG_SENDINVITATION_FAILURE_REASON_SENDER_DOES_NOT_ALLOW_INVITING, ///< Sender does not allow inviting
+  GOG_SENDINVITATION_FAILURE_REASON_RECEIVER_BLOCKED, ///< Receiver blocked by sender.
+  GOG_SENDINVITATION_FAILURE_REASON_SENDER_BLOCKED, ///< Sender blocked by receiver. Will also occur if both users blocked each other.
+  GOG_SENDINVITATION_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+struct gog_ISendInvitationListener {
+  void (*OnInvitationSendSuccess)(gog_ID userID, const char* connectionString);
+  void (*OnInvitationSendFailure)(gog_ID userID, const char* connectionString, enum gog_SendInvitationFailureReason failureReason);
+};
+
+enum gog_UserFindFailureReason {
+  GOG_USERFIND_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_USERFIND_FAILURE_REASON_USER_NOT_FOUND, ///< Specified user was not found.
+  GOG_USERFIND_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+struct gog_IUserFindListener {
+  void (*OnUserFindSuccess)(const char* userSpecifier, gog_ID userID);
+  void (*OnUserFindFailure)(const char* userSpecifier, enum gog_UserFindFailureReason failureReason);
+};
+
+gog_AvatarCriteria gog_IFriend_GetDefaultAvatarCriteria(gog_Interface friend);
+void gog_IFriend_SetDefaultAvatarCriteria(gog_Interface friend, gog_AvatarCriteria defaultAvatarCriteria);
+void gog_IFriend_RequestUserInformation(gog_Interface friend, gog_ID userID, gog_AvatarCriteria avatarCriteria, gog_Interface listener);
+bool gog_IFriend_IsUserInformationAvailable(gog_Interface friend, gog_ID userID);
+char* gog_IFriend_GetPersonaName(gog_Interface friend);
+void gog_IFriend_GetPersonaNameCopy(gog_Interface friend, char* buffer, uint32_t bufferLength);
+enum gog_PersonaState gog_IFriend_GetPersonaState(gog_Interface friend);
+char* gog_IFriend_GetFriendPersonaName(gog_Interface friend, gog_ID userID);
+void gog_IFriend_GetFriendPersonaNameCopy(gog_Interface friend, gog_ID userID, char* buffer, uint32_t bufferLength);
+enum gog_PersonaState gog_IFriend_GetFriendPersonaState(gog_Interface friend, gog_ID userID);
+char* gog_IFriend_GetFriendAvatarUrl(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType);
+void gog_IFriend_GetFriendAvatarUrlCopy(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType, char* buffer, uint32_t bufferLength);
+uint32_t gog_IFriend_GetFriendAvatarImageID(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType);
+void gog_IFriend_GetFriendAvatarImageRGBA(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType, void* buffer, uint32_t bufferLength);
+bool gog_IFriend_IsFriendAvatarImageRGBAAvailable(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType);
+void gog_IFriend_RequestFriendList(gog_Interface friend, gog_Interface listener);
+bool gog_IFriend_IsFriend(gog_Interface friend, gog_ID userID);
+uint32_t gog_IFriend_GetFriendCount(gog_Interface friend);
+gog_ID gog_IFriend_GetFriendByIndex(gog_Interface friend, uint32_t index);
+void gog_IFriend_SendFriendInvitation(gog_Interface friend, gog_ID userID, gog_Interface listener);
+void gog_IFriend_RequestFriendInvitationList(gog_Interface friend, gog_Interface listener);
+void gog_IFriend_RequestSentFriendInvitationList(gog_Interface friend, gog_Interface listener);
+uint32_t gog_IFriend_GetFriendInvitationCount(gog_Interface friend);
+void gog_IFriend_GetFriendInvitationByIndex(gog_Interface friend, uint32_t index, gog_ID* userID, uint32_t* sendTime);
+void gog_IFriend_RespondToFriendInvitation(gog_Interface friend, gog_ID userID, bool accept, gog_Interface listener);
+void gog_IFriend_DeleteFriend(gog_Interface friend, gog_ID userID, gog_Interface listener);
+void gog_IFriend_SetRichPresence(gog_Interface friend, char* key, char* value, gog_Interface listener);
+void gog_IFriend_DeleteRichPresence(gog_Interface friend, char* key, gog_Interface listener);
+void gog_IFriend_ClearRichPresence(gog_Interface friend, gog_Interface listener);
+void gog_IFriend_RequestRichPresence(gog_Interface friend, gog_ID userID, gog_Interface listener);
+char* gog_IFriend_GetRichPresence(gog_Interface friend, char* key, gog_ID userID);
+void gog_IFriend_GetRichPresenceCopy(gog_Interface friend, char* key, char* buffer, uint32_t bufferLength, gog_ID userID);
+uint32_t gog_IFriend_GetRichPresenceCount(gog_Interface friend, gog_ID userID);
+void gog_IFriend_GetRichPresenceByIndex(gog_Interface friend, uint32_t index, char* key, uint32_t keyLength, char* value, uint32_t valueLength, gog_ID userID);
+char* gog_IFriend_GetRichPresenceKeyByIndex(gog_Interface friend, uint32_t index, gog_ID userID);
+void gog_IFriend_GetRichPresenceKeyByIndexCopy(gog_Interface friend, uint32_t index, char* buffer, uint32_t bufferLength, gog_ID userID);
+void gog_IFriend_ShowOverlayInviteDialog(gog_Interface friend, char* connectionString);
+void gog_IFriend_SendInvitation(gog_Interface friend, gog_ID userID, char* connectionString, gog_Interface listener);
+void gog_IFriend_FindUser(gog_Interface friend, char* userSpecifier, gog_Interface listener);
+bool gog_IFriend_IsUserInTheSameGame(gog_Interface friend, gog_ID userID);
 
 //// IChat.h
 
