@@ -1,10 +1,10 @@
-#include <Galaxy/GalaxyApi.h>
+#include <galaxy/GalaxyApi.h>
 #include "gog.h"
 
 //// GalaxyAllocator.h
 
 void *gog_MakeAllocator(gog_GalaxyMalloc malloc, gog_GalaxyRealloc realloc, gog_GalaxyFree free){
-  return (void *)new GalaxyAllocator((galaxy::api::GalaxyMalloc)malloc, (galaxy::api::GalaxyRealloc)realloc, (galaxy::api::GalaxyFree)free);
+  return (void *)new galaxy::api::GalaxyAllocator((galaxy::api::GalaxyMalloc)malloc, (galaxy::api::GalaxyRealloc)realloc, (galaxy::api::GalaxyFree)free);
 }
 
 void gog_FreeAllocator(void *allocator){
@@ -13,15 +13,15 @@ void gog_FreeAllocator(void *allocator){
 
 //// GalaxyThread.h
 
-class ThreadFactory : public IGalaxyThreadFactory {
+class ThreadFactory : public galaxy::api::IGalaxyThreadFactory {
 public:
   gog_ThreadCreationFunction creator;
   ThreadFactory(gog_ThreadCreationFunction creator) : creator(creator) {}
 
-  IGalaxyThread* SpawnThread(ThreadEntryFunction const entryPoint, ThreadEntryParam param) override {
-    return (IGalaxyThread*)this->creator(entryPoint, param);
+  galaxy::api::IGalaxyThread* SpawnThread(galaxy::api::ThreadEntryFunction const entryPoint, galaxy::api::ThreadEntryParam param) override {
+    return (galaxy::api::IGalaxyThread*)this->creator(entryPoint, param);
   }
-}
+};
 
 void *gog_MakeThreadFactory(gog_ThreadCreationFunction creator){
   return (void *)new ThreadFactory(creator);
@@ -34,7 +34,7 @@ void gog_FreeThreadFactor(void *factory){
 //// GalaxyApi.h
 
 void gog_Init(struct gog_InitOptions *options){
-  galaxy::api::Init(options);
+  galaxy::api::Init((const galaxy::api::InitOptions&)options);
 }
 
 void gog_Shutdown(){
@@ -42,7 +42,7 @@ void gog_Shutdown(){
 }
 
 void gog_ShutdownEx(struct gog_ShutdownOptions *options){
-  galaxy::api::ShutdownEx(options);
+  galaxy::api::ShutdownEx((const galaxy::api::ShutdownOptions&)options);
 }
 
 gog_Interface gog_User(){
@@ -103,11 +103,11 @@ void gog_ProcessData(){
 
 //// Errors.h
 
-char* gog_IError_GetName(gog_Interface error){
+const char* gog_IError_GetName(gog_Interface error){
   return ((galaxy::api::IError*)error)->GetName();
 }
 
-char* gog_IError_GetMsg(gog_Interface error){
+const char* gog_IError_GetMsg(gog_Interface error){
   return ((galaxy::api::IError*)error)->GetMsg();
 }
 
@@ -116,5 +116,5 @@ enum gog_ErrorType gog_IError_GetType(gog_Interface error){
 }
 
 gog_Interface gog_GetError(){
-  return (gog_Interface)gog::galaxy::GetError();
+  return (gog_Interface)galaxy::api::GetError();
 }

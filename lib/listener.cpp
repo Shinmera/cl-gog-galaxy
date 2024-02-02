@@ -1,5 +1,7 @@
-#include <Galaxy/GalaxyApi.h>
+#include <galaxy/GalaxyApi.h>
 #include "gog.h"
+
+using namespace galaxy::api;
 
 void gog_IListenerRegistrar_Register(gog_Interface registrar, enum gog_ListenerType type, gog_Interface listener){
   ((galaxy::api::IListenerRegistrar*)registrar)->Register((galaxy::api::ListenerType)type, (galaxy::api::IGalaxyListenerlistener *)listener);

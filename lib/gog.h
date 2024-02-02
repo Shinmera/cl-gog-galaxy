@@ -61,7 +61,7 @@ static inline uint64_t gog_ID_GetRealID(gog_ID id){
 }
 
 static inline enum gog_ID_Type gog_ID_GetType(gog_ID id){
-  return id >> 56;
+  return (enum gog_ID_Type)(id >> 56);
 }
 
 static inline bool gog_ID_IsValid(gog_ID id){
@@ -114,8 +114,8 @@ enum gog_ErrorType {
   GOG_RUNTIME_ERROR
 };
 
-char* gog_IError_GetName(gog_Interface error);
-char* gog_IError_GetMsg(gog_Interface error);
+const char* gog_IError_GetName(gog_Interface error);
+const char* gog_IError_GetMsg(gog_Interface error);
 enum gog_ErrorType gog_IError_GetType(gog_Interface error);
 gog_Interface gog_GetError();
 
@@ -238,46 +238,46 @@ enum gog_UserFindFailureReason {
   GOG_USERFIND_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
 };
 
-gog_AvatarCriteria gog_IFriend_GetDefaultAvatarCriteria(gog_Interface friend);
-void gog_IFriend_SetDefaultAvatarCriteria(gog_Interface friend, gog_AvatarCriteria defaultAvatarCriteria);
-void gog_IFriend_RequestUserInformation(gog_Interface friend, gog_ID userID, gog_AvatarCriteria avatarCriteria, gog_Interface listener);
-bool gog_IFriend_IsUserInformationAvailable(gog_Interface friend, gog_ID userID);
-char* gog_IFriend_GetPersonaName(gog_Interface friend);
-void gog_IFriend_GetPersonaNameCopy(gog_Interface friend, char* buffer, uint32_t bufferLength);
-enum gog_PersonaState gog_IFriend_GetPersonaState(gog_Interface friend);
-char* gog_IFriend_GetFriendPersonaName(gog_Interface friend, gog_ID userID);
-void gog_IFriend_GetFriendPersonaNameCopy(gog_Interface friend, gog_ID userID, char* buffer, uint32_t bufferLength);
-enum gog_PersonaState gog_IFriend_GetFriendPersonaState(gog_Interface friend, gog_ID userID);
-char* gog_IFriend_GetFriendAvatarUrl(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType);
-void gog_IFriend_GetFriendAvatarUrlCopy(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType, char* buffer, uint32_t bufferLength);
-uint32_t gog_IFriend_GetFriendAvatarImageID(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType);
-void gog_IFriend_GetFriendAvatarImageRGBA(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType, void* buffer, uint32_t bufferLength);
-bool gog_IFriend_IsFriendAvatarImageRGBAAvailable(gog_Interface friend, gog_ID userID, enum gog_AvatarType avatarType);
-void gog_IFriend_RequestFriendList(gog_Interface friend, gog_Interface listener);
-bool gog_IFriend_IsFriend(gog_Interface friend, gog_ID userID);
-uint32_t gog_IFriend_GetFriendCount(gog_Interface friend);
-gog_ID gog_IFriend_GetFriendByIndex(gog_Interface friend, uint32_t index);
-void gog_IFriend_SendFriendInvitation(gog_Interface friend, gog_ID userID, gog_Interface listener);
-void gog_IFriend_RequestFriendInvitationList(gog_Interface friend, gog_Interface listener);
-void gog_IFriend_RequestSentFriendInvitationList(gog_Interface friend, gog_Interface listener);
-uint32_t gog_IFriend_GetFriendInvitationCount(gog_Interface friend);
-void gog_IFriend_GetFriendInvitationByIndex(gog_Interface friend, uint32_t index, gog_ID* userID, uint32_t* sendTime);
-void gog_IFriend_RespondToFriendInvitation(gog_Interface friend, gog_ID userID, bool accept, gog_Interface listener);
-void gog_IFriend_DeleteFriend(gog_Interface friend, gog_ID userID, gog_Interface listener);
-void gog_IFriend_SetRichPresence(gog_Interface friend, char* key, char* value, gog_Interface listener);
-void gog_IFriend_DeleteRichPresence(gog_Interface friend, char* key, gog_Interface listener);
-void gog_IFriend_ClearRichPresence(gog_Interface friend, gog_Interface listener);
-void gog_IFriend_RequestRichPresence(gog_Interface friend, gog_ID userID, gog_Interface listener);
-char* gog_IFriend_GetRichPresence(gog_Interface friend, char* key, gog_ID userID);
-void gog_IFriend_GetRichPresenceCopy(gog_Interface friend, char* key, char* buffer, uint32_t bufferLength, gog_ID userID);
-uint32_t gog_IFriend_GetRichPresenceCount(gog_Interface friend, gog_ID userID);
-void gog_IFriend_GetRichPresenceByIndex(gog_Interface friend, uint32_t index, char* key, uint32_t keyLength, char* value, uint32_t valueLength, gog_ID userID);
-char* gog_IFriend_GetRichPresenceKeyByIndex(gog_Interface friend, uint32_t index, gog_ID userID);
-void gog_IFriend_GetRichPresenceKeyByIndexCopy(gog_Interface friend, uint32_t index, char* buffer, uint32_t bufferLength, gog_ID userID);
-void gog_IFriend_ShowOverlayInviteDialog(gog_Interface friend, char* connectionString);
-void gog_IFriend_SendInvitation(gog_Interface friend, gog_ID userID, char* connectionString, gog_Interface listener);
-void gog_IFriend_FindUser(gog_Interface friend, char* userSpecifier, gog_Interface listener);
-bool gog_IFriend_IsUserInTheSameGame(gog_Interface friend, gog_ID userID);
+gog_AvatarCriteria gog_IFriend_GetDefaultAvatarCriteria(gog_Interface _friend);
+void gog_IFriend_SetDefaultAvatarCriteria(gog_Interface _friend, gog_AvatarCriteria defaultAvatarCriteria);
+void gog_IFriend_RequestUserInformation(gog_Interface _friend, gog_ID userID, gog_AvatarCriteria avatarCriteria, gog_Interface listener);
+bool gog_IFriend_IsUserInformationAvailable(gog_Interface _friend, gog_ID userID);
+char* gog_IFriend_GetPersonaName(gog_Interface _friend);
+void gog_IFriend_GetPersonaNameCopy(gog_Interface _friend, char* buffer, uint32_t bufferLength);
+enum gog_PersonaState gog_IFriend_GetPersonaState(gog_Interface _friend);
+char* gog_IFriend_GetFriendPersonaName(gog_Interface _friend, gog_ID userID);
+void gog_IFriend_GetFriendPersonaNameCopy(gog_Interface _friend, gog_ID userID, char* buffer, uint32_t bufferLength);
+enum gog_PersonaState gog_IFriend_GetFriendPersonaState(gog_Interface _friend, gog_ID userID);
+char* gog_IFriend_GetFriendAvatarUrl(gog_Interface _friend, gog_ID userID, enum gog_AvatarType avatarType);
+void gog_IFriend_GetFriendAvatarUrlCopy(gog_Interface _friend, gog_ID userID, enum gog_AvatarType avatarType, char* buffer, uint32_t bufferLength);
+uint32_t gog_IFriend_GetFriendAvatarImageID(gog_Interface _friend, gog_ID userID, enum gog_AvatarType avatarType);
+void gog_IFriend_GetFriendAvatarImageRGBA(gog_Interface _friend, gog_ID userID, enum gog_AvatarType avatarType, void* buffer, uint32_t bufferLength);
+bool gog_IFriend_IsFriendAvatarImageRGBAAvailable(gog_Interface _friend, gog_ID userID, enum gog_AvatarType avatarType);
+void gog_IFriend_RequestFriendList(gog_Interface _friend, gog_Interface listener);
+bool gog_IFriend_IsFriend(gog_Interface _friend, gog_ID userID);
+uint32_t gog_IFriend_GetFriendCount(gog_Interface _friend);
+gog_ID gog_IFriend_GetFriendByIndex(gog_Interface _friend, uint32_t index);
+void gog_IFriend_SendFriendInvitation(gog_Interface _friend, gog_ID userID, gog_Interface listener);
+void gog_IFriend_RequestFriendInvitationList(gog_Interface _friend, gog_Interface listener);
+void gog_IFriend_RequestSentFriendInvitationList(gog_Interface _friend, gog_Interface listener);
+uint32_t gog_IFriend_GetFriendInvitationCount(gog_Interface _friend);
+void gog_IFriend_GetFriendInvitationByIndex(gog_Interface _friend, uint32_t index, gog_ID* userID, uint32_t* sendTime);
+void gog_IFriend_RespondToFriendInvitation(gog_Interface _friend, gog_ID userID, bool accept, gog_Interface listener);
+void gog_IFriend_DeleteFriend(gog_Interface _friend, gog_ID userID, gog_Interface listener);
+void gog_IFriend_SetRichPresence(gog_Interface _friend, char* key, char* value, gog_Interface listener);
+void gog_IFriend_DeleteRichPresence(gog_Interface _friend, char* key, gog_Interface listener);
+void gog_IFriend_ClearRichPresence(gog_Interface _friend, gog_Interface listener);
+void gog_IFriend_RequestRichPresence(gog_Interface _friend, gog_ID userID, gog_Interface listener);
+char* gog_IFriend_GetRichPresence(gog_Interface _friend, char* key, gog_ID userID);
+void gog_IFriend_GetRichPresenceCopy(gog_Interface _friend, char* key, char* buffer, uint32_t bufferLength, gog_ID userID);
+uint32_t gog_IFriend_GetRichPresenceCount(gog_Interface _friend, gog_ID userID);
+void gog_IFriend_GetRichPresenceByIndex(gog_Interface _friend, uint32_t index, char* key, uint32_t keyLength, char* value, uint32_t valueLength, gog_ID userID);
+char* gog_IFriend_GetRichPresenceKeyByIndex(gog_Interface _friend, uint32_t index, gog_ID userID);
+void gog_IFriend_GetRichPresenceKeyByIndexCopy(gog_Interface _friend, uint32_t index, char* buffer, uint32_t bufferLength, gog_ID userID);
+void gog_IFriend_ShowOverlayInviteDialog(gog_Interface _friend, char* connectionString);
+void gog_IFriend_SendInvitation(gog_Interface _friend, gog_ID userID, char* connectionString, gog_Interface listener);
+void gog_IFriend_FindUser(gog_Interface _friend, char* userSpecifier, gog_Interface listener);
+bool gog_IFriend_IsUserInTheSameGame(gog_Interface _friend, gog_ID userID);
 
 //// IChat.h
 typedef uint64_t gog_ChatRoomID;
@@ -401,8 +401,8 @@ void gog_IMatchmaking_SetMaxNumLobbyMembers(gog_Interface matchmaking, gog_ID lo
 uint32_t gog_IMatchmaking_GetMaxNumLobbyMembers(gog_Interface matchmaking, gog_ID lobbyID);
 uint32_t gog_IMatchmaking_GetNumLobbyMembers(gog_Interface matchmaking, gog_ID lobbyID);
 gog_ID gog_IMatchmaking_GetLobbyMemberByIndex(gog_Interface matchmaking, gog_ID lobbyID, uint32_t index);
-void gog_IMatchmaking_SetLobbyType(gog_Interface matchmaking, gog_ID lobbyID, enum LobbyType lobbyType, gog_Interface listener);
-enum LobbyType gog_IMatchmaking_GetLobbyType(gog_Interface matchmaking, gog_ID lobbyID);
+void gog_IMatchmaking_SetLobbyType(gog_Interface matchmaking, gog_ID lobbyID, enum gog_LobbyType lobbyType, gog_Interface listener);
+enum gog_LobbyType gog_IMatchmaking_GetLobbyType(gog_Interface matchmaking, gog_ID lobbyID);
 void gog_IMatchmaking_SetLobbyJoinable(gog_Interface matchmaking, gog_ID lobbyID, bool joinable, gog_Interface listener);
 bool gog_IMatchmaking_IsLobbyJoinable(gog_Interface matchmaking, gog_ID lobbyID);
 void gog_IMatchmaking_RequestLobbyData(gog_Interface matchmaking, gog_ID lobbyID, gog_Interface listener);
