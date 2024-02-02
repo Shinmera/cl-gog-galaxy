@@ -174,24 +174,9 @@ void gog_IListenerRegistrar_Unregister(gog_Interface registrar, enum gog_Listene
 gog_Interface gog_ListenerRegistrar();
 gog_Interface gog_GameServerListenerRegistrar();
 
-enum gog_BasicFailureReason {
+enum gog_FailureReason {
   GOG_BASIC_FAILURE_REASON_UNDEFINED, 
   GOG_BASIC_FAILURE_REASON_CONNECTION_FAILURE 
-};
-
-// IEncryptedAppTicketListener
-// IPlayFabCreateOpenIDConnectionListener
-// IPlayFabLoginWithOpenIDConnectListener
-// IUserInformationRetrieveListener
-// IFriendListListener
-// IFriendInvitationListRetrieveListener
-// ISentFriendInvitationListRetrieveListener
-// IFriendDeleteListener
-// IRichPresenceChangeListener
-// IRichPresenceRetrieveListener
-struct gog_BasicListener {
-  void (*OnSuccess)();
-  void (*OnFailure)(enum gog_BasicFailureReason reason);
 };
 
 //// IUser.h
@@ -208,35 +193,9 @@ enum gog_AuthFailureReason {
   GOG_FAILURE_REASON_EXTERNAL_SERVICE_FAILURE 
 };
 
-struct gog_IAuthListener {
-  void (*OnAuthSuccess)();
-  void (*OnAuthFailure)(enum gog_AuthFailureReason reason);
-  void (*OnAuthLost)();
-};
-
-struct gog_IOtherSessionStartListener {
-  void (*OnOtherSessionStarted)();
-};
-
 enum gog_OperationalState {
   OPERATIONAL_STATE_SIGNED_IN = 0x0001, 
   OPERATIONAL_STATE_LOGGED_ON = 0x0002 
-};
-
-struct gog_IOperationalStateChangeListener {
-  void (*OnOperationalStateChanged)(enum gog_OperationalState state);
-};
-
-struct gog_IUserDataListener {
-  void (*OnUserDataUpdated)();
-};
-
-struct gog_ISpecificUserDataListener {
-  void (*OnSpecificUserDataUpdated)(gog_ID user);
-};
-
-struct gog_IAccessTokenListener {
-  void (*OnAccessTokenChanged)();
 };
 
 bool gog_IUser_SignedIn(gog_Interface user);
@@ -302,25 +261,12 @@ enum gog_PersonaStateChange {
   GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_ANY = GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_SMALL | GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_MEDIUM | GOG_PERSONA_CHANGE_AVATAR_DOWNLOADED_IMAGE_LARGE
 };
 
-struct gog_IPersonaDataChangedListener {
-  void (*OnPersonaDataChanged)(gog_ID userID, uint32_t personaStateChange);
-};
-
 enum gog_FriendInvitationFailureReason {
   GOG_FRIENDINVITATION_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
   GOG_FRIENDINVITATION_FAILURE_REASON_USER_DOES_NOT_EXIST, ///< User does not exist.
   GOG_FRIENDINVITATION_FAILURE_REASON_USER_ALREADY_INVITED, ///< Friend invitation already sent to the user.
   GOG_FRIENDINVITATION_FAILURE_REASON_USER_ALREADY_FRIEND, ///< User already on the friend list.
   GOG_FRIENDINVITATION_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
-};
-
-struct gog_IFriendInvitationSendListener {
-  void (*OnFriendInvitationSendSuccess)(gog_ID userID);
-  void (*OnFriendInvitationSendFailure)(gog_ID userID, enum gog_FriendInvitationFailureReason failureReason);
-};
-
-struct gog_IFriendInvitationListener {
-  void (*OnFriendInvitationReceived)(gog_ID userID, uint32_t sendTime);
 };
 
 enum gog_FriendInvitationRespondFailureReason {
@@ -331,30 +277,9 @@ enum gog_FriendInvitationRespondFailureReason {
   GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
 };
 
-struct gog_IFriendInvitationRespondToListener {
-  void (*OnFriendInvitationRespondToSuccess)(gog_ID userID, bool accept);
-  void (*OnFriendInvitationRespondToFailure)(gog_ID userID, enum gog_FriendInvitationRespondFailureReason failureReason);
-};
-
 enum gog_InvitationDirection{
   GOG_INVITATION_DIRECTION_INCOMING, ///< The user indicated in the notification was the inviter.
   GOG_INVITATION_DIRECTION_OUTGOING ///< The user indicated in the notification was the invitee.
-};
-
-struct gog_IFriendAddListener {
-  void (*OnFriendAdded)(gog_ID userID, enum gog_InvitationDirection invitationDirection);
-};
-
-struct gog_IRichPresenceListener {
-  void (*OnRichPresenceUpdated)(gog_ID userID);
-};
-
-struct gog_IGameJoinRequestedListener {
-  void (*OnGameJoinRequested)(gog_ID userID, const char* connectionString);
-};
-
-struct gog_IGameInvitationReceivedListener {
-  void (*OnGameInvitationReceived)(gog_ID userID, const char* connectionString);
 };
 
 enum gog_SendInvitationFailureReason{
@@ -367,20 +292,10 @@ enum gog_SendInvitationFailureReason{
   GOG_SENDINVITATION_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
 };
 
-struct gog_ISendInvitationListener {
-  void (*OnInvitationSendSuccess)(gog_ID userID, const char* connectionString);
-  void (*OnInvitationSendFailure)(gog_ID userID, const char* connectionString, enum gog_SendInvitationFailureReason failureReason);
-};
-
 enum gog_UserFindFailureReason {
   GOG_USERFIND_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
   GOG_USERFIND_FAILURE_REASON_USER_NOT_FOUND, ///< Specified user was not found.
   GOG_USERFIND_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
-};
-
-struct gog_IUserFindListener {
-  void (*OnUserFindSuccess)(const char* userSpecifier, gog_ID userID);
-  void (*OnUserFindFailure)(const char* userSpecifier, enum gog_UserFindFailureReason failureReason);
 };
 
 gog_AvatarCriteria gog_IFriend_GetDefaultAvatarCriteria(gog_Interface friend);
@@ -425,23 +340,545 @@ void gog_IFriend_FindUser(gog_Interface friend, char* userSpecifier, gog_Interfa
 bool gog_IFriend_IsUserInTheSameGame(gog_Interface friend, gog_ID userID);
 
 //// IChat.h
+typedef uint64_t gog_ChatRoomID;
+typedef uint64_t gog_ChatMessageID;
+
+enum gog_ChatMessageType {
+  GOG_CHAT_MESSAGE_TYPE_UNKNOWN, ///< Unknown message type.
+  GOG_CHAT_MESSAGE_TYPE_CHAT_MESSAGE, ///< Chat message.
+  GOG_CHAT_MESSAGE_TYPE_GAME_INVITATION ///< Game invitation.
+};
+
+enum gog_ChatUserRetrieveFailureReason {
+  GOG_CHATUSERRETRIEVE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_CHATUSERRETRIEVE_FAILURE_REASON_FORBIDDEN, ///< Communication with a specified user is not allowed.
+  GOG_CHATUSERRETRIEVE_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+enum gog_ChatMessageSendFailureReason {
+  GOG_CHATMESSAGESEND_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_CHATMESSAGESEND_FAILURE_REASON_FORBIDDEN, ///< Sending messages to the chat room is forbidden for the user.
+  GOG_CHATMESSAGESEND_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+enum gog_ChatMessageRetrieveFailureReason {
+  FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  FAILURE_REASON_FORBIDDEN, ///< Retrieving messages from the chat room is forbidden for the user.
+  FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+void gog_IChat_RequestChatRoomWithUser(gog_Interface chat, gog_ID userID, gog_Interface listener);
+void gog_IChat_RequestChatRoomMessages(gog_Interface chat, gog_ChatRoomID chatRoomID, uint32_t limit, gog_ChatMessageID referenceMessageID, gog_Interface listener);
+uint32_t gog_IChat_SendChatRoomMessage(gog_Interface chat, gog_ChatRoomID chatRoomID, const char* msg, gog_Interface listener);
+uint32_t gog_IChat_GetChatRoomMessageByIndex(gog_Interface chat, uint32_t index, gog_ChatMessageID* messageID, enum gog_ChatMessageType* messageType, gog_ID* senderID, uint32_t* sendTime, char* buffer, uint32_t bufferLength);
+uint32_t gog_IChat_GetChatRoomMemberCount(gog_Interface chat, gog_ChatRoomID chatRoomID);
+gog_ID gog_IChat_GetChatRoomMemberUserIDByIndex(gog_Interface chat, gog_ChatRoomID chatRoomID, uint32_t index);
+uint32_t gog_IChat_GetChatRoomUnreadMessageCount(gog_Interface chat, gog_ChatRoomID chatRoomID);
+void gog_IChat_MarkChatRoomAsRead(gog_Interface chat, gog_ChatRoomID chatRoomID);
 
 //// IMatchmaking.h
+enum gog_LobbyType {
+  GOG_LOBBY_TYPE_PRIVATE, ///< Only invited users are able to join the lobby.
+  GOG_LOBBY_TYPE_FRIENDS_ONLY, ///< Visible only to friends or invitees, but not in lobby list. Forbidden for the Game Server.
+  GOG_LOBBY_TYPE_PUBLIC, ///< Visible for friends and in lobby list.
+  GOG_LOBBY_TYPE_INVISIBLE_TO_FRIENDS ///< Returned by search, but not visible to friends. Forbidden for the Game Server.
+};
+
+enum gog_LobbyTopologyType {
+  GOG_DEPRECATED_LOBBY_TOPOLOGY_TYPE_FCM_HOST_MIGRATION, ///< All users are connected with each other. Disconnection of lobby owner results in choosing a new one. Deprecated: use LOBBY_TOPOLOGY_TYPE_FCM_OWNERSHIP_TRANSITION instead.
+  GOG_LOBBY_TOPOLOGY_TYPE_FCM, ///< All users are connected with each other. Disconnection of lobby owner results in closing the lobby.
+  GOG_LOBBY_TOPOLOGY_TYPE_STAR, ///< All users are connected with lobby owner. Disconnection of lobby owner results in closing the lobby.
+  GOG_LOBBY_TOPOLOGY_TYPE_CONNECTIONLESS, ///< All users are connected only with server. Disconnection of lobby owner results in choosing a new one. Forbidden for the Game Server.
+  GOG_LOBBY_TOPOLOGY_TYPE_FCM_OWNERSHIP_TRANSITION ///< All users are connected with each other. Disconnection of lobby owner results in choosing a new one. Forbidden for the Game Server.
+};
+
+enum gog_LobbyMemberStateChange {
+  GOG_LOBBY_MEMBER_STATE_CHANGED_ENTERED = 0x0001, ///< The user joined the lobby.
+  GOG_LOBBY_MEMBER_STATE_CHANGED_LEFT = 0x0002, ///< The user left the lobby having announced it first.
+  GOG_LOBBY_MEMBER_STATE_CHANGED_DISCONNECTED = 0x0004, ///< The user disconnected without leaving the lobby first.
+  GOG_LOBBY_MEMBER_STATE_CHANGED_KICKED = 0x0008, ///< User was kicked from the lobby.
+  GOG_LOBBY_MEMBER_STATE_CHANGED_BANNED = 0x0010 ///< User was kicked and banned from the lobby.
+};
+
+enum gog_LobbyComparisonType {
+  GOG_LOBBY_COMPARISON_TYPE_EQUAL, ///< The lobby should have a property of a value that is equal to the one specified.
+  GOG_LOBBY_COMPARISON_TYPE_NOT_EQUAL, ///< The lobby should have a property of a value that is not equal to the one specified.
+  GOG_LOBBY_COMPARISON_TYPE_GREATER, ///< The lobby should have a property of a value that is greater than the one specified.
+  GOG_LOBBY_COMPARISON_TYPE_GREATER_OR_EQUAL, ///< The lobby should have a property of a value that is greater than or equal to the one specified.
+  GOG_LOBBY_COMPARISON_TYPE_LOWER, ///< The lobby should have a property of a value that is lower than the one specified.
+  GOG_LOBBY_COMPARISON_TYPE_LOWER_OR_EQUAL ///< The lobby should have a property of a value that is lower than or equal to the one specified.
+};
+
+enum gog_LobbyCreateResult {
+  GOG_LOBBY_CREATE_RESULT_SUCCESS, ///< Lobby was created.
+  GOG_LOBBY_CREATE_RESULT_ERROR, ///< Unexpected error.
+  GOG_LOBBY_CREATE_RESULT_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+enum gog_LobbyEnterResult {
+  GOG_LOBBY_ENTER_RESULT_SUCCESS, ///< The user has entered the lobby.
+  GOG_LOBBY_ENTER_RESULT_LOBBY_DOES_NOT_EXIST, ///< Specified lobby does not exist.
+  GOG_LOBBY_ENTER_RESULT_LOBBY_IS_FULL, ///< Specified lobby is full.
+  GOG_LOBBY_ENTER_RESULT_ERROR, ///< Unexpected error.
+  GOG_LOBBY_ENTER_RESULT_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+enum gog_LobbyListResult {
+  GOG_LOBBY_LIST_RESULT_SUCCESS, ///< The list of lobbies retrieved successfully.
+  GOG_LOBBY_LIST_RESULT_ERROR, ///< Unexpected error.
+  GOG_LOBBY_LIST_RESULT_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+enum gog_LobbyLeaveReason {
+  GOG_LOBBY_LEAVE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_LOBBY_LEAVE_REASON_USER_LEFT, ///< The user has left the lobby as a result of calling IMatchmaking::LeaveLobby().
+  GOG_LOBBY_LEAVE_REASON_LOBBY_CLOSED, ///< The lobby has been closed (e.g. the owner has left the lobby without host migration).
+  GOG_LOBBY_LEAVE_REASON_CONNECTION_LOST ///< The Peer has lost the connection.
+};
+
+enum gog_LobbyDataUpdateFailureReason {
+  GOG_LOBBYDATAUPDATE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_LOBBYDATAUPDATE_FAILURE_REASON_LOBBY_DOES_NOT_EXIST, ///< Specified lobby does not exist.
+  GOG_LOBBYDATAUPDATE_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+enum gog_LobbyDataRetrieveFailureReason {
+  GOG_LOBBYDATARETRIEVE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_LOBBYDATARETRIEVE_FAILURE_REASON_LOBBY_DOES_NOT_EXIST, ///< Specified lobby does not exist.
+  GOG_LOBBYDATARETRIEVE_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+void gog_IMatchmaking_CreateLobby(gog_Interface matchmaking, enum gog_LobbyType lobbyType, uint32_t maxMembers, bool joinable, enum gog_LobbyTopologyType lobbyTopologyType, gog_Interface created, gog_Interface entered);
+void gog_IMatchmaking_RequestLobbyList(gog_Interface matchmaking, bool allowFullLobbies, gog_Interface listener);
+void gog_IMatchmaking_AddRequestLobbyListResultCountFilter(gog_Interface matchmaking, uint32_t limit);
+void gog_IMatchmaking_AddRequestLobbyListStringFilter(gog_Interface matchmaking, char* keyToMatch, char* valueToMatch, enum gog_LobbyComparisonType comparisonType);
+void gog_IMatchmaking_AddRequestLobbyListNumericalFilter(gog_Interface matchmaking, char* keyToMatch, int32_t valueToMatch, enum gog_LobbyComparisonType comparisonType);
+void gog_IMatchmaking_AddRequestLobbyListNearValueFilter(gog_Interface matchmaking, char* keyToMatch, int32_t valueToBeCloseTo);
+gog_ID gog_IMatchmaking_GetLobbyByIndex(gog_Interface matchmaking, uint32_t index);
+void gog_IMatchmaking_JoinLobby(gog_Interface matchmaking, gog_ID lobbyID, gog_Interface listener);
+void gog_IMatchmaking_LeaveLobby(gog_Interface matchmaking, gog_ID lobbyID, gog_Interface listener);
+void gog_IMatchmaking_SetMaxNumLobbyMembers(gog_Interface matchmaking, gog_ID lobbyID, uint32_t maxNumLobbyMembers, gog_Interface listener);
+uint32_t gog_IMatchmaking_GetMaxNumLobbyMembers(gog_Interface matchmaking, gog_ID lobbyID);
+uint32_t gog_IMatchmaking_GetNumLobbyMembers(gog_Interface matchmaking, gog_ID lobbyID);
+gog_ID gog_IMatchmaking_GetLobbyMemberByIndex(gog_Interface matchmaking, gog_ID lobbyID, uint32_t index);
+void gog_IMatchmaking_SetLobbyType(gog_Interface matchmaking, gog_ID lobbyID, enum LobbyType lobbyType, gog_Interface listener);
+enum LobbyType gog_IMatchmaking_GetLobbyType(gog_Interface matchmaking, gog_ID lobbyID);
+void gog_IMatchmaking_SetLobbyJoinable(gog_Interface matchmaking, gog_ID lobbyID, bool joinable, gog_Interface listener);
+bool gog_IMatchmaking_IsLobbyJoinable(gog_Interface matchmaking, gog_ID lobbyID);
+void gog_IMatchmaking_RequestLobbyData(gog_Interface matchmaking, gog_ID lobbyID, gog_Interface listener);
+char* gog_IMatchmaking_GetLobbyData(gog_Interface matchmaking, gog_ID lobbyID, char* key);
+void gog_IMatchmaking_GetLobbyDataCopy(gog_Interface matchmaking, gog_ID lobbyID, char* key, char* buffer, uint32_t bufferLength);
+void gog_IMatchmaking_SetLobbyData(gog_Interface matchmaking, gog_ID lobbyID, char* key, char* value, gog_Interface listener);
+uint32_t gog_IMatchmaking_GetLobbyDataCount(gog_Interface matchmaking, gog_ID lobbyID);
+bool gog_IMatchmaking_GetLobbyDataByIndex(gog_Interface matchmaking, gog_ID lobbyID, uint32_t index, char* key, uint32_t keyLength, char* value, uint32_t valueLength);
+void gog_IMatchmaking_DeleteLobbyData(gog_Interface matchmaking, gog_ID lobbyID, char* key, gog_Interface listener);
+char* gog_IMatchmaking_GetLobbyMemberData(gog_Interface matchmaking, gog_ID lobbyID, gog_ID memberID, char* key);
+void gog_IMatchmaking_GetLobbyMemberDataCopy(gog_Interface matchmaking, gog_ID lobbyID, gog_ID memberID, char* key, char* buffer, uint32_t bufferLength);
+void gog_IMatchmaking_SetLobbyMemberData(gog_Interface matchmaking, gog_ID lobbyID, char* key, char* value, gog_Interface listener);
+uint32_t gog_IMatchmaking_GetLobbyMemberDataCount(gog_Interface matchmaking, gog_ID lobbyID, gog_ID memberID);
+bool gog_IMatchmaking_GetLobbyMemberDataByIndex(gog_Interface matchmaking, gog_ID lobbyID, gog_ID memberID, uint32_t index, char* key, uint32_t keyLength, char* value, uint32_t valueLength);
+void gog_IMatchmaking_DeleteLobbyMemberData(gog_Interface matchmaking, gog_ID lobbyID, char* key, gog_Interface listener);
+gog_ID gog_IMatchmaking_GetLobbyOwner(gog_Interface matchmaking, gog_ID lobbyID);
+bool gog_IMatchmaking_SendLobbyMessage(gog_Interface matchmaking, gog_ID lobbyID, void* data, uint32_t dataSize);
+uint32_t gog_IMatchmaking_GetLobbyMessage(gog_Interface matchmaking, gog_ID lobbyID, uint32_t messageID, gog_ID senderID, char* msg, uint32_t msgLength);
 
 //// INetworking.h
+enum gog_NatType {
+  GOG_NAT_TYPE_NONE, ///< There is no NAT at all.
+  GOG_NAT_TYPE_FULL_CONE, ///< Accepts any datagrams to a port that has been previously used.
+  GOG_NAT_TYPE_ADDRESS_RESTRICTED, ///< Accepts datagrams to a port if the datagram source IP address belongs to a system that has been sent to.
+  GOG_NAT_TYPE_PORT_RESTRICTED, ///< Accepts datagrams to a port if the datagram source IP address and port belongs a system that has been sent to.
+  GOG_NAT_TYPE_SYMMETRIC, ///< A different port is chosen for every remote destination.
+  GOG_NAT_TYPE_UNKNOWN ///< NAT type has not been determined.
+};
+
+enum gog_P2PSendType {
+  GOG_P2P_SEND_UNRELIABLE, ///< UDP-like packet transfer. The packet will be sent during the next call to ProcessData().
+  GOG_P2P_SEND_RELIABLE, ///< TCP-like packet transfer. The packet will be sent during the next call to ProcessData().
+  GOG_P2P_SEND_UNRELIABLE_IMMEDIATE, ///< UDP-like packet transfer. The packet will be sent instantly.
+  GOG_P2P_SEND_RELIABLE_IMMEDIATE ///< TCP-like packet transfer. The packet will be sent instantly.
+};
+
+enum gog_ConnectionType {
+  GOG_CONNECTION_TYPE_NONE, ///< User is connected only with server.
+  GOG_CONNECTION_TYPE_DIRECT, ///< User is connected directly.
+  GOG_CONNECTION_TYPE_PROXY ///< User is connected through a proxy.
+};
+
+bool gog_INetworking_SendP2PPacket(gog_Interface networking, gog_ID galaxyID, const void* data, uint32_t dataSize, enum gog_P2PSendType sendType, uint8_t channel);
+bool gog_INetworking_PeekP2PPacket(gog_Interface networking, void* dest, uint32_t destSize, uint32_t* outMsgSize, gog_ID outGalaxyID, uint8_t channel);
+bool gog_INetworking_IsP2PPacketAvailable(gog_Interface networking, uint32_t* outMsgSize, uint8_t channel);
+bool gog_INetworking_ReadP2PPacket(gog_Interface networking, void* dest, uint32_t destSize, uint32_t* outMsgSize, gog_ID outGalaxyID, uint8_t channel);
+void gog_INetworking_PopP2PPacket(gog_Interface networking, uint8_t channel);
+int gog_INetworking_GetPingWith(gog_Interface networking, gog_ID galaxyID);
+void gog_INetworking_RequestNatTypeDetection(gog_Interface networking);
+enum gog_NatType gog_INetworking_GetNatType(gog_Interface networking);
+enum gog_ConnectionType gog_INetworking_GetConnectionType(gog_Interface networking, gog_ID userID);
 
 //// IStats.h
+enum gog_LeaderboardSortMethod {
+  GOG_LEADERBOARD_SORT_METHOD_NONE, ///< No sorting method specified.
+  GOG_LEADERBOARD_SORT_METHOD_ASCENDING, ///< Top score is lowest number.
+  GOG_LEADERBOARD_SORT_METHOD_DESCENDING ///< Top score is highest number.
+};
+
+enum gog_LeaderboardDisplayType {
+  GOG_LEADERBOARD_DISPLAY_TYPE_NONE, ///< Not display type specified.
+  GOG_LEADERBOARD_DISPLAY_TYPE_NUMBER, ///< Simple numerical score.
+  GOG_LEADERBOARD_DISPLAY_TYPE_TIME_SECONDS, ///< The score represents time, in seconds.
+  GOG_LEADERBOARD_DISPLAY_TYPE_TIME_MILLISECONDS ///< The score represents time, in milliseconds.
+};
+
+enum gog_LeaderboardScoreUpdateFailureReason {
+  GOG_LEADERBOARDSCOREUPDATE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_LEADERBOARDSCOREUPDATE_FAILURE_REASON_NO_IMPROVEMENT, ///< Previous score was better and the update operation was not forced.
+  GOG_LEADERBOARDSCOREUPDATE_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+void gog_IStats_RequestUserStatsAndAchievements(gog_Interface stats, gog_ID userID, gog_Interface listener);
+int32_t gog_IStats_GetStatInt(gog_Interface stats, char* name, gog_ID userID);
+float gog_IStats_GetStatFloat(gog_Interface stats, char* name, gog_ID userID);
+void gog_IStats_SetStatInt(gog_Interface stats, char* name, int32_t value);
+void gog_IStats_SetStatFloat(gog_Interface stats, char* name, float value);
+void gog_IStats_UpdateAvgRateStat(gog_Interface stats, char* name, float countThisSession, double sessionLength);
+void gog_IStats_GetAchievement(gog_Interface stats, char* name, bool* unlocked, uint32_t* unlockTime, gog_ID userID);
+void gog_IStats_SetAchievement(gog_Interface stats, char* name);
+void gog_IStats_ClearAchievement(gog_Interface stats, char* name);
+void gog_IStats_StoreStatsAndAchievements(gog_Interface stats, gog_Interface listener);
+void gog_IStats_ResetStatsAndAchievements(gog_Interface stats, gog_Interface listener);
+char* gog_IStats_GetAchievementDisplayName(gog_Interface stats, char* name);
+void gog_IStats_GetAchievementDisplayNameCopy(gog_Interface stats, char* name, char* buffer, uint32_t bufferLength);
+char* gog_IStats_GetAchievementDescription(gog_Interface stats, char* name);
+void gog_IStats_GetAchievementDescriptionCopy(gog_Interface stats, char* name, char* buffer, uint32_t bufferLength);
+bool gog_IStats_IsAchievementVisible(gog_Interface stats, char* name);
+bool gog_IStats_IsAchievementVisibleWhileLocked(gog_Interface stats, char* name);
+void gog_IStats_RequestLeaderboards(gog_Interface stats, gog_Interface listener);
+char* gog_IStats_GetLeaderboardDisplayName(gog_Interface stats, char* name);
+void gog_IStats_GetLeaderboardDisplayNameCopy(gog_Interface stats, char* name, char* buffer, uint32_t bufferLength);
+enum gog_LeaderboardSortMethod gog_IStats_GetLeaderboardSortMethod(gog_Interface stats, char* name);
+enum gog_LeaderboardDisplayType gog_IStats_GetLeaderboardDisplayType(gog_Interface stats, char* name);
+void gog_IStats_RequestLeaderboardEntriesGlobal(gog_Interface stats, char* name, uint32_t rangeStart, uint32_t rangeEnd, gog_Interface listener);
+void gog_IStats_RequestLeaderboardEntriesAroundUser(gog_Interface stats, char* name, uint32_t countBefore, uint32_t countAfter, gog_ID userID, gog_Interface listener);
+void gog_IStats_RequestLeaderboardEntriesForUsers(gog_Interface stats, char* name, gog_ID* userArray, uint32_t userArraySize, gog_Interface listener);
+void gog_IStats_GetRequestedLeaderboardEntry(gog_Interface stats, uint32_t index, uint32_t* rank, int32_t* score, gog_ID* userID);
+void gog_IStats_GetRequestedLeaderboardEntryWithDetails(gog_Interface stats, uint32_t index, uint32_t* rank, int32_t* score, void* details, uint32_t detailsSize, uint32_t* outDetailsSize, gog_ID* userID);
+void gog_IStats_SetLeaderboardScore(gog_Interface stats, char* name, int32_t score, bool forceUpdate, gog_Interface listener);
+void gog_IStats_SetLeaderboardScoreWithDetails(gog_Interface stats, char* name, int32_t score, void* details, uint32_t detailsSize, bool forceUpdate, gog_Interface listener);
+uint32_t gog_IStats_GetLeaderboardEntryCount(gog_Interface stats, char* name);
+void gog_IStats_FindLeaderboard(gog_Interface stats, char* name, gog_Interface listener);
+void gog_IStats_FindOrCreateLeaderboard(gog_Interface stats, char* name, char* displayName, enum gog_LeaderboardSortMethod sortMethod, enum gog_LeaderboardDisplayType displayType, gog_Interface listener);
+void gog_IStats_RequestUserTimePlayed(gog_Interface stats, gog_ID userID, gog_Interface listener);
+uint32_t gog_IStats_GetUserTimePlayed(gog_Interface stats, gog_ID userID);
 
 //// IUtils.h
+typedef uint64_t gog_NotificationID;
+
+enum gog_OverlayState {
+  GOG_OVERLAY_STATE_UNDEFINED, ///< Overlay state is undefined.
+  GOG_OVERLAY_STATE_NOT_SUPPORTED, ///< Overlay is not supported.
+  GOG_OVERLAY_STATE_DISABLED, ///< Overlay is disabled by the user in the Galaxy Client.
+  GOG_OVERLAY_STATE_FAILED_TO_INITIALIZE, ///< Galaxy Client failed to initialize the overlay or inject it into the game.
+  GOG_OVERLAY_STATE_INITIALIZED ///< Overlay has been successfully injected into the game.
+};
+
+enum gog_ServicesConnectionState {
+  GOG_SERVICES_CONNECTION_STATE_UNDEFINED, ///< Connection state is undefined.
+  GOG_SERVICES_CONNECTION_STATE_CONNECTED, ///< Connection to the GOG services has been established.
+  GOG_SERVICES_CONNECTION_STATE_DISCONNECTED, ///< Connection to the GOG services has been lost.
+  GOG_SERVICES_CONNECTION_STATE_AUTH_LOST ///< Connection to the GOG services has been lost due to lose of peer authentication.
+};
+
+void gog_IUtils_GetImageSize(gog_Interface utils, uint32_t imageID, int32_t *width, int32_t *height);
+void gog_IUtils_GetImageRGBA(gog_Interface utils, uint32_t imageID, void* buffer, uint32_t bufferLength);
+void gog_IUtils_RegisterForNotification(gog_Interface utils, char* type);
+uint32_t gog_IUtils_GetNotification(gog_Interface utils, gog_NotificationID notificationID, bool *consumable, char* type, uint32_t typeLength, void* content, uint32_t contentSize);
+void gog_IUtils_ShowOverlayWithWebPage(gog_Interface utils, char* url);
+bool gog_IUtils_IsOverlayVisible(gog_Interface utils);
+enum gog_OverlayState gog_IUtils_GetOverlayState(gog_Interface utils);
+void gog_IUtils_DisableOverlayPopups(gog_Interface utils, char* popupGroup);
+enum gog_ServicesConnectionState gog_IUtils_GetGogServicesConnectionState(gog_Interface utils);
 
 //// IApps.h
+typedef uint64_t gog_ProductID;
+
+enum gog_DlcCheckFailureReason{
+  GOG_DLCCHECK_FAILURE_REASON_UNDEFINED, ///< Undefined error.
+  GOG_DLCCHECK_FAILURE_REASON_GALAXY_SERVICE_NOT_SIGNED_IN, ///< Galaxy Service is not signed in properly.
+  GOG_DLCCHECK_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
+  GOG_DLCCHECK_FAILURE_REASON_EXTERNAL_SERVICE_FAILURE ///< Unable to communicate with external service.
+};
+
+bool gog_IApps_IsDlcInstalled(gog_Interface apps, gog_ProductID productID);
+void gog_IApps_IsDlcOwned(gog_Interface apps, gog_ProductID productID, gog_Interface listener);
+char* gog_IApps_GetCurrentGameLanguage(gog_Interface apps, gog_ProductID productID);
+void gog_IApps_GetCurrentGameLanguageCopy(gog_Interface apps, char* buffer, uint32_t bufferLength, gog_ProductID productID);
+char* gog_IApps_GetCurrentGameLanguageCode(gog_Interface apps, gog_ProductID productID);
+void gog_IApps_GetCurrentGameLanguageCodeCopy(gog_Interface apps, char* buffer, uint32_t bufferLength, gog_ProductID productID);
 
 //// IStorage.h
+typedef uint64_t gog_SharedFileID;
+
+void gog_IStorage_FileWrite(gog_Interface storage, const char* fileName, const void* data, uint32_t dataSize);
+uint32_t gog_IStorage_FileRead(gog_Interface storage, const char* fileName, void* data, uint32_t dataSize);
+void gog_IStorage_FileDelete(gog_Interface storage, const char* fileName);
+bool gog_IStorage_FileExists(gog_Interface storage, const char* fileName);
+uint32_t gog_IStorage_GetFileSize(gog_Interface storage, const char* fileName);
+uint32_t gog_IStorage_GetFileTimestamp(gog_Interface storage, const char* fileName);
+uint32_t gog_IStorage_GetFileCount(gog_Interface storage);
+char* gog_IStorage_GetFileNameByIndex(gog_Interface storage, uint32_t index);
+void gog_IStorage_GetFileNameCopyByIndex(gog_Interface storage, uint32_t index, char* buffer, uint32_t bufferLength);
+void gog_IStorage_FileShare(gog_Interface storage, const char* fileName, gog_Interface listener);
+void gog_IStorage_DownloadSharedFile(gog_Interface storage, gog_SharedFileID sharedFileID, gog_Interface listener);
+char* gog_IStorage_GetSharedFileName(gog_Interface storage, gog_SharedFileID sharedFileID);
+void gog_IStorage_GetSharedFileNameCopy(gog_Interface storage, gog_SharedFileID sharedFileID, char* buffer, uint32_t bufferLength);
+uint32_t gog_IStorage_GetSharedFileSize(gog_Interface storage, gog_SharedFileID sharedFileID);
+gog_ID gog_IStorage_GetSharedFileOwner(gog_Interface storage, gog_SharedFileID sharedFileID);
+uint32_t gog_IStorage_SharedFileRead(gog_Interface storage, gog_SharedFileID sharedFileID, void* data, uint32_t dataSize, uint32_t offset);
+void gog_IStorage_SharedFileClose(gog_Interface storage, gog_SharedFileID sharedFileID);
+uint32_t gog_IStorage_GetDownloadedSharedFileCount(gog_Interface storage);
+gog_SharedFileID gog_IStorage_GetDownloadedSharedFileByIndex(gog_Interface storage, uint32_t index);
 
 //// ICustomNetworking.h
+typedef uint64_t gog_ConnectionID;
+
+enum gog_ConnectionOpenFailureReason {
+  GOG_CONNECTIONOPEN_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_CONNECTIONOPEN_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
+  GOG_CONNECTIONOPEN_FAILURE_REASON_UNAUTHORIZED ///< Client is unauthorized.
+};
+
+enum gog_CloseReason {
+  CLOSE_REASON_UNDEFINED ///< Unspecified reason.
+};
+
+void gog_ICustomNetworking_OpenConnection(gog_Interface customnetworking, const char* connectionString, gog_Interface listener);
+void gog_ICustomNetworking_CloseConnection(gog_Interface customnetworking, gog_ConnectionID connectionID, gog_Interface listener);
+void gog_ICustomNetworking_SendData(gog_Interface customnetworking, gog_ConnectionID connectionID, const void* data, uint32_t dataSize);
+uint32_t gog_ICustomNetworking_GetAvailableDataSize(gog_Interface customnetworking, gog_ConnectionID connectionID);
+void gog_ICustomNetworking_PeekData(gog_Interface customnetworking, gog_ConnectionID connectionID, void* dest, uint32_t dataSize);
+void gog_ICustomNetworking_ReadData(gog_Interface customnetworking, gog_ConnectionID connectionID, void* dest, uint32_t dataSize);
+void gog_ICustomNetworking_PopData(gog_Interface customnetworking, gog_ConnectionID connectionID, uint32_t dataSize);
 
 //// ILogger.h
+void gog_ILogger_Trace(gog_Interface logger, const char* format, ...);
+void gog_ILogger_Debug(gog_Interface logger, const char* format, ...);
+void gog_ILogger_Info(gog_Interface logger, const char* format, ...);
+void gog_ILogger_Warning(gog_Interface logger, const char* format, ...);
+void gog_ILogger_Error(gog_Interface logger, const char* format, ...);
+void gog_ILogger_Fatal(gog_Interface logger, const char* format, ...);
 
 //// ITelemetry.h
+enum gog_TelemetryEventFailureReason {
+  GOG_TELEMETRYEVENT_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_TELEMETRYEVENT_FAILURE_REASON_CLIENT_FORBIDDEN, ///< Sending telemetry events is forbidden for this application.
+  GOG_TELEMETRYEVENT_FAILURE_REASON_INVALID_DATA, ///< The event of given type and form does not match specification.
+  GOG_TELEMETRYEVENT_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
+  GOG_TELEMETRYEVENT_FAILURE_REASON_NO_SAMPLING_CLASS_IN_CONFIG, ///< The event sampling class not present in configuration.
+  GOG_TELEMETRYEVENT_FAILURE_REASON_SAMPLING_CLASS_FIELD_MISSING, ///< Sampling class' field not present in the event.
+  GOG_TELEMETRYEVENT_FAILURE_REASON_EVENT_SAMPLED_OUT, ///< The event did not match sampling criteria.
+  GOG_TELEMETRYEVENT_FAILURE_REASON_SAMPLING_RESULT_ALREADY_EXIST, ///< The event already contains a field defined as "dry_run_result_path".
+  GOG_TELEMETRYEVENT_FAILURE_REASON_SAMPLING_INVALID_RESULT_PATH ///< "dry_run_result_path" has an invalid value (doesn't start with "data" or "meta" or one of the intermediate elements isn't an object).
+};
+
+void gog_ITelemetry_AddStringParam(gog_Interface telemetry, const char* name, const char* value);
+void gog_ITelemetry_AddIntParam(gog_Interface telemetry, const char* name, int32_t value);
+void gog_ITelemetry_AddFloatParam(gog_Interface telemetry, const char* name, double value);
+void gog_ITelemetry_AddBoolParam(gog_Interface telemetry, const char* name, bool value);
+void gog_ITelemetry_AddObjectParam(gog_Interface telemetry, const char* name);
+void gog_ITelemetry_AddArrayParam(gog_Interface telemetry, const char* name);
+void gog_ITelemetry_CloseParam(gog_Interface telemetry);
+void gog_ITelemetry_ClearParams(gog_Interface telemetry);
+void gog_ITelemetry_SetSamplingClass(gog_Interface telemetry, const char* name);
+uint32_t gog_ITelemetry_SendTelemetryEvent(gog_Interface telemetry, const char* eventType, gog_Interface listener);
+uint32_t gog_ITelemetry_SendAnonymousTelemetryEvent(gog_Interface telemetry, const char* eventType, gog_Interface listener);
+char* gog_ITelemetry_GetVisitID(gog_Interface telemetry);
+void gog_ITelemetry_GetVisitIDCopy(gog_Interface telemetry, char* buffer, uint32_t bufferLength);
+void gog_ITelemetry_ResetVisitID(gog_Interface telemetry);
 
 //// ICloudStorage.h
+enum gog_SavegameType {
+  GOG_SAVEGAME_TYPE_UNDEFINED, ///< Not defined savegame type.
+  GOG_SAVEGAME_TYPE_AUTO, ///< Auto savegame, triggered automatically over time.
+  GOG_SAVEGAME_TYPE_QUICK, ///< Quick savegame.
+  GOG_SAVEGAME_TYPE_MANUAL, ///< Manual savegame.
+  GOG_SAVEGAME_TYPE_POINT_OF_NO_RETURN, ///< Savegame at the point of no return.
+  GOG_SAVEGAME_TYPE_ENDGAME_SAVE, ///< Savegame at the end of the game.
+  GOG_SAVEGAME_TYPE_CHECKPOINT ///< Savegame at a certain in-game event, e.g. quest completion.
+};
+
+enum gog_GetFileListFailureReason {
+  GOG_GETFILELIST_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_GETFILELIST_FAILURE_REASON_UNAUTHORIZED, ///< Authorization lost.
+  GOG_GETFILELIST_FAILURE_REASON_FORBIDDEN, ///< No access to specified container.
+  GOG_GETFILELIST_FAILURE_REASON_NOT_FOUND, ///< Container not found.
+  GOG_GETFILELIST_FAILURE_REASON_UNAVAILABLE, ///< Service unavailable.
+  GOG_GETFILELIST_FAILURE_REASON_ABORTED, ///< Request aborted.
+  GOG_GETFILELIST_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+};
+
+enum gog_GetFileFailureReason {
+  GOG_GETFILE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_GETFILE_FAILURE_REASON_UNAUTHORIZED, ///< Authorization lost.
+  GOG_GETFILE_FAILURE_REASON_FORBIDDEN, ///< No access to specified container.
+  GOG_GETFILE_FAILURE_REASON_NOT_FOUND, ///< Container not found.
+  GOG_GETFILE_FAILURE_REASON_UNAVAILABLE, ///< Service unavailable.
+  GOG_GETFILE_FAILURE_REASON_ABORTED, ///< Request aborted.
+  GOG_GETFILE_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
+  GOG_GETFILE_FAILURE_REASON_BUFFER_TOO_SMALL, ///< Buffer passed to ICloudStorage::GetFile() is too small to fit the file content.
+  GOG_GETFILE_FAILURE_REASON_WRITE_FUNC_ERROR ///< Function writeFunc passed to ICloudStorage::GetFile() returned an error.
+};
+
+enum gog_PutFileFailureReason {
+  GGOG_PUTFILE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GGOG_PUTFILE_FAILURE_REASON_UNAUTHORIZED, ///< Authorization lost.
+  GGOG_PUTFILE_FAILURE_REASON_FORBIDDEN, ///< No access to specified container.
+  GGOG_PUTFILE_FAILURE_REASON_UNAVAILABLE, ///< Service unavailable.
+  GGOG_PUTFILE_FAILURE_REASON_ABORTED, ///< Request aborted.
+  GGOG_PUTFILE_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
+  GGOG_PUTFILE_FAILURE_REASON_READ_FUNC_ERROR, ///< Function readFunc passed to ICloudStorage::PutFile() returned an error.
+  GGOG_PUTFILE_FAILURE_REASON_QUOTA_EXCEEDED ///< Unable to upload the file because there is no free space on cloud storage.
+};
+
+enum gog_DeleteFileFailureReason {
+  GOG_DELETEFILE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
+  GOG_DELETEFILE_FAILURE_REASON_UNAUTHORIZED, ///< Authorization lost.
+  GOG_DELETEFILE_FAILURE_REASON_FORBIDDEN, ///< No access to specified container.
+  GOG_DELETEFILE_FAILURE_REASON_NOT_FOUND, ///< Container not found.
+  GOG_DELETEFILE_FAILURE_REASON_UNAVAILABLE, ///< Service unavailable.
+  GOG_DELETEFILE_FAILURE_REASON_ABORTED, ///< Request aborted.
+  GOG_DELETEFILE_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
+  GOG_DELETEFILE_FAILURE_REASON_CONFLICT /// < Expected hash parameter doesn't match the hash in the container.
+};
+
+enum gog_ReadPhase {
+  GOG_CHECKSUM_CALCULATING, ///< Checksum calculating phase.
+  GOG_UPLOADING ///< Uploading phase.
+};
+
+typedef int (*gog_WriteFunc)(void* userParam, const char* data, int size);
+typedef int (*gog_ReadFunc)(void* userParam, char* data, int size);
+typedef int (*gog_RewindFunc)(void* userParam, enum gog_ReadPhase phase);
+
+#define GOG_MIN_HASH_BUFFER_SIZE 33;
+
+void gog_ICloudStorage_GetFileList(gog_Interface cloudstorage, const char* container, gog_Interface listener);
+char* gog_ICloudStorage_GetFileNameByIndex(gog_Interface cloudstorage, uint32_t index);
+uint32_t gog_ICloudStorage_GetFileSizeByIndex(gog_Interface cloudstorage, uint32_t index);
+uint32_t gog_ICloudStorage_GetFileTimestampByIndex(gog_Interface cloudstorage, uint32_t index);
+char* gog_ICloudStorage_GetFileHashByIndex(gog_Interface cloudstorage, uint32_t index);
+void gog_ICloudStorage_GetFile_Callback(gog_Interface cloudstorage, const char* container, const char* name, void* userParam, gog_WriteFunc writeFunc, gog_Interface listener);
+void gog_ICloudStorage_GetFile(gog_Interface cloudstorage, const char* container, const char* name, void* dataBuffer, uint32_t bufferLength, gog_Interface listener);
+void gog_ICloudStorage_GetFileMetadata(gog_Interface cloudstorage, const char* container, const char* name, gog_Interface listener);
+void gog_ICloudStorage_PutFile_Callback(gog_Interface cloudstorage, const char* container, const char* name, void* userParam, gog_ReadFunc readFunc, gog_RewindFunc rewindFunc, gog_Interface listener, enum gog_SavegameType savegameType, uint32_t timeStamp,const char* hash);
+void gog_ICloudStorage_PutFile(gog_Interface cloudstorage, const char* container, const char* name, const void* buffer, uint32_t bufferLength, gog_Interface listener, enum gog_SavegameType savegameType, uint32_t timeStamp, const char* hash);
+void gog_ICloudStorage_CalculateHash_Callback(gog_Interface cloudstorage, void* userParam, gog_ReadFunc readFunc, gog_RewindFunc rewindFunc, char* hashBuffer, uint32_t hashBufferSize);
+void gog_ICloudStorage_CalculateHash(gog_Interface cloudstorage, const void* buffer, uint32_t bufferLength, char* hashBuffer, uint32_t hashBufferSize);
+void gog_ICloudStorage_DeleteFile(gog_Interface cloudstorage, const char* container, const char* name, gog_Interface listener, const char* expectedHash);
+void gog_ICloudStorage_OpenSavegame(gog_Interface cloudstorage);
+void gog_ICloudStorage_CloseSavegame(gog_Interface cloudstorage);
+
+//// Cumulative listener
+struct gog_Listener {
+  void (*OnAuthSuccess)();
+  void (*OnAuthFailure)(enum gog_AuthFailureReason reason);
+  void (*OnAuthLost)();
+  void (*OnOtherSessionStarted)();
+  void (*OnOperationalStateChanged)(enum gog_OperationalState state);
+  void (*OnUserDataUpdated)();
+  void (*OnSpecificUserDataUpdated)(gog_ID user);
+  void (*OnEncryptedAppTicketRetrieveSuccess)();
+  void (*OnEncryptedAppTicketRetrieveFailure)(enum gog_FailureReason failureReason);
+  void (*OnAccessTokenChanged)();
+  void (*OnPlayFabCreateOpenIDConnectionSuccess)(bool connectionAlreadyExists);
+  void (*OnPlayFabCreateOpenIDConnectionFailure)(enum gog_FailureReason failureReason);
+  void (*OnPersonaDataChanged)(gog_ID userID, uint32_t personaStateChange);
+  void (*OnUserInformationRetrieveSuccess)(gog_ID userID);
+  void (*OnUserInformationRetrieveFailure)(gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnFriendListRetrieveSuccess)();
+  void (*OnFriendListRetrieveFailure)(enum gog_FailureReason failureReason);
+  void (*OnFriendInvitationSendSuccess)(gog_ID userID);
+  void (*OnFriendInvitationSendFailure)(gog_ID userID, enum gog_FriendInvitationFailureReason failureReason);
+  void (*OnFriendInvitationListRetrieveSuccess)();
+  void (*OnFriendInvitationListRetrieveFailure)(enum gog_FailureReason failureReason);
+  void (*OnSentFriendInvitationListRetrieveSuccess)();
+  void (*OnSentFriendInvitationListRetrieveFailure)(enum gog_FailureReason failureReason);
+  void (*OnFriendInvitationReceived)(gog_ID userID, uint32_t sendTime);
+  void (*OnFriendInvitationRespondToSuccess)(gog_ID userID, bool accept);
+  void (*OnFriendInvitationRespondToFailure)(gog_ID userID, enum gog_FriendInvitationRespondFailureReason failureReason);
+  void (*OnFriendAdded)(gog_ID userID, enum gog_InvitationDirection invitationDirection);
+  void (*OnFriendDeleteSuccess)(gog_ID userID);
+  void (*OnFriendDeleteFailure)(gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnRichPresenceChangeSuccess)();
+  void (*OnRichPresenceChangeFailure)(enum gog_FailureReason failureReason);
+  void (*OnRichPresenceUpdated)(gog_ID userID);
+  void (*OnRichPresenceRetrieveSuccess)(gog_ID userID);
+  void (*OnRichPresenceRetrieveFailure)(gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnGameJoinRequested)(gog_ID userID, const char* connectionString);
+  void (*OnGameInvitationReceived)(gog_ID userID, const char* connectionString);
+  void (*OnInvitationSendSuccess)(gog_ID userID, const char* connectionString);
+  void (*OnInvitationSendFailure)(gog_ID userID, const char* connectionString, enum gog_SendInvitationFailureReason failureReason);
+  void (*OnUserFindSuccess)(const char* userSpecifier, gog_ID userID);
+  void (*OnUserFindFailure)(const char* userSpecifier, enum gog_UserFindFailureReason failureReason);
+  void (*OnChatRoomWithUserRetrieveSuccess)(gog_ID userID, gog_ChatRoomID chatRoomID);
+  void (*OnChatRoomWithUserRetrieveFailure)(gog_ID userID, enum gog_ChatUserRetrieveFailureReason failureReason);
+  void (*OnChatRoomMessageSendSuccess)(gog_ChatRoomID chatRoomID, uint32_t sentMessageIndex, gog_ChatMessageID messageID, uint32_t sendTime);
+  void (*OnChatRoomMessageSendFailure)(gog_ChatRoomID chatRoomID, uint32_t sentMessageIndex, enum gog_ChatMessageSendFailureReason failureReason);
+  void (*OnChatRoomMessagesReceived)(gog_ChatRoomID chatRoomID, uint32_t messageCount, uint32_t longestMessageLenght);
+  void (*OnChatRoomMessagesRetrieveSuccess)(gog_ChatRoomID chatRoomID, uint32_t messageCount, uint32_t longestMessageLenght);
+  void (*OnChatRoomMessagesRetrieveFailure)(gog_ChatRoomID chatRoomID, enum gog_ChatMessageRetrieveFailureReason failureReason);
+  void (*OnLobbyList)(uint32_t lobbyCount, enum gog_LobbyListResult result);
+  void (*OnLobbyCreated)(gog_ID lobbyID, enum gog_LobbyCreateResult result);
+  void (*OnLobbyEntered)(gog_ID lobbyID, enum gog_LobbyEnterResult result);
+  void (*OnLobbyLeft)(gog_ID lobbyID, enum gog_LobbyLeaveReason leaveReason);
+  void (*OnLobbyDataUpdated)(gog_ID lobbyID, gog_ID memberID);
+  void (*OnLobbyDataUpdateSuccess)(gog_ID lobbyID);
+  void (*OnLobbyDataUpdateFailure)(gog_ID lobbyID, enum gog_LobbyDataUpdateFailureReason failureReason);
+  void (*OnLobbyMemberDataUpdateSuccess)(gog_ID lobbyID, gog_ID memberID);
+  void (*OnLobbyMemberDataUpdateFailure)(gog_ID lobbyID, gog_ID memberID, enum gog_LobbyDataUpdateFailureReason failureReason);
+  void (*OnLobbyDataRetrieveFailure)(gog_ID lobbyID, enum gog_LobbyDataRetrieveFailureReason failureReason);
+  void (*OnLobbyMemberStateChanged)(gog_ID lobbyID, gog_ID memberID, enum gog_LobbyMemberStateChange memberStateChange);
+  void (*OnLobbyOwnerChanged)(gog_ID lobbyID, gog_ID newOwnerID);
+  void (*OnLobbyMessageReceived)(gog_ID lobbyID, gog_ID senderID, uint32_t messageID, uint32_t messageLength);
+  void (*OnP2PPacketAvailable)(uint32_t msgSize, uint8_t channel);
+  void (*OnNatTypeDetectionSuccess)(enum gog_NatType natType);
+  void (*OnNatTypeDetectionFailure)();
+  void (*OnUserStatsAndAchievementsRetrieveSuccess)(gog_ID userID);
+  void (*OnUserStatsAndAchievementsRetrieveFailure)(gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnUserStatsAndAchievementsStoreSuccess)();
+  void (*OnUserStatsAndAchievementsStoreFailure)(enum gog_FailureReason failureReason);
+  void (*OnAchievementUnlocked)(const char* name);
+  void (*OnLeaderboardsRetrieveSuccess)();
+  void (*OnLeaderboardsRetrieveFailure)(enum gog_FailureReason failureReason);
+  void (*OnLeaderboardEntriesRetrieveSuccess)(const char* name, uint32_t entryCount);
+  void (*OnLeaderboardEntriesRetrieveFailure)(const char* name, enum gog_FailureReason failureReason);
+  void (*OnLeaderboardScoreUpdateSuccess)(const char* name, int32_t score, uint32_t oldRank, uint32_t newRank);
+  void (*OnLeaderboardScoreUpdateFailure)(const char* name, int32_t score, enum gog_LeaderboardScoreUpdateFailureReason failureReason);
+  void (*OnLeaderboardRetrieveSuccess)(const char* name);
+  void (*OnLeaderboardRetrieveFailure)(const char* name, enum gog_FailureReason failureReason);
+  void (*OnUserTimePlayedRetrieveSuccess)(gog_ID userID);
+  void (*OnUserTimePlayedRetrieveFailure)(gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnOverlayVisibilityChanged)(bool overlayVisible);
+  void (*OnOverlayStateChanged)(enum gog_OverlayState overlayState);
+  void (*OnNotificationReceived)(gog_NotificationID notificationID, uint32_t typeLength, uint32_t contentSize);
+  void (*OnConnectionStateChange)(enum gog_ServicesConnectionState connectionState);
+  void (*OnDlcCheckSuccess)(gog_ProductID productId, bool isOwned);
+  void (*OnDlcCheckFailure)(gog_ProductID productId, enum gog_DlcCheckFailureReason failureReason);
+  void (*OnFileShareSuccess)(const char* fileName, gog_SharedFileID sharedFileID);
+  void (*OnFileShareFailure)(const char* fileName, enum gog_FailureReason failureReason);
+  void (*OnSharedFileDownloadSuccess)(gog_SharedFileID sharedFileID, const char* fileName);
+  void (*OnSharedFileDownloadFailure)(gog_SharedFileID sharedFileID, enum gog_FailureReason failureReason);
+  void (*OnConnectionOpenSuccess)(const char* connectionString, gog_ConnectionID connectionID);
+  void (*OnConnectionOpenFailure)(const char* connectionString, enum gog_ConnectionOpenFailureReason failureReason);
+  void (*OnConnectionClosed)(gog_ConnectionID connectionID, enum gog_CloseReason closeReason);
+  void (*OnConnectionDataReceived)(gog_ConnectionID connectionID, uint32_t dataSize);
+  void (*OnTelemetryEventSendSuccess)(const char* eventType, uint32_t sentEventIndex);
+  void (*OnTelemetryEventSendFailure)(const char* eventType, uint32_t sentEventIndex, enum gog_TelemetryEventFailureReason failureReason);
+  void (*OnGetFileListSuccess)(uint32_t fileCount, uint32_t quota, uint32_t quotaUsed);
+  void (*OnGetFileListFailure)(enum gog_GetFileListFailureReason failureReason);
+  void (*OnGetFileSuccess)(const char* container, const char* name, uint32_t fileSize, enum gog_SavegameType savegameType, const char* savegameID);
+  void (*OnGetFileFailure)(const char* container, const char* name, enum gog_GetFileFailureReason failureReason);
+  void (*OnPutFileSuccess)(const char* container, const char* name);
+  void (*OnPutFileFailure)(const char* container, const char* name, enum gog_PutFileFailureReason failureReason);
+  void (*OnDeleteFileSuccess)(const char* container, const char* name);
+  void (*OnDeleteFileFailure)(const char* container, const char* name, enum gog_DeleteFileFailureReason failureReason);
+};
