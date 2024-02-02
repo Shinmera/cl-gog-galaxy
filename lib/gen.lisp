@@ -20,20 +20,38 @@
     (let* ((filename (string-trim '(#\Linefeed) (get-output-stream-string out)))
            (src (uiop:read-file-string (merge-pathnames filename *sdk-dir*))))
       (or (cl-ppcre:register-groups-bind (args) ((format NIL "void ~a\\(((?:.|\\n)*?)\\) = 0;" name) src)
-            (return-from find-listener-def-args (cl-ppcre:split ", *" args)))
+            (return-from find-listener-def-args (loop for arg in (cl-ppcre:split ", *" args)
+                                                      collect (cl-ppcre:split " +" arg))))
+          (error "Can't find method for ~a" name)))))
+
+(defun find-listener-def-interface (name)
+  (let ((out (make-string-output-stream)))
+    (sb-ext:run-program "/usr/bin/ag" (list "-l" (format NIL "void ~a\\(" name)) :directory *sdk-dir* :output out)
+    (let* ((filename (string-trim '(#\Linefeed) (get-output-stream-string out)))
+           (src (uiop:read-file-string (merge-pathnames filename *sdk-dir*))))
+      ;; FIXME: this
+      (or (cl-ppcre:register-groups-bind (args) ((format NIL "void ~a\\(((?:.|\\n)*?)\\) = 0;" name) src)
+            (return-from find-listener-def-interface (loop for arg in (cl-ppcre:split ", *" args)
+                                                           collect (cl-ppcre:split " +" arg))))
           (error "Can't find method for ~a" name)))))
 
 (defun parse-listener-line (line)
   (or (cl-ppcre:register-groups-bind (name args) (" *void +(?:\\(\\*)(\\w+)\\)?\\((.*)\\); *$" line)
         (let ((args (rest (loop for arg in (cl-ppcre:split ", *" args)
                                 collect (cl-ppcre:split " +" arg))))
-              (def-args (find-listener-def-args name)))
+              (def-args (find-listener-def-args name))
+              (interface (find-listener-def-interface name)))
           (list name
-                def-args
+                (loop for arg in def-args
+                      for type = (butlast arg)
+                      for name = (car (last arg))
+                      collect (if (string= (first type) "FailureReason")
+                                  (format NIL "galaxy::api::~a::FailureReason ~a" interface name)
+                                  (format NIL "~{~a~^ ~}" arg)))
                 (loop for arg in args
                       for def in def-args
                       for type = (butlast arg)
-                      for name = (first (last (cl-ppcre:split " +" def)))
+                      for name = (first (last def))
                       collect (if (string= "gog_ID" (first type))
                                   (format NIL "(gog_ID)~a.ToUint64()" name)
                                   (format NIL "(~{~a~^ ~})~a" type name))))))

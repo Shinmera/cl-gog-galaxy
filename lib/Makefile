@@ -5,7 +5,7 @@ SRC=$(wildcard *.cpp)
 OBJ=$(SRC:%.cpp=%.o)
 
 all: $(OBJ)
-	$(CXX) $(LDFLAGS) -o galaxy-c.so $^
+	$(CXX) -o galaxy-c.dll $^ $(LDFLAGS)
 
 %.o: %.c
 	$(CXX) $(CXXFLAGS) $@ -c $<
