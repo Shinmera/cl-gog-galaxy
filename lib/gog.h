@@ -1,3 +1,25 @@
+#ifndef __GOG_C_H__
+#define __GOG_C_H__
+#ifdef __cplusplus
+extern "C" {
+#endif
+#if defined GOG_STATIC
+#  define GOG_EXPORT
+#elif defined _MSC_VER
+#  if defined GOG_BUILD
+#    define GOG_EXPORT __declspec(dllexport)
+#  else
+#    define GOG_EXPORT __declspec(dllimport)
+#  endif
+#elif defined __GNUC__
+#  if defined GOG_BUILD
+#    define GOG_EXPORT __attribute__((visibility("default")))
+#  else
+#    define GOG_EXPORT
+#  endif
+#else
+#  define GOG_EXPORT
+#endif
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -30,19 +52,19 @@ enum gog_ID_Type{
 
 typedef uint64_t gog_ID;
 
-inline gog_ID gog_ID_FromRealID(enum gog_ID_Type type, uint64_t value){
+static inline gog_ID gog_ID_FromRealID(enum gog_ID_Type type, uint64_t value){
   return (uint64_t)type << 56 | value;
 }
 
-inline uint64_t gog_ID_GetRealID(gog_ID id){
+static inline uint64_t gog_ID_GetRealID(gog_ID id){
   return id & 0xFFFFFFFFFFFFFF;
 }
 
-inline enum gog_ID_Type gog_ID_GetType(gog_ID id){
+static inline enum gog_ID_Type gog_ID_GetType(gog_ID id){
   return id >> 56;
 }
 
-inline bool gog_ID_IsValid(gog_ID id){
+static inline bool gog_ID_IsValid(gog_ID id){
   return id != 0;
 }
 
@@ -885,3 +907,8 @@ gog_Interface gog_ListenerRegistrar();
 gog_Interface gog_GameServerListenerRegistrar();
 gog_Interface *gog_MakeListener(struct gog_listener *listener);
 void gog_FreeListener(struct gog_listener *listener);
+
+#ifdef __cplusplus
+}
+#endif
+#endif
