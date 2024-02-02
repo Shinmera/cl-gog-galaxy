@@ -905,8 +905,8 @@ void gog_IListenerRegistrar_Register(gog_Interface registrar, enum gog_ListenerT
 void gog_IListenerRegistrar_Unregister(gog_Interface registrar, enum gog_ListenerType type, gog_Interface listener);
 gog_Interface gog_ListenerRegistrar();
 gog_Interface gog_GameServerListenerRegistrar();
-gog_Interface *gog_MakeListener(struct gog_listener *listener);
-void gog_FreeListener(struct gog_listener *listener);
+gog_Interface gog_MakeListener(struct gog_listener *listener);
+void gog_FreeListener(gog_Interface listener);
 
 #ifdef __cplusplus
 }
