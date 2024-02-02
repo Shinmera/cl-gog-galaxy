@@ -69,13 +69,13 @@ public:
       (format o "
 };
 
-gog_Interface gog_MakeListener(struct gog_listener *listener){
+GOG_EXPORT gog_Interface gog_MakeListener(struct gog_listener *listener){
   Listener *list = new Listener();
   memcpy(&list->listener, listener, sizeof(struct gog_listener));
   return (gog_Interface)list;
 }
 
-void gog_FreeListener(gog_Interface listener){
+GOG_EXPORT void gog_FreeListener(gog_Interface listener){
   delete (Listener*)listener;
 }"))))
 
@@ -116,7 +116,7 @@ typedef galaxy::api::ICloudStorage::WriteFunc WriteFunc;
             while line
             do (with-simple-restart (continue "Ignore the definition line.")
                  (destructuring-bind (iface method rettype cargs gargs) (parse-interface-line line)
-                   (format o "~:[void~;~:*~a~] gog_~a_~a(~{~a~^, ~}){
+                   (format o "GOG_EXPORT ~:[void~;~:*~a~] gog_~a_~a(~{~a~^, ~}){
   ~:[~;return ~:*(~a)~]((galaxy::api::~a*)~a)->~a(~{~a~^, ~})~@[~a~];
 }~%~%" rettype iface method cargs rettype iface (subseq (first cargs) (length "gog_Interface ")) method gargs
 (when (string= "gog_ID" rettype) ".ToUint64()"))))))))

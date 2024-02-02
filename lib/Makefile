@@ -1,15 +1,8 @@
-CXX ?= g++
-CXXFLAGS ?= -fvisibility=hidden -fPIC -g -std=c++11 -I/home/linus/Projects/var/gog-galaxy/Include/
-LDFLAGS ?= -lGalaxy64
-
-SRC=$(wildcard *.cpp)
-OBJ=$(SRC:%.cpp=%.o)
-
-all: $(OBJ)
-	$(CXX) -o galaxy-c.dll $^ $(LDFLAGS)
-
-%.o: %.c
-	$(CXX) $(CXXFLAGS) $@ -c $<
+windows:
+	mkdir -p build ../static/
+	cmake -S . -B build/ -G "Visual Studio 16 2019" -A x64
+	cmake --build build/
+	cp build/Debug/galaxy-c.dll ../static/win-amd64-galaxy-c.dll
 
 clean:
-	rm *.o
+	rm -r build/
