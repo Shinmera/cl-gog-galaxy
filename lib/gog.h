@@ -809,6 +809,8 @@ struct gog_listener {
   void (*OnAccessTokenChanged)(void *userptr);
   void (*OnPlayFabCreateOpenIDConnectionSuccess)(void *userptr, bool connectionAlreadyExists);
   void (*OnPlayFabCreateOpenIDConnectionFailure)(void *userptr, enum gog_FailureReason failureReason);
+  void (*OnPlayFabLoginWithOpenIDConnectSuccess)(void *userptr);
+  void (*OnPlayFabLoginWithOpenIDConnectFailure)(void *userptr, enum gog_FailureReason failureReason);
   void (*OnPersonaDataChanged)(void *userptr, gog_ID userID, uint32_t personaStateChange);
   void (*OnUserInformationRetrieveSuccess)(void *userptr, gog_ID userID);
   void (*OnUserInformationRetrieveFailure)(void *userptr, gog_ID userID, enum gog_FailureReason failureReason);
@@ -853,6 +855,7 @@ struct gog_listener {
   void (*OnLobbyDataUpdateFailure)(void *userptr, gog_ID lobbyID, enum gog_LobbyDataUpdateFailureReason failureReason);
   void (*OnLobbyMemberDataUpdateSuccess)(void *userptr, gog_ID lobbyID, gog_ID memberID);
   void (*OnLobbyMemberDataUpdateFailure)(void *userptr, gog_ID lobbyID, gog_ID memberID, enum gog_LobbyDataUpdateFailureReason failureReason);
+  void (*OnLobbyDataRetrieveSuccess)(void *userptr, gog_ID lobbyID);
   void (*OnLobbyDataRetrieveFailure)(void *userptr, gog_ID lobbyID, enum gog_LobbyDataRetrieveFailureReason failureReason);
   void (*OnLobbyMemberStateChanged)(void *userptr, gog_ID lobbyID, gog_ID memberID, enum gog_LobbyMemberStateChange memberStateChange);
   void (*OnLobbyOwnerChanged)(void *userptr, gog_ID lobbyID, gog_ID newOwnerID);

@@ -79,7 +79,7 @@ void OnAuthSuccess() override {
   this->listener.OnAuthSuccess(this->listener.userptr);
 }
 
-void OnAuthFailure(FailureReason failureReason) override {
+void OnAuthFailure(galaxy::api::IAuthListener::FailureReason failureReason) override {
   if(!this->listener.OnAuthFailure) return;
   this->listener.OnAuthFailure(this->listener.userptr, (enum gog_AuthFailureReason)failureReason);
 }
@@ -114,7 +114,7 @@ void OnEncryptedAppTicketRetrieveSuccess() override {
   this->listener.OnEncryptedAppTicketRetrieveSuccess(this->listener.userptr);
 }
 
-void OnEncryptedAppTicketRetrieveFailure(FailureReason failureReason) override {
+void OnEncryptedAppTicketRetrieveFailure(galaxy::api::IEncryptedAppTicketListener::FailureReason failureReason) override {
   if(!this->listener.OnEncryptedAppTicketRetrieveFailure) return;
   this->listener.OnEncryptedAppTicketRetrieveFailure(this->listener.userptr, (enum gog_FailureReason)failureReason);
 }
@@ -129,9 +129,19 @@ void OnPlayFabCreateOpenIDConnectionSuccess(bool connectionAlreadyExists) overri
   this->listener.OnPlayFabCreateOpenIDConnectionSuccess(this->listener.userptr, (bool)connectionAlreadyExists);
 }
 
-void OnPlayFabCreateOpenIDConnectionFailure(FailureReason failureReason) override {
+void OnPlayFabCreateOpenIDConnectionFailure(galaxy::api::IPlayFabCreateOpenIDConnectionListener::FailureReason failureReason) override {
   if(!this->listener.OnPlayFabCreateOpenIDConnectionFailure) return;
   this->listener.OnPlayFabCreateOpenIDConnectionFailure(this->listener.userptr, (enum gog_FailureReason)failureReason);
+}
+
+void OnPlayFabLoginWithOpenIDConnectSuccess() override {
+  if(!this->listener.OnPlayFabLoginWithOpenIDConnectSuccess) return;
+  this->listener.OnPlayFabLoginWithOpenIDConnectSuccess(this->listener.userptr);
+}
+
+void OnPlayFabLoginWithOpenIDConnectFailure(galaxy::api::IPlayFabLoginWithOpenIDConnectListener::FailureReason failureReason) override {
+  if(!this->listener.OnPlayFabLoginWithOpenIDConnectFailure) return;
+  this->listener.OnPlayFabLoginWithOpenIDConnectFailure(this->listener.userptr, (enum gog_FailureReason)failureReason);
 }
 
 void OnPersonaDataChanged(GalaxyID userID, uint32_t personaStateChange) override {
@@ -144,7 +154,7 @@ void OnUserInformationRetrieveSuccess(GalaxyID userID) override {
   this->listener.OnUserInformationRetrieveSuccess(this->listener.userptr, (gog_ID)userID.ToUint64());
 }
 
-void OnUserInformationRetrieveFailure(GalaxyID userID, FailureReason failureReason) override {
+void OnUserInformationRetrieveFailure(GalaxyID userID, galaxy::api::IUserInformationRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnUserInformationRetrieveFailure) return;
   this->listener.OnUserInformationRetrieveFailure(this->listener.userptr, (gog_ID)userID.ToUint64(), (enum gog_FailureReason)failureReason);
 }
@@ -154,7 +164,7 @@ void OnFriendListRetrieveSuccess() override {
   this->listener.OnFriendListRetrieveSuccess(this->listener.userptr);
 }
 
-void OnFriendListRetrieveFailure(FailureReason failureReason) override {
+void OnFriendListRetrieveFailure(galaxy::api::IFriendListListener::FailureReason failureReason) override {
   if(!this->listener.OnFriendListRetrieveFailure) return;
   this->listener.OnFriendListRetrieveFailure(this->listener.userptr, (enum gog_FailureReason)failureReason);
 }
@@ -164,7 +174,7 @@ void OnFriendInvitationSendSuccess(GalaxyID userID) override {
   this->listener.OnFriendInvitationSendSuccess(this->listener.userptr, (gog_ID)userID.ToUint64());
 }
 
-void OnFriendInvitationSendFailure(GalaxyID userID, FailureReason failureReason) override {
+void OnFriendInvitationSendFailure(GalaxyID userID, galaxy::api::IFriendInvitationSendListener::FailureReason failureReason) override {
   if(!this->listener.OnFriendInvitationSendFailure) return;
   this->listener.OnFriendInvitationSendFailure(this->listener.userptr, (gog_ID)userID.ToUint64(), (enum gog_FriendInvitationFailureReason)failureReason);
 }
@@ -174,7 +184,7 @@ void OnFriendInvitationListRetrieveSuccess() override {
   this->listener.OnFriendInvitationListRetrieveSuccess(this->listener.userptr);
 }
 
-void OnFriendInvitationListRetrieveFailure(FailureReason failureReason) override {
+void OnFriendInvitationListRetrieveFailure(galaxy::api::IFriendInvitationListRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnFriendInvitationListRetrieveFailure) return;
   this->listener.OnFriendInvitationListRetrieveFailure(this->listener.userptr, (enum gog_FailureReason)failureReason);
 }
@@ -184,7 +194,7 @@ void OnSentFriendInvitationListRetrieveSuccess() override {
   this->listener.OnSentFriendInvitationListRetrieveSuccess(this->listener.userptr);
 }
 
-void OnSentFriendInvitationListRetrieveFailure(FailureReason failureReason) override {
+void OnSentFriendInvitationListRetrieveFailure(galaxy::api::ISentFriendInvitationListRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnSentFriendInvitationListRetrieveFailure) return;
   this->listener.OnSentFriendInvitationListRetrieveFailure(this->listener.userptr, (enum gog_FailureReason)failureReason);
 }
@@ -199,7 +209,7 @@ void OnFriendInvitationRespondToSuccess(GalaxyID userID, bool accept) override {
   this->listener.OnFriendInvitationRespondToSuccess(this->listener.userptr, (gog_ID)userID.ToUint64(), (bool)accept);
 }
 
-void OnFriendInvitationRespondToFailure(GalaxyID userID, FailureReason failureReason) override {
+void OnFriendInvitationRespondToFailure(GalaxyID userID, galaxy::api::IFriendInvitationRespondToListener::FailureReason failureReason) override {
   if(!this->listener.OnFriendInvitationRespondToFailure) return;
   this->listener.OnFriendInvitationRespondToFailure(this->listener.userptr, (gog_ID)userID.ToUint64(), (enum gog_FriendInvitationRespondFailureReason)failureReason);
 }
@@ -214,7 +224,7 @@ void OnFriendDeleteSuccess(GalaxyID userID) override {
   this->listener.OnFriendDeleteSuccess(this->listener.userptr, (gog_ID)userID.ToUint64());
 }
 
-void OnFriendDeleteFailure(GalaxyID userID, FailureReason failureReason) override {
+void OnFriendDeleteFailure(GalaxyID userID, galaxy::api::IFriendDeleteListener::FailureReason failureReason) override {
   if(!this->listener.OnFriendDeleteFailure) return;
   this->listener.OnFriendDeleteFailure(this->listener.userptr, (gog_ID)userID.ToUint64(), (enum gog_FailureReason)failureReason);
 }
@@ -224,7 +234,7 @@ void OnRichPresenceChangeSuccess() override {
   this->listener.OnRichPresenceChangeSuccess(this->listener.userptr);
 }
 
-void OnRichPresenceChangeFailure(FailureReason failureReason) override {
+void OnRichPresenceChangeFailure(galaxy::api::IRichPresenceChangeListener::FailureReason failureReason) override {
   if(!this->listener.OnRichPresenceChangeFailure) return;
   this->listener.OnRichPresenceChangeFailure(this->listener.userptr, (enum gog_FailureReason)failureReason);
 }
@@ -239,7 +249,7 @@ void OnRichPresenceRetrieveSuccess(GalaxyID userID) override {
   this->listener.OnRichPresenceRetrieveSuccess(this->listener.userptr, (gog_ID)userID.ToUint64());
 }
 
-void OnRichPresenceRetrieveFailure(GalaxyID userID, FailureReason failureReason) override {
+void OnRichPresenceRetrieveFailure(GalaxyID userID, galaxy::api::IRichPresenceRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnRichPresenceRetrieveFailure) return;
   this->listener.OnRichPresenceRetrieveFailure(this->listener.userptr, (gog_ID)userID.ToUint64(), (enum gog_FailureReason)failureReason);
 }
@@ -259,7 +269,7 @@ void OnInvitationSendSuccess(GalaxyID userID, const char* connectionString) over
   this->listener.OnInvitationSendSuccess(this->listener.userptr, (gog_ID)userID.ToUint64(), (const char*)connectionString);
 }
 
-void OnInvitationSendFailure(GalaxyID userID, const char* connectionString, FailureReason failureReason) override {
+void OnInvitationSendFailure(GalaxyID userID, const char* connectionString, galaxy::api::ISendInvitationListener::FailureReason failureReason) override {
   if(!this->listener.OnInvitationSendFailure) return;
   this->listener.OnInvitationSendFailure(this->listener.userptr, (gog_ID)userID.ToUint64(), (const char*)connectionString, (enum gog_SendInvitationFailureReason)failureReason);
 }
@@ -269,7 +279,7 @@ void OnUserFindSuccess(const char* userSpecifier, GalaxyID userID) override {
   this->listener.OnUserFindSuccess(this->listener.userptr, (const char*)userSpecifier, (gog_ID)userID.ToUint64());
 }
 
-void OnUserFindFailure(const char* userSpecifier, FailureReason failureReason) override {
+void OnUserFindFailure(const char* userSpecifier, galaxy::api::IUserFindListener::FailureReason failureReason) override {
   if(!this->listener.OnUserFindFailure) return;
   this->listener.OnUserFindFailure(this->listener.userptr, (const char*)userSpecifier, (enum gog_UserFindFailureReason)failureReason);
 }
@@ -279,7 +289,7 @@ void OnChatRoomWithUserRetrieveSuccess(GalaxyID userID, ChatRoomID chatRoomID) o
   this->listener.OnChatRoomWithUserRetrieveSuccess(this->listener.userptr, (gog_ID)userID.ToUint64(), (gog_ChatRoomID)chatRoomID);
 }
 
-void OnChatRoomWithUserRetrieveFailure(GalaxyID userID, FailureReason failureReason) override {
+void OnChatRoomWithUserRetrieveFailure(GalaxyID userID, galaxy::api::IChatRoomWithUserRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnChatRoomWithUserRetrieveFailure) return;
   this->listener.OnChatRoomWithUserRetrieveFailure(this->listener.userptr, (gog_ID)userID.ToUint64(), (enum gog_ChatUserRetrieveFailureReason)failureReason);
 }
@@ -289,7 +299,7 @@ void OnChatRoomMessageSendSuccess(ChatRoomID chatRoomID, uint32_t sentMessageInd
   this->listener.OnChatRoomMessageSendSuccess(this->listener.userptr, (gog_ChatRoomID)chatRoomID, (uint32_t)sentMessageIndex, (gog_ChatMessageID)messageID, (uint32_t)sendTime);
 }
 
-void OnChatRoomMessageSendFailure(ChatRoomID chatRoomID, uint32_t sentMessageIndex, FailureReason failureReason) override {
+void OnChatRoomMessageSendFailure(ChatRoomID chatRoomID, uint32_t sentMessageIndex, galaxy::api::IChatRoomMessageSendListener::FailureReason failureReason) override {
   if(!this->listener.OnChatRoomMessageSendFailure) return;
   this->listener.OnChatRoomMessageSendFailure(this->listener.userptr, (gog_ChatRoomID)chatRoomID, (uint32_t)sentMessageIndex, (enum gog_ChatMessageSendFailureReason)failureReason);
 }
@@ -304,7 +314,7 @@ void OnChatRoomMessagesRetrieveSuccess(ChatRoomID chatRoomID, uint32_t messageCo
   this->listener.OnChatRoomMessagesRetrieveSuccess(this->listener.userptr, (gog_ChatRoomID)chatRoomID, (uint32_t)messageCount, (uint32_t)longestMessageLenght);
 }
 
-void OnChatRoomMessagesRetrieveFailure(ChatRoomID chatRoomID, FailureReason failureReason) override {
+void OnChatRoomMessagesRetrieveFailure(ChatRoomID chatRoomID, galaxy::api::IChatRoomMessagesRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnChatRoomMessagesRetrieveFailure) return;
   this->listener.OnChatRoomMessagesRetrieveFailure(this->listener.userptr, (gog_ChatRoomID)chatRoomID, (enum gog_ChatMessageRetrieveFailureReason)failureReason);
 }
@@ -339,7 +349,7 @@ void OnLobbyDataUpdateSuccess(const GalaxyID& lobbyID) override {
   this->listener.OnLobbyDataUpdateSuccess(this->listener.userptr, (gog_ID)lobbyID.ToUint64());
 }
 
-void OnLobbyDataUpdateFailure(const GalaxyID& lobbyID, FailureReason failureReason) override {
+void OnLobbyDataUpdateFailure(const GalaxyID& lobbyID, galaxy::api::ILobbyDataUpdateListener::FailureReason failureReason) override {
   if(!this->listener.OnLobbyDataUpdateFailure) return;
   this->listener.OnLobbyDataUpdateFailure(this->listener.userptr, (gog_ID)lobbyID.ToUint64(), (enum gog_LobbyDataUpdateFailureReason)failureReason);
 }
@@ -349,12 +359,17 @@ void OnLobbyMemberDataUpdateSuccess(const GalaxyID& lobbyID, const GalaxyID& mem
   this->listener.OnLobbyMemberDataUpdateSuccess(this->listener.userptr, (gog_ID)lobbyID.ToUint64(), (gog_ID)memberID.ToUint64());
 }
 
-void OnLobbyMemberDataUpdateFailure(const GalaxyID& lobbyID, const GalaxyID& memberID, FailureReason failureReason) override {
+void OnLobbyMemberDataUpdateFailure(const GalaxyID& lobbyID, const GalaxyID& memberID, galaxy::api::ILobbyMemberDataUpdateListener::FailureReason failureReason) override {
   if(!this->listener.OnLobbyMemberDataUpdateFailure) return;
   this->listener.OnLobbyMemberDataUpdateFailure(this->listener.userptr, (gog_ID)lobbyID.ToUint64(), (gog_ID)memberID.ToUint64(), (enum gog_LobbyDataUpdateFailureReason)failureReason);
 }
 
-void OnLobbyDataRetrieveFailure(const GalaxyID& lobbyID, FailureReason failureReason) override {
+void OnLobbyDataRetrieveSuccess(const GalaxyID& lobbyID) override {
+  if(!this->listener.OnLobbyDataRetrieveSuccess) return;
+  this->listener.OnLobbyDataRetrieveSuccess(this->listener.userptr, (gog_ID)lobbyID.ToUint64());
+}
+
+void OnLobbyDataRetrieveFailure(const GalaxyID& lobbyID, galaxy::api::ILobbyDataRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnLobbyDataRetrieveFailure) return;
   this->listener.OnLobbyDataRetrieveFailure(this->listener.userptr, (gog_ID)lobbyID.ToUint64(), (enum gog_LobbyDataRetrieveFailureReason)failureReason);
 }
@@ -394,7 +409,7 @@ void OnUserStatsAndAchievementsRetrieveSuccess(GalaxyID userID) override {
   this->listener.OnUserStatsAndAchievementsRetrieveSuccess(this->listener.userptr, (gog_ID)userID.ToUint64());
 }
 
-void OnUserStatsAndAchievementsRetrieveFailure(GalaxyID userID, FailureReason failureReason) override {
+void OnUserStatsAndAchievementsRetrieveFailure(GalaxyID userID, galaxy::api::IUserStatsAndAchievementsRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnUserStatsAndAchievementsRetrieveFailure) return;
   this->listener.OnUserStatsAndAchievementsRetrieveFailure(this->listener.userptr, (gog_ID)userID.ToUint64(), (enum gog_FailureReason)failureReason);
 }
@@ -404,7 +419,7 @@ void OnUserStatsAndAchievementsStoreSuccess() override {
   this->listener.OnUserStatsAndAchievementsStoreSuccess(this->listener.userptr);
 }
 
-void OnUserStatsAndAchievementsStoreFailure(FailureReason failureReason) override {
+void OnUserStatsAndAchievementsStoreFailure(galaxy::api::IStatsAndAchievementsStoreListener::FailureReason failureReason) override {
   if(!this->listener.OnUserStatsAndAchievementsStoreFailure) return;
   this->listener.OnUserStatsAndAchievementsStoreFailure(this->listener.userptr, (enum gog_FailureReason)failureReason);
 }
@@ -419,7 +434,7 @@ void OnLeaderboardsRetrieveSuccess() override {
   this->listener.OnLeaderboardsRetrieveSuccess(this->listener.userptr);
 }
 
-void OnLeaderboardsRetrieveFailure(FailureReason failureReason) override {
+void OnLeaderboardsRetrieveFailure(galaxy::api::ILeaderboardsRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnLeaderboardsRetrieveFailure) return;
   this->listener.OnLeaderboardsRetrieveFailure(this->listener.userptr, (enum gog_FailureReason)failureReason);
 }
@@ -429,7 +444,7 @@ void OnLeaderboardEntriesRetrieveSuccess(const char* name, uint32_t entryCount) 
   this->listener.OnLeaderboardEntriesRetrieveSuccess(this->listener.userptr, (const char*)name, (uint32_t)entryCount);
 }
 
-void OnLeaderboardEntriesRetrieveFailure(const char* name, FailureReason failureReason) override {
+void OnLeaderboardEntriesRetrieveFailure(const char* name, galaxy::api::ILeaderboardEntriesRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnLeaderboardEntriesRetrieveFailure) return;
   this->listener.OnLeaderboardEntriesRetrieveFailure(this->listener.userptr, (const char*)name, (enum gog_FailureReason)failureReason);
 }
@@ -439,7 +454,7 @@ void OnLeaderboardScoreUpdateSuccess(const char* name, int32_t score, uint32_t o
   this->listener.OnLeaderboardScoreUpdateSuccess(this->listener.userptr, (const char*)name, (int32_t)score, (uint32_t)oldRank, (uint32_t)newRank);
 }
 
-void OnLeaderboardScoreUpdateFailure(const char* name, int32_t score, FailureReason failureReason) override {
+void OnLeaderboardScoreUpdateFailure(const char* name, int32_t score, galaxy::api::ILeaderboardScoreUpdateListener::FailureReason failureReason) override {
   if(!this->listener.OnLeaderboardScoreUpdateFailure) return;
   this->listener.OnLeaderboardScoreUpdateFailure(this->listener.userptr, (const char*)name, (int32_t)score, (enum gog_LeaderboardScoreUpdateFailureReason)failureReason);
 }
@@ -449,7 +464,7 @@ void OnLeaderboardRetrieveSuccess(const char* name) override {
   this->listener.OnLeaderboardRetrieveSuccess(this->listener.userptr, (const char*)name);
 }
 
-void OnLeaderboardRetrieveFailure(const char* name, FailureReason failureReason) override {
+void OnLeaderboardRetrieveFailure(const char* name, galaxy::api::ILeaderboardRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnLeaderboardRetrieveFailure) return;
   this->listener.OnLeaderboardRetrieveFailure(this->listener.userptr, (const char*)name, (enum gog_FailureReason)failureReason);
 }
@@ -459,7 +474,7 @@ void OnUserTimePlayedRetrieveSuccess(GalaxyID userID) override {
   this->listener.OnUserTimePlayedRetrieveSuccess(this->listener.userptr, (gog_ID)userID.ToUint64());
 }
 
-void OnUserTimePlayedRetrieveFailure(GalaxyID userID, FailureReason failureReason) override {
+void OnUserTimePlayedRetrieveFailure(GalaxyID userID, galaxy::api::IUserTimePlayedRetrieveListener::FailureReason failureReason) override {
   if(!this->listener.OnUserTimePlayedRetrieveFailure) return;
   this->listener.OnUserTimePlayedRetrieveFailure(this->listener.userptr, (gog_ID)userID.ToUint64(), (enum gog_FailureReason)failureReason);
 }
@@ -489,7 +504,7 @@ void OnDlcCheckSuccess(ProductID productId, bool isOwned) override {
   this->listener.OnDlcCheckSuccess(this->listener.userptr, (gog_ProductID)productId, (bool)isOwned);
 }
 
-void OnDlcCheckFailure(ProductID productId, FailureReason failureReason) override {
+void OnDlcCheckFailure(ProductID productId, galaxy::api::IIsDlcOwnedListener::FailureReason failureReason) override {
   if(!this->listener.OnDlcCheckFailure) return;
   this->listener.OnDlcCheckFailure(this->listener.userptr, (gog_ProductID)productId, (enum gog_DlcCheckFailureReason)failureReason);
 }
@@ -499,7 +514,7 @@ void OnFileShareSuccess(const char* fileName, SharedFileID sharedFileID) overrid
   this->listener.OnFileShareSuccess(this->listener.userptr, (const char*)fileName, (gog_SharedFileID)sharedFileID);
 }
 
-void OnFileShareFailure(const char* fileName, FailureReason failureReason) override {
+void OnFileShareFailure(const char* fileName, galaxy::api::IFileShareListener::FailureReason failureReason) override {
   if(!this->listener.OnFileShareFailure) return;
   this->listener.OnFileShareFailure(this->listener.userptr, (const char*)fileName, (enum gog_FailureReason)failureReason);
 }
@@ -509,7 +524,7 @@ void OnSharedFileDownloadSuccess(SharedFileID sharedFileID, const char* fileName
   this->listener.OnSharedFileDownloadSuccess(this->listener.userptr, (gog_SharedFileID)sharedFileID, (const char*)fileName);
 }
 
-void OnSharedFileDownloadFailure(SharedFileID sharedFileID, FailureReason failureReason) override {
+void OnSharedFileDownloadFailure(SharedFileID sharedFileID, galaxy::api::ISharedFileDownloadListener::FailureReason failureReason) override {
   if(!this->listener.OnSharedFileDownloadFailure) return;
   this->listener.OnSharedFileDownloadFailure(this->listener.userptr, (gog_SharedFileID)sharedFileID, (enum gog_FailureReason)failureReason);
 }
@@ -519,7 +534,7 @@ void OnConnectionOpenSuccess(const char* connectionString, ConnectionID connecti
   this->listener.OnConnectionOpenSuccess(this->listener.userptr, (const char*)connectionString, (gog_ConnectionID)connectionID);
 }
 
-void OnConnectionOpenFailure(const char* connectionString, FailureReason failureReason) override {
+void OnConnectionOpenFailure(const char* connectionString, galaxy::api::IConnectionOpenListener::FailureReason failureReason) override {
   if(!this->listener.OnConnectionOpenFailure) return;
   this->listener.OnConnectionOpenFailure(this->listener.userptr, (const char*)connectionString, (enum gog_ConnectionOpenFailureReason)failureReason);
 }
@@ -539,7 +554,7 @@ void OnTelemetryEventSendSuccess(const char* eventType, uint32_t sentEventIndex)
   this->listener.OnTelemetryEventSendSuccess(this->listener.userptr, (const char*)eventType, (uint32_t)sentEventIndex);
 }
 
-void OnTelemetryEventSendFailure(const char* eventType, uint32_t sentEventIndex, FailureReason failureReason) override {
+void OnTelemetryEventSendFailure(const char* eventType, uint32_t sentEventIndex, galaxy::api::ITelemetryEventSendListener::FailureReason failureReason) override {
   if(!this->listener.OnTelemetryEventSendFailure) return;
   this->listener.OnTelemetryEventSendFailure(this->listener.userptr, (const char*)eventType, (uint32_t)sentEventIndex, (enum gog_TelemetryEventFailureReason)failureReason);
 }
@@ -549,7 +564,7 @@ void OnGetFileListSuccess(uint32_t fileCount, uint32_t quota, uint32_t quotaUsed
   this->listener.OnGetFileListSuccess(this->listener.userptr, (uint32_t)fileCount, (uint32_t)quota, (uint32_t)quotaUsed);
 }
 
-void OnGetFileListFailure(FailureReason failureReason) override {
+void OnGetFileListFailure(galaxy::api::ICloudStorageGetFileListListener::FailureReason failureReason) override {
   if(!this->listener.OnGetFileListFailure) return;
   this->listener.OnGetFileListFailure(this->listener.userptr, (enum gog_GetFileListFailureReason)failureReason);
 }
@@ -566,7 +581,7 @@ void OnGetFileSuccess(
 			);
 }
 
-void OnGetFileFailure(const char* container, const char* name, FailureReason failureReason) override {
+void OnGetFileFailure(const char* container, const char* name, galaxy::api::ICloudStorageGetFileListener::FailureReason failureReason) override {
   if(!this->listener.OnGetFileFailure) return;
   this->listener.OnGetFileFailure(this->listener.userptr, (const char*)container, (const char*)name, (enum gog_GetFileFailureReason)failureReason);
 }
@@ -576,7 +591,7 @@ void OnPutFileSuccess(const char* container, const char* name) override {
   this->listener.OnPutFileSuccess(this->listener.userptr, (const char*)container, (const char*)name);
 }
 
-void OnPutFileFailure(const char* container, const char* name, FailureReason failureReason) override {
+void OnPutFileFailure(const char* container, const char* name, galaxy::api::ICloudStoragePutFileListener::FailureReason failureReason) override {
   if(!this->listener.OnPutFileFailure) return;
   this->listener.OnPutFileFailure(this->listener.userptr, (const char*)container, (const char*)name, (enum gog_PutFileFailureReason)failureReason);
 }
@@ -586,7 +601,7 @@ void OnDeleteFileSuccess(const char* container, const char* name) override {
   this->listener.OnDeleteFileSuccess(this->listener.userptr, (const char*)container, (const char*)name);
 }
 
-void OnDeleteFileFailure(const char* container, const char* name, FailureReason failureReason) override {
+void OnDeleteFileFailure(const char* container, const char* name, galaxy::api::ICloudStorageDeleteFileListener::FailureReason failureReason) override {
   if(!this->listener.OnDeleteFileFailure) return;
   this->listener.OnDeleteFileFailure(this->listener.userptr, (const char*)container, (const char*)name, (enum gog_DeleteFileFailureReason)failureReason);
 }
