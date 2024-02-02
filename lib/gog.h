@@ -97,88 +97,6 @@ char* gog_IError_GetMsg(gog_Interface error);
 enum gog_ErrorType gog_IError_GetType(gog_Interface error);
 gog_Interface gog_GetError();
 
-//// IListenerRegistrar.h
-enum gog_ListenerType {
-  GOG_LISTENER_TYPE_BEGIN, 
-  GOG_LOBBY_LIST = GOG_LISTENER_TYPE_BEGIN, 
-  GOG_LOBBY_CREATED, 
-  GOG_LOBBY_ENTERED, 
-  GOG_LOBBY_LEFT, 
-  GOG_LOBBY_DATA, 
-  GOG_LOBBY_MEMBER_STATE, 
-  GOG_LOBBY_OWNER_CHANGE, 
-  GOG_AUTH, 
-  GOG_LOBBY_MESSAGE, 
-  GOG_NETWORKING, 
-  GOG_USER_DATA, 
-  GOG_USER_STATS_AND_ACHIEVEMENTS_RETRIEVE, 
-  GOG_STATS_AND_ACHIEVEMENTS_STORE, 
-  GOG_ACHIEVEMENT_CHANGE, 
-  GOG_LEADERBOARDS_RETRIEVE, 
-  GOG_LEADERBOARD_ENTRIES_RETRIEVE, 
-  GOG_LEADERBOARD_SCORE_UPDATE_LISTENER, 
-  GOG_PERSONA_DATA_CHANGED, 
-  GOG_RICH_PRESENCE_CHANGE_LISTENER, 
-  GOG_GAME_JOIN_REQUESTED_LISTENER, 
-  GOG_OPERATIONAL_STATE_CHANGE, 
-  GOG_FRIEND_LIST_RETRIEVE, 
-  GOG_ENCRYPTED_APP_TICKET_RETRIEVE, 
-  GOG_ACCESS_TOKEN_CHANGE, 
-  GOG_LEADERBOARD_RETRIEVE, 
-  GOG_SPECIFIC_USER_DATA, 
-  GOG_INVITATION_SEND, 
-  GOG_RICH_PRESENCE_LISTENER, 
-  GOG_GAME_INVITATION_RECEIVED_LISTENER, 
-  GOG_NOTIFICATION_LISTENER, 
-  GOG_LOBBY_DATA_RETRIEVE, 
-  GOG_USER_TIME_PLAYED_RETRIEVE, 
-  GOG_OTHER_SESSION_START, 
-  GOG_FILE_SHARE, 
-  GOG_SHARED_FILE_DOWNLOAD, 
-  GOG_CUSTOM_NETWORKING_CONNECTION_OPEN, 
-  GOG_CUSTOM_NETWORKING_CONNECTION_CLOSE, 
-  GOG_CUSTOM_NETWORKING_CONNECTION_DATA, 
-  GOG_OVERLAY_INITIALIZATION_STATE_CHANGE, 
-  GOG_OVERLAY_VISIBILITY_CHANGE, 
-  GOG_CHAT_ROOM_WITH_USER_RETRIEVE_LISTENER, 
-  GOG_CHAT_ROOM_MESSAGE_SEND_LISTENER, 
-  GOG_CHAT_ROOM_MESSAGES_LISTENER, 
-  GOG_FRIEND_INVITATION_SEND_LISTENER, 
-  GOG_FRIEND_INVITATION_LIST_RETRIEVE_LISTENER, 
-  GOG_FRIEND_INVITATION_LISTENER, 
-  GOG_FRIEND_INVITATION_RESPOND_TO_LISTENER, 
-  GOG_FRIEND_ADD_LISTENER, 
-  GOG_FRIEND_DELETE_LISTENER, 
-  GOG_CHAT_ROOM_MESSAGES_RETRIEVE_LISTENER, 
-  GOG_USER_FIND_LISTENER, 
-  GOG_NAT_TYPE_DETECTION, 
-  GOG_SENT_FRIEND_INVITATION_LIST_RETRIEVE_LISTENER, 
-  GOG_LOBBY_DATA_UPDATE_LISTENER, /// < Used by ILobbyDataUpdateListener.
-  GOG_LOBBY_MEMBER_DATA_UPDATE_LISTENER, /// < Used by ILobbyDataUpdateListener.
-  GOG_USER_INFORMATION_RETRIEVE_LISTENER, 
-  GOG_RICH_PRESENCE_RETRIEVE_LISTENER, 
-  GOG_GOG_SERVICES_CONNECTION_STATE_LISTENER, 
-  GOG_TELEMETRY_EVENT_SEND_LISTENER, 
-  GOG_CLOUD_STORAGE_GET_FILE_LIST, 
-  GOG_CLOUD_STORAGE_GET_FILE, 
-  GOG_CLOUD_STORAGE_PUT_FILE, 
-  GOG_CLOUD_STORAGE_DELETE_FILE, 
-  GOG_IS_DLC_OWNED, 
-  GOG_PLAYFAB_CREATE_OPENID_CONNECTION, 
-  GOG_PLAYFAB_LOGIN_WITH_OPENID_CONNECT, 
-  GOG_LISTENER_TYPE_END 
-};
-
-void gog_IListenerRegistrar_Register(gog_Interface registrar, enum gog_ListenerType type, void *listener);
-void gog_IListenerRegistrar_Unregister(gog_Interface registrar, enum gog_ListenerType type, void *listener);
-gog_Interface gog_ListenerRegistrar();
-gog_Interface gog_GameServerListenerRegistrar();
-
-enum gog_FailureReason {
-  GOG_BASIC_FAILURE_REASON_UNDEFINED, 
-  GOG_BASIC_FAILURE_REASON_CONNECTION_FAILURE 
-};
-
 //// IUser.h
 typedef uint64_t gog_SessionID;
 
@@ -777,108 +695,193 @@ void gog_ICloudStorage_DeleteFile(gog_Interface cloudstorage, const char* contai
 void gog_ICloudStorage_OpenSavegame(gog_Interface cloudstorage);
 void gog_ICloudStorage_CloseSavegame(gog_Interface cloudstorage);
 
-//// Cumulative listener
-struct gog_Listener {
-  void (*OnAuthSuccess)();
-  void (*OnAuthFailure)(enum gog_AuthFailureReason reason);
-  void (*OnAuthLost)();
-  void (*OnOtherSessionStarted)();
-  void (*OnOperationalStateChanged)(enum gog_OperationalState state);
-  void (*OnUserDataUpdated)();
-  void (*OnSpecificUserDataUpdated)(gog_ID user);
-  void (*OnEncryptedAppTicketRetrieveSuccess)();
-  void (*OnEncryptedAppTicketRetrieveFailure)(enum gog_FailureReason failureReason);
-  void (*OnAccessTokenChanged)();
-  void (*OnPlayFabCreateOpenIDConnectionSuccess)(bool connectionAlreadyExists);
-  void (*OnPlayFabCreateOpenIDConnectionFailure)(enum gog_FailureReason failureReason);
-  void (*OnPersonaDataChanged)(gog_ID userID, uint32_t personaStateChange);
-  void (*OnUserInformationRetrieveSuccess)(gog_ID userID);
-  void (*OnUserInformationRetrieveFailure)(gog_ID userID, enum gog_FailureReason failureReason);
-  void (*OnFriendListRetrieveSuccess)();
-  void (*OnFriendListRetrieveFailure)(enum gog_FailureReason failureReason);
-  void (*OnFriendInvitationSendSuccess)(gog_ID userID);
-  void (*OnFriendInvitationSendFailure)(gog_ID userID, enum gog_FriendInvitationFailureReason failureReason);
-  void (*OnFriendInvitationListRetrieveSuccess)();
-  void (*OnFriendInvitationListRetrieveFailure)(enum gog_FailureReason failureReason);
-  void (*OnSentFriendInvitationListRetrieveSuccess)();
-  void (*OnSentFriendInvitationListRetrieveFailure)(enum gog_FailureReason failureReason);
-  void (*OnFriendInvitationReceived)(gog_ID userID, uint32_t sendTime);
-  void (*OnFriendInvitationRespondToSuccess)(gog_ID userID, bool accept);
-  void (*OnFriendInvitationRespondToFailure)(gog_ID userID, enum gog_FriendInvitationRespondFailureReason failureReason);
-  void (*OnFriendAdded)(gog_ID userID, enum gog_InvitationDirection invitationDirection);
-  void (*OnFriendDeleteSuccess)(gog_ID userID);
-  void (*OnFriendDeleteFailure)(gog_ID userID, enum gog_FailureReason failureReason);
-  void (*OnRichPresenceChangeSuccess)();
-  void (*OnRichPresenceChangeFailure)(enum gog_FailureReason failureReason);
-  void (*OnRichPresenceUpdated)(gog_ID userID);
-  void (*OnRichPresenceRetrieveSuccess)(gog_ID userID);
-  void (*OnRichPresenceRetrieveFailure)(gog_ID userID, enum gog_FailureReason failureReason);
-  void (*OnGameJoinRequested)(gog_ID userID, const char* connectionString);
-  void (*OnGameInvitationReceived)(gog_ID userID, const char* connectionString);
-  void (*OnInvitationSendSuccess)(gog_ID userID, const char* connectionString);
-  void (*OnInvitationSendFailure)(gog_ID userID, const char* connectionString, enum gog_SendInvitationFailureReason failureReason);
-  void (*OnUserFindSuccess)(const char* userSpecifier, gog_ID userID);
-  void (*OnUserFindFailure)(const char* userSpecifier, enum gog_UserFindFailureReason failureReason);
-  void (*OnChatRoomWithUserRetrieveSuccess)(gog_ID userID, gog_ChatRoomID chatRoomID);
-  void (*OnChatRoomWithUserRetrieveFailure)(gog_ID userID, enum gog_ChatUserRetrieveFailureReason failureReason);
-  void (*OnChatRoomMessageSendSuccess)(gog_ChatRoomID chatRoomID, uint32_t sentMessageIndex, gog_ChatMessageID messageID, uint32_t sendTime);
-  void (*OnChatRoomMessageSendFailure)(gog_ChatRoomID chatRoomID, uint32_t sentMessageIndex, enum gog_ChatMessageSendFailureReason failureReason);
-  void (*OnChatRoomMessagesReceived)(gog_ChatRoomID chatRoomID, uint32_t messageCount, uint32_t longestMessageLenght);
-  void (*OnChatRoomMessagesRetrieveSuccess)(gog_ChatRoomID chatRoomID, uint32_t messageCount, uint32_t longestMessageLenght);
-  void (*OnChatRoomMessagesRetrieveFailure)(gog_ChatRoomID chatRoomID, enum gog_ChatMessageRetrieveFailureReason failureReason);
-  void (*OnLobbyList)(uint32_t lobbyCount, enum gog_LobbyListResult result);
-  void (*OnLobbyCreated)(gog_ID lobbyID, enum gog_LobbyCreateResult result);
-  void (*OnLobbyEntered)(gog_ID lobbyID, enum gog_LobbyEnterResult result);
-  void (*OnLobbyLeft)(gog_ID lobbyID, enum gog_LobbyLeaveReason leaveReason);
-  void (*OnLobbyDataUpdated)(gog_ID lobbyID, gog_ID memberID);
-  void (*OnLobbyDataUpdateSuccess)(gog_ID lobbyID);
-  void (*OnLobbyDataUpdateFailure)(gog_ID lobbyID, enum gog_LobbyDataUpdateFailureReason failureReason);
-  void (*OnLobbyMemberDataUpdateSuccess)(gog_ID lobbyID, gog_ID memberID);
-  void (*OnLobbyMemberDataUpdateFailure)(gog_ID lobbyID, gog_ID memberID, enum gog_LobbyDataUpdateFailureReason failureReason);
-  void (*OnLobbyDataRetrieveFailure)(gog_ID lobbyID, enum gog_LobbyDataRetrieveFailureReason failureReason);
-  void (*OnLobbyMemberStateChanged)(gog_ID lobbyID, gog_ID memberID, enum gog_LobbyMemberStateChange memberStateChange);
-  void (*OnLobbyOwnerChanged)(gog_ID lobbyID, gog_ID newOwnerID);
-  void (*OnLobbyMessageReceived)(gog_ID lobbyID, gog_ID senderID, uint32_t messageID, uint32_t messageLength);
-  void (*OnP2PPacketAvailable)(uint32_t msgSize, uint8_t channel);
-  void (*OnNatTypeDetectionSuccess)(enum gog_NatType natType);
-  void (*OnNatTypeDetectionFailure)();
-  void (*OnUserStatsAndAchievementsRetrieveSuccess)(gog_ID userID);
-  void (*OnUserStatsAndAchievementsRetrieveFailure)(gog_ID userID, enum gog_FailureReason failureReason);
-  void (*OnUserStatsAndAchievementsStoreSuccess)();
-  void (*OnUserStatsAndAchievementsStoreFailure)(enum gog_FailureReason failureReason);
-  void (*OnAchievementUnlocked)(const char* name);
-  void (*OnLeaderboardsRetrieveSuccess)();
-  void (*OnLeaderboardsRetrieveFailure)(enum gog_FailureReason failureReason);
-  void (*OnLeaderboardEntriesRetrieveSuccess)(const char* name, uint32_t entryCount);
-  void (*OnLeaderboardEntriesRetrieveFailure)(const char* name, enum gog_FailureReason failureReason);
-  void (*OnLeaderboardScoreUpdateSuccess)(const char* name, int32_t score, uint32_t oldRank, uint32_t newRank);
-  void (*OnLeaderboardScoreUpdateFailure)(const char* name, int32_t score, enum gog_LeaderboardScoreUpdateFailureReason failureReason);
-  void (*OnLeaderboardRetrieveSuccess)(const char* name);
-  void (*OnLeaderboardRetrieveFailure)(const char* name, enum gog_FailureReason failureReason);
-  void (*OnUserTimePlayedRetrieveSuccess)(gog_ID userID);
-  void (*OnUserTimePlayedRetrieveFailure)(gog_ID userID, enum gog_FailureReason failureReason);
-  void (*OnOverlayVisibilityChanged)(bool overlayVisible);
-  void (*OnOverlayStateChanged)(enum gog_OverlayState overlayState);
-  void (*OnNotificationReceived)(gog_NotificationID notificationID, uint32_t typeLength, uint32_t contentSize);
-  void (*OnConnectionStateChange)(enum gog_ServicesConnectionState connectionState);
-  void (*OnDlcCheckSuccess)(gog_ProductID productId, bool isOwned);
-  void (*OnDlcCheckFailure)(gog_ProductID productId, enum gog_DlcCheckFailureReason failureReason);
-  void (*OnFileShareSuccess)(const char* fileName, gog_SharedFileID sharedFileID);
-  void (*OnFileShareFailure)(const char* fileName, enum gog_FailureReason failureReason);
-  void (*OnSharedFileDownloadSuccess)(gog_SharedFileID sharedFileID, const char* fileName);
-  void (*OnSharedFileDownloadFailure)(gog_SharedFileID sharedFileID, enum gog_FailureReason failureReason);
-  void (*OnConnectionOpenSuccess)(const char* connectionString, gog_ConnectionID connectionID);
-  void (*OnConnectionOpenFailure)(const char* connectionString, enum gog_ConnectionOpenFailureReason failureReason);
-  void (*OnConnectionClosed)(gog_ConnectionID connectionID, enum gog_CloseReason closeReason);
-  void (*OnConnectionDataReceived)(gog_ConnectionID connectionID, uint32_t dataSize);
-  void (*OnTelemetryEventSendSuccess)(const char* eventType, uint32_t sentEventIndex);
-  void (*OnTelemetryEventSendFailure)(const char* eventType, uint32_t sentEventIndex, enum gog_TelemetryEventFailureReason failureReason);
-  void (*OnGetFileListSuccess)(uint32_t fileCount, uint32_t quota, uint32_t quotaUsed);
-  void (*OnGetFileListFailure)(enum gog_GetFileListFailureReason failureReason);
-  void (*OnGetFileSuccess)(const char* container, const char* name, uint32_t fileSize, enum gog_SavegameType savegameType, const char* savegameID);
-  void (*OnGetFileFailure)(const char* container, const char* name, enum gog_GetFileFailureReason failureReason);
-  void (*OnPutFileSuccess)(const char* container, const char* name);
-  void (*OnPutFileFailure)(const char* container, const char* name, enum gog_PutFileFailureReason failureReason);
-  void (*OnDeleteFileSuccess)(const char* container, const char* name);
-  void (*OnDeleteFileFailure)(const char* container, const char* name, enum gog_DeleteFileFailureReason failureReason);
+
+//// IListenerRegistrar.h
+enum gog_ListenerType {
+  GOG_LISTENER_TYPE_BEGIN, 
+  GOG_LOBBY_LIST = GOG_LISTENER_TYPE_BEGIN, 
+  GOG_LOBBY_CREATED, 
+  GOG_LOBBY_ENTERED, 
+  GOG_LOBBY_LEFT, 
+  GOG_LOBBY_DATA, 
+  GOG_LOBBY_MEMBER_STATE, 
+  GOG_LOBBY_OWNER_CHANGE, 
+  GOG_AUTH, 
+  GOG_LOBBY_MESSAGE, 
+  GOG_NETWORKING, 
+  GOG_USER_DATA, 
+  GOG_USER_STATS_AND_ACHIEVEMENTS_RETRIEVE, 
+  GOG_STATS_AND_ACHIEVEMENTS_STORE, 
+  GOG_ACHIEVEMENT_CHANGE, 
+  GOG_LEADERBOARDS_RETRIEVE, 
+  GOG_LEADERBOARD_ENTRIES_RETRIEVE, 
+  GOG_LEADERBOARD_SCORE_UPDATE_LISTENER, 
+  GOG_PERSONA_DATA_CHANGED, 
+  GOG_RICH_PRESENCE_CHANGE_LISTENER, 
+  GOG_GAME_JOIN_REQUESTED_LISTENER, 
+  GOG_OPERATIONAL_STATE_CHANGE, 
+  GOG_FRIEND_LIST_RETRIEVE, 
+  GOG_ENCRYPTED_APP_TICKET_RETRIEVE, 
+  GOG_ACCESS_TOKEN_CHANGE, 
+  GOG_LEADERBOARD_RETRIEVE, 
+  GOG_SPECIFIC_USER_DATA, 
+  GOG_INVITATION_SEND, 
+  GOG_RICH_PRESENCE_LISTENER, 
+  GOG_GAME_INVITATION_RECEIVED_LISTENER, 
+  GOG_NOTIFICATION_LISTENER, 
+  GOG_LOBBY_DATA_RETRIEVE, 
+  GOG_USER_TIME_PLAYED_RETRIEVE, 
+  GOG_OTHER_SESSION_START, 
+  GOG_FILE_SHARE, 
+  GOG_SHARED_FILE_DOWNLOAD, 
+  GOG_CUSTOM_NETWORKING_CONNECTION_OPEN, 
+  GOG_CUSTOM_NETWORKING_CONNECTION_CLOSE, 
+  GOG_CUSTOM_NETWORKING_CONNECTION_DATA, 
+  GOG_OVERLAY_INITIALIZATION_STATE_CHANGE, 
+  GOG_OVERLAY_VISIBILITY_CHANGE, 
+  GOG_CHAT_ROOM_WITH_USER_RETRIEVE_LISTENER, 
+  GOG_CHAT_ROOM_MESSAGE_SEND_LISTENER, 
+  GOG_CHAT_ROOM_MESSAGES_LISTENER, 
+  GOG_FRIEND_INVITATION_SEND_LISTENER, 
+  GOG_FRIEND_INVITATION_LIST_RETRIEVE_LISTENER, 
+  GOG_FRIEND_INVITATION_LISTENER, 
+  GOG_FRIEND_INVITATION_RESPOND_TO_LISTENER, 
+  GOG_FRIEND_ADD_LISTENER, 
+  GOG_FRIEND_DELETE_LISTENER, 
+  GOG_CHAT_ROOM_MESSAGES_RETRIEVE_LISTENER, 
+  GOG_USER_FIND_LISTENER, 
+  GOG_NAT_TYPE_DETECTION, 
+  GOG_SENT_FRIEND_INVITATION_LIST_RETRIEVE_LISTENER, 
+  GOG_LOBBY_DATA_UPDATE_LISTENER, /// < Used by ILobbyDataUpdateListener.
+  GOG_LOBBY_MEMBER_DATA_UPDATE_LISTENER, /// < Used by ILobbyDataUpdateListener.
+  GOG_USER_INFORMATION_RETRIEVE_LISTENER, 
+  GOG_RICH_PRESENCE_RETRIEVE_LISTENER, 
+  GOG_GOG_SERVICES_CONNECTION_STATE_LISTENER, 
+  GOG_TELEMETRY_EVENT_SEND_LISTENER, 
+  GOG_CLOUD_STORAGE_GET_FILE_LIST, 
+  GOG_CLOUD_STORAGE_GET_FILE, 
+  GOG_CLOUD_STORAGE_PUT_FILE, 
+  GOG_CLOUD_STORAGE_DELETE_FILE, 
+  GOG_IS_DLC_OWNED, 
+  GOG_PLAYFAB_CREATE_OPENID_CONNECTION, 
+  GOG_PLAYFAB_LOGIN_WITH_OPENID_CONNECT, 
+  GOG_LISTENER_TYPE_END 
 };
+
+enum gog_FailureReason {
+  GOG_BASIC_FAILURE_REASON_UNDEFINED, 
+  GOG_BASIC_FAILURE_REASON_CONNECTION_FAILURE 
+};
+
+struct gog_listener {
+  void *userptr;
+  void (*OnAuthSuccess)(void *userptr);
+  void (*OnAuthFailure)(void *userptr, enum gog_AuthFailureReason reason);
+  void (*OnAuthLost)(void *userptr);
+  void (*OnOtherSessionStarted)(void *userptr);
+  void (*OnOperationalStateChanged)(void *userptr, enum gog_OperationalState state);
+  void (*OnUserDataUpdated)(void *userptr);
+  void (*OnSpecificUserDataUpdated)(void *userptr, gog_ID user);
+  void (*OnEncryptedAppTicketRetrieveSuccess)(void *userptr);
+  void (*OnEncryptedAppTicketRetrieveFailure)(void *userptr, enum gog_FailureReason failureReason);
+  void (*OnAccessTokenChanged)(void *userptr);
+  void (*OnPlayFabCreateOpenIDConnectionSuccess)(void *userptr, bool connectionAlreadyExists);
+  void (*OnPlayFabCreateOpenIDConnectionFailure)(void *userptr, enum gog_FailureReason failureReason);
+  void (*OnPersonaDataChanged)(void *userptr, gog_ID userID, uint32_t personaStateChange);
+  void (*OnUserInformationRetrieveSuccess)(void *userptr, gog_ID userID);
+  void (*OnUserInformationRetrieveFailure)(void *userptr, gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnFriendListRetrieveSuccess)(void *userptr);
+  void (*OnFriendListRetrieveFailure)(void *userptr, enum gog_FailureReason failureReason);
+  void (*OnFriendInvitationSendSuccess)(void *userptr, gog_ID userID);
+  void (*OnFriendInvitationSendFailure)(void *userptr, gog_ID userID, enum gog_FriendInvitationFailureReason failureReason);
+  void (*OnFriendInvitationListRetrieveSuccess)(void *userptr);
+  void (*OnFriendInvitationListRetrieveFailure)(void *userptr, enum gog_FailureReason failureReason);
+  void (*OnSentFriendInvitationListRetrieveSuccess)(void *userptr);
+  void (*OnSentFriendInvitationListRetrieveFailure)(void *userptr, enum gog_FailureReason failureReason);
+  void (*OnFriendInvitationReceived)(void *userptr, gog_ID userID, uint32_t sendTime);
+  void (*OnFriendInvitationRespondToSuccess)(void *userptr, gog_ID userID, bool accept);
+  void (*OnFriendInvitationRespondToFailure)(void *userptr, gog_ID userID, enum gog_FriendInvitationRespondFailureReason failureReason);
+  void (*OnFriendAdded)(void *userptr, gog_ID userID, enum gog_InvitationDirection invitationDirection);
+  void (*OnFriendDeleteSuccess)(void *userptr, gog_ID userID);
+  void (*OnFriendDeleteFailure)(void *userptr, gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnRichPresenceChangeSuccess)(void *userptr);
+  void (*OnRichPresenceChangeFailure)(void *userptr, enum gog_FailureReason failureReason);
+  void (*OnRichPresenceUpdated)(void *userptr, gog_ID userID);
+  void (*OnRichPresenceRetrieveSuccess)(void *userptr, gog_ID userID);
+  void (*OnRichPresenceRetrieveFailure)(void *userptr, gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnGameJoinRequested)(void *userptr, gog_ID userID, const char* connectionString);
+  void (*OnGameInvitationReceived)(void *userptr, gog_ID userID, const char* connectionString);
+  void (*OnInvitationSendSuccess)(void *userptr, gog_ID userID, const char* connectionString);
+  void (*OnInvitationSendFailure)(void *userptr, gog_ID userID, const char* connectionString, enum gog_SendInvitationFailureReason failureReason);
+  void (*OnUserFindSuccess)(void *userptr, const char* userSpecifier, gog_ID userID);
+  void (*OnUserFindFailure)(void *userptr, const char* userSpecifier, enum gog_UserFindFailureReason failureReason);
+  void (*OnChatRoomWithUserRetrieveSuccess)(void *userptr, gog_ID userID, gog_ChatRoomID chatRoomID);
+  void (*OnChatRoomWithUserRetrieveFailure)(void *userptr, gog_ID userID, enum gog_ChatUserRetrieveFailureReason failureReason);
+  void (*OnChatRoomMessageSendSuccess)(void *userptr, gog_ChatRoomID chatRoomID, uint32_t sentMessageIndex, gog_ChatMessageID messageID, uint32_t sendTime);
+  void (*OnChatRoomMessageSendFailure)(void *userptr, gog_ChatRoomID chatRoomID, uint32_t sentMessageIndex, enum gog_ChatMessageSendFailureReason failureReason);
+  void (*OnChatRoomMessagesReceived)(void *userptr, gog_ChatRoomID chatRoomID, uint32_t messageCount, uint32_t longestMessageLenght);
+  void (*OnChatRoomMessagesRetrieveSuccess)(void *userptr, gog_ChatRoomID chatRoomID, uint32_t messageCount, uint32_t longestMessageLenght);
+  void (*OnChatRoomMessagesRetrieveFailure)(void *userptr, gog_ChatRoomID chatRoomID, enum gog_ChatMessageRetrieveFailureReason failureReason);
+  void (*OnLobbyList)(void *userptr, uint32_t lobbyCount, enum gog_LobbyListResult result);
+  void (*OnLobbyCreated)(void *userptr, gog_ID lobbyID, enum gog_LobbyCreateResult result);
+  void (*OnLobbyEntered)(void *userptr, gog_ID lobbyID, enum gog_LobbyEnterResult result);
+  void (*OnLobbyLeft)(void *userptr, gog_ID lobbyID, enum gog_LobbyLeaveReason leaveReason);
+  void (*OnLobbyDataUpdated)(void *userptr, gog_ID lobbyID, gog_ID memberID);
+  void (*OnLobbyDataUpdateSuccess)(void *userptr, gog_ID lobbyID);
+  void (*OnLobbyDataUpdateFailure)(void *userptr, gog_ID lobbyID, enum gog_LobbyDataUpdateFailureReason failureReason);
+  void (*OnLobbyMemberDataUpdateSuccess)(void *userptr, gog_ID lobbyID, gog_ID memberID);
+  void (*OnLobbyMemberDataUpdateFailure)(void *userptr, gog_ID lobbyID, gog_ID memberID, enum gog_LobbyDataUpdateFailureReason failureReason);
+  void (*OnLobbyDataRetrieveFailure)(void *userptr, gog_ID lobbyID, enum gog_LobbyDataRetrieveFailureReason failureReason);
+  void (*OnLobbyMemberStateChanged)(void *userptr, gog_ID lobbyID, gog_ID memberID, enum gog_LobbyMemberStateChange memberStateChange);
+  void (*OnLobbyOwnerChanged)(void *userptr, gog_ID lobbyID, gog_ID newOwnerID);
+  void (*OnLobbyMessageReceived)(void *userptr, gog_ID lobbyID, gog_ID senderID, uint32_t messageID, uint32_t messageLength);
+  void (*OnP2PPacketAvailable)(void *userptr, uint32_t msgSize, uint8_t channel);
+  void (*OnNatTypeDetectionSuccess)(void *userptr, enum gog_NatType natType);
+  void (*OnNatTypeDetectionFailure)(void *userptr);
+  void (*OnUserStatsAndAchievementsRetrieveSuccess)(void *userptr, gog_ID userID);
+  void (*OnUserStatsAndAchievementsRetrieveFailure)(void *userptr, gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnUserStatsAndAchievementsStoreSuccess)(void *userptr);
+  void (*OnUserStatsAndAchievementsStoreFailure)(void *userptr, enum gog_FailureReason failureReason);
+  void (*OnAchievementUnlocked)(void *userptr, const char* name);
+  void (*OnLeaderboardsRetrieveSuccess)(void *userptr);
+  void (*OnLeaderboardsRetrieveFailure)(void *userptr, enum gog_FailureReason failureReason);
+  void (*OnLeaderboardEntriesRetrieveSuccess)(void *userptr, const char* name, uint32_t entryCount);
+  void (*OnLeaderboardEntriesRetrieveFailure)(void *userptr, const char* name, enum gog_FailureReason failureReason);
+  void (*OnLeaderboardScoreUpdateSuccess)(void *userptr, const char* name, int32_t score, uint32_t oldRank, uint32_t newRank);
+  void (*OnLeaderboardScoreUpdateFailure)(void *userptr, const char* name, int32_t score, enum gog_LeaderboardScoreUpdateFailureReason failureReason);
+  void (*OnLeaderboardRetrieveSuccess)(void *userptr, const char* name);
+  void (*OnLeaderboardRetrieveFailure)(void *userptr, const char* name, enum gog_FailureReason failureReason);
+  void (*OnUserTimePlayedRetrieveSuccess)(void *userptr, gog_ID userID);
+  void (*OnUserTimePlayedRetrieveFailure)(void *userptr, gog_ID userID, enum gog_FailureReason failureReason);
+  void (*OnOverlayVisibilityChanged)(void *userptr, bool overlayVisible);
+  void (*OnOverlayStateChanged)(void *userptr, enum gog_OverlayState overlayState);
+  void (*OnNotificationReceived)(void *userptr, gog_NotificationID notificationID, uint32_t typeLength, uint32_t contentSize);
+  void (*OnConnectionStateChange)(void *userptr, enum gog_ServicesConnectionState connectionState);
+  void (*OnDlcCheckSuccess)(void *userptr, gog_ProductID productId, bool isOwned);
+  void (*OnDlcCheckFailure)(void *userptr, gog_ProductID productId, enum gog_DlcCheckFailureReason failureReason);
+  void (*OnFileShareSuccess)(void *userptr, const char* fileName, gog_SharedFileID sharedFileID);
+  void (*OnFileShareFailure)(void *userptr, const char* fileName, enum gog_FailureReason failureReason);
+  void (*OnSharedFileDownloadSuccess)(void *userptr, gog_SharedFileID sharedFileID, const char* fileName);
+  void (*OnSharedFileDownloadFailure)(void *userptr, gog_SharedFileID sharedFileID, enum gog_FailureReason failureReason);
+  void (*OnConnectionOpenSuccess)(void *userptr, const char* connectionString, gog_ConnectionID connectionID);
+  void (*OnConnectionOpenFailure)(void *userptr, const char* connectionString, enum gog_ConnectionOpenFailureReason failureReason);
+  void (*OnConnectionClosed)(void *userptr, gog_ConnectionID connectionID, enum gog_CloseReason closeReason);
+  void (*OnConnectionDataReceived)(void *userptr, gog_ConnectionID connectionID, uint32_t dataSize);
+  void (*OnTelemetryEventSendSuccess)(void *userptr, const char* eventType, uint32_t sentEventIndex);
+  void (*OnTelemetryEventSendFailure)(void *userptr, const char* eventType, uint32_t sentEventIndex, enum gog_TelemetryEventFailureReason failureReason);
+  void (*OnGetFileListSuccess)(void *userptr, uint32_t fileCount, uint32_t quota, uint32_t quotaUsed);
+  void (*OnGetFileListFailure)(void *userptr, enum gog_GetFileListFailureReason failureReason);
+  void (*OnGetFileSuccess)(void *userptr, const char* container, const char* name, uint32_t fileSize, enum gog_SavegameType savegameType, const char* savegameID);
+  void (*OnGetFileFailure)(void *userptr, const char* container, const char* name, enum gog_GetFileFailureReason failureReason);
+  void (*OnPutFileSuccess)(void *userptr, const char* container, const char* name);
+  void (*OnPutFileFailure)(void *userptr, const char* container, const char* name, enum gog_PutFileFailureReason failureReason);
+  void (*OnDeleteFileSuccess)(void *userptr, const char* container, const char* name);
+  void (*OnDeleteFileFailure)(void *userptr, const char* container, const char* name, enum gog_DeleteFileFailureReason failureReason);
+};
+
+void gog_IListenerRegistrar_Register(gog_Interface registrar, enum gog_ListenerType type, gog_Interface listener);
+void gog_IListenerRegistrar_Unregister(gog_Interface registrar, enum gog_ListenerType type, gog_Interface listener);
+gog_Interface gog_ListenerRegistrar();
+gog_Interface gog_GameServerListenerRegistrar();
+gog_Interface *gog_MakeListener(struct gog_listener *listener);
+void gog_FreeListener(struct gog_listener *listener);
