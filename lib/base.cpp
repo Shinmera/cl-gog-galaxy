@@ -119,14 +119,14 @@ gog_Interface gog_GetError(){
   return (gog_Interface)galaxy::api::GetError();
 }
 
-////
+//// 
 
 void gog_IListenerRegistrar_Register(gog_Interface registrar, enum gog_ListenerType type, gog_Interface listener){
-  ((galaxy::api::IListenerRegistrar*)registrar)->Register((galaxy::api::ListenerType)type, (galaxy::api::IGalaxyListenerlistener *)listener);
+  ((galaxy::api::IListenerRegistrar*)registrar)->Register((galaxy::api::ListenerType)type, (galaxy::api::IGalaxyListener *)listener);
 }
 
 void gog_IListenerRegistrar_Unregister(gog_Interface registrar, enum gog_ListenerType type, gog_Interface listener){
-  ((galaxy::api::IListenerRegistrar*)registrar)->Unregister((galaxy::api::ListenerType)type, (galaxy::api::IGalaxyListenerlistener *)listener);
+  ((galaxy::api::IListenerRegistrar*)registrar)->Unregister((galaxy::api::ListenerType)type, (galaxy::api::IGalaxyListener *)listener);
 }
 
 gog_Interface gog_ListenerRegistrar(){
@@ -139,9 +139,27 @@ gog_Interface gog_GameServerListenerRegistrar(){
 
 //// Generator is too dumb for these
 
-void gog_ICloudStorage_GetFile_Callback(gog_Interface cloudstorage, const char* container, const char* name, void* userParam, gog_WriteFunc writeFunc, gog_Interface listener);
-void gog_ICloudStorage_GetFile(gog_Interface cloudstorage, const char* container, const char* name, void* dataBuffer, uint32_t bufferLength, gog_Interface listener);
-void gog_ICloudStorage_PutFile_Callback(gog_Interface cloudstorage, const char* container, const char* name, void* userParam, gog_ReadFunc readFunc, gog_RewindFunc rewindFunc, gog_Interface listener, enum gog_SavegameType savegameType, uint32_t timeStamp,const char* hash);
-void gog_ICloudStorage_PutFile(gog_Interface cloudstorage, const char* container, const char* name, const void* buffer, uint32_t bufferLength, gog_Interface listener, enum gog_SavegameType savegameType, uint32_t timeStamp, const char* hash);
-void gog_ICloudStorage_CalculateHash_Callback(gog_Interface cloudstorage, void* userParam, gog_ReadFunc readFunc, gog_RewindFunc rewindFunc, char* hashBuffer, uint32_t hashBufferSize);
-void gog_ICloudStorage_CalculateHash(gog_Interface cloudstorage, const void* buffer, uint32_t bufferLength, char* hashBuffer, uint32_t hashBufferSize);
+void gog_ICloudStorage_GetFile_Callback(gog_Interface cloudstorage, const char* container, const char* name, void* userParam, gog_WriteFunc writeFunc, gog_Interface listener){
+  ((galaxy::api::ICloudStorage*)cloudstorage)->GetFile(container, name, userParam, (galaxy::api::ICloudStorage::WriteFunc)writeFunc, (galaxy::api::ICloudStorageGetFileListener*)listener);
+}
+
+void gog_ICloudStorage_GetFile(gog_Interface cloudstorage, const char* container, const char* name, void* dataBuffer, uint32_t bufferLength, gog_Interface listener){
+  ((galaxy::api::ICloudStorage*)cloudstorage)->GetFile(container, name, dataBuffer, bufferLength, (galaxy::api::ICloudStorageGetFileListener*)listener);
+}
+
+void gog_ICloudStorage_PutFile_Callback(gog_Interface cloudstorage, const char* container, const char* name, void* userParam, gog_ReadFunc readFunc, gog_RewindFunc rewindFunc, gog_Interface listener, enum gog_SavegameType savegameType, uint32_t timeStamp,const char* hash){
+  ((galaxy::api::ICloudStorage*)cloudstorage)->PutFile(container, name, userParam, (galaxy::api::ICloudStorage::ReadFunc)readFunc, (galaxy::api::ICloudStorage::RewindFunc)rewindFunc, (galaxy::api::ICloudStoragePutFileListener*)listener, (galaxy::api::SavegameType)savegameType, timeStamp, hash);
+}
+
+void gog_ICloudStorage_PutFile(gog_Interface cloudstorage, const char* container, const char* name, const void* buffer, uint32_t bufferLength, gog_Interface listener, enum gog_SavegameType savegameType, uint32_t timeStamp, const char* hash){
+  ((galaxy::api::ICloudStorage*)cloudstorage)->PutFile(container, name, buffer, bufferLength, (galaxy::api::ICloudStoragePutFileListener*)listener, (galaxy::api::SavegameType)savegameType, timeStamp, hash);
+}
+
+void gog_ICloudStorage_CalculateHash_Callback(gog_Interface cloudstorage, void* userParam, gog_ReadFunc readFunc, gog_RewindFunc rewindFunc, char* hashBuffer, uint32_t hashBufferSize){
+  ((galaxy::api::ICloudStorage*)cloudstorage)->CalculateHash(userParam, (galaxy::api::ICloudStorage::ReadFunc)readFunc, (galaxy::api::ICloudStorage::RewindFunc)rewindFunc, hashBuffer, hashBufferSize);
+}
+
+void gog_ICloudStorage_CalculateHash(gog_Interface cloudstorage, const void* buffer, uint32_t bufferLength, char* hashBuffer, uint32_t hashBufferSize){
+  ((galaxy::api::ICloudStorage*)cloudstorage)->CalculateHash(buffer, bufferLength, hashBuffer, hashBufferSize);
+}
+

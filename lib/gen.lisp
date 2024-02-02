@@ -20,23 +20,30 @@
     (let* ((filename (string-trim '(#\Linefeed) (get-output-stream-string out)))
            (src (uiop:read-file-string (merge-pathnames filename *sdk-dir*))))
       (or (cl-ppcre:register-groups-bind (args) ((format NIL "void ~a\\(((?:.|\\n)*?)\\) = 0;" name) src)
-            args)
+            (return-from find-listener-def-args (cl-ppcre:split ", *" args)))
           (error "Can't find method for ~a" name)))))
 
 (defun parse-listener-line (line)
   (or (cl-ppcre:register-groups-bind (name args) (" *void +(?:\\(\\*)(\\w+)\\)?\\((.*)\\); *$" line)
-        (let ((args (loop for arg in (cl-ppcre:split ", *" args)
-                          collect (cl-ppcre:split " +" arg))))
+        (let ((args (rest (loop for arg in (cl-ppcre:split ", *" args)
+                                collect (cl-ppcre:split " +" arg))))
+              (def-args (find-listener-def-args name)))
           (list name
-                (find-listener-def-args name)
+                def-args
                 (loop for arg in args
-                      collect (format NIL "(~{~a~^ ~})~a" (butlast arg) (first (last arg)))))))
+                      for def in def-args
+                      for type = (butlast arg)
+                      for name = (first (last (cl-ppcre:split " +" def)))
+                      collect (if (string= "gog_ID" (first type))
+                                  (format NIL "(gog_ID)~a.ToUint64()" name)
+                                  (format NIL "(~{~a~^ ~})~a" type name))))))
       (error "Failed to parse line~%  ~a" line)))
 
 (defun listener-methods ()
   (with-open-file (s #p"~/a")
     (with-open-file (o (merge-pathnames "listener.cpp" *here*) :direction :output :if-exists :supersede)
       (format o "#include <galaxy/GalaxyApi.h>
+#include <cstring>
 #include \"gog.h\"
 
 using namespace galaxy::api;
@@ -47,7 +54,7 @@ public:
       (loop for line = (read-line s NIL NIL)
             while line
             do (destructuring-bind (name gog-args cast-args) (parse-listener-line line)
-                 (format o "~%~%void ~a(~a) override {
+                 (format o "~%~%void ~a(~{~a~^, ~}) override {
   if(!this->listener.~a) return;
   this->listener.~a(this->listener.userptr~{, ~a~});
 }"
