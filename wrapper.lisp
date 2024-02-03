@@ -33,6 +33,7 @@
         (setf (gog:init-option-config-file-path options) (coerce-path config-file-path))
         (setf (gog:init-option-storage-path options) (coerce-path storage-path))
         (setf (gog:init-option-allocator options) (cffi:null-pointer))
+        ;; TODO: lord, not bothering with this for now.
         (setf (gog:init-option-thread-factory options) (cffi:null-pointer))
         (setf (gog:init-option-host options) (or host (cffi:null-pointer)))
         (setf (gog:init-option-port options) (or port 0))

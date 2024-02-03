@@ -72,6 +72,8 @@ public:
 GOG_EXPORT gog_Interface gog_MakeListener(struct gog_listener *listener){
   Listener *list = new Listener();
   memcpy(&list->listener, listener, sizeof(struct gog_listener));
+  if(list->listener.userptr == 0)
+    list->listener.userptr = (void*)list
   return (gog_Interface)list;
 }
 

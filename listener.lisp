@@ -9,7 +9,7 @@
   (cffi:with-foreign-object (listener '(:struct gog:listener))
     (loop for fun being the hash-keys of *callback-funs* using (hash-value field)
           do (setf (cffi:foreign-slot-value listener '(:struct gog:listener) field) (cffi:get-callback fun)))
-    (setf (gog:listener-userptr listener) ())
+    (setf (gog:listener-userptr listener) (cffi:null-pointer))
     (gog:make-listener listener)))
 
 (defmethod free-handle-function ((listener listener) handle)
@@ -29,7 +29,7 @@
     `(progn (setf (gethash ',callback *callback-funs*) ',field)
             
             (cffi:defcallback ,callback :void ((userptr :pointer) ,@(loop for (name type) in args collect (list name type)))
-              (let ((,listener (listener userptr)))
+              (let ((,listener (pointer->object userptr)))
                 (if ,listener
                     (handler-case (,name ,listener ,@(loop for (name type conv) in args
                                                            collect (if conv `(,conv ,name) name)))
