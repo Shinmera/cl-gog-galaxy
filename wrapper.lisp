@@ -1,21 +1,5 @@
 (in-package #:org.shirakumo.fraf.gog-galaxy)
 
-(define-condition gog-error (error)
-  ((name :initarg :name :reader name)
-   (message :initarg :message :reader message)
-   (type :initarg :type :reader kind))
-  (:report (lambda (c s) (format s "GOG Galaxy API failed with ~a (~a):~%  ~a"
-                                 (name c) (kind c) (message c)))))
-
-(defun check-error (&optional value)
-  (let ((err (gog:get-error)))
-    (if (cffi:null-pointer-p err)
-        value
-        (error 'gog-error
-               :name (gog:ierror-get-name err)
-               :message (gog:ierror-get-msg err)
-               :type (gog:ierror-get-type err)))))
-
 (defvar *init* NIL)
 
 (defun init (client-id client-secret &key config-file-path storage-path host port)
@@ -38,8 +22,7 @@
         (setf (gog:init-option-thread-factory options) (cffi:null-pointer))
         (setf (gog:init-option-host options) (or host (cffi:null-pointer)))
         (setf (gog:init-option-port options) (or port 0))
-        (gog:init options)
-        (check-error)
+        (gog init options)
         (setf *init* T))))
   #-(or windows darwin)
   NIL)
@@ -48,8 +31,7 @@
   (when *init*
     (cffi:with-foreign-object (options '(:struct gog:shutdown-options))
       (setf (gog:shutdown-options-preserve-static-objects options) preserve-static-objects)
-      (gog:shutdown-ex options)
-      (check-error)
+      (gog shutdown-ex options)
       (clrhash *interface-table*)
       (clrhash *c-object-table*)
       (setf *init* NIL))))
@@ -58,9 +40,7 @@
   *init*)
 
 (defun process-data ()
-  (gog:process-data))
-
-(define-interface user gog:user)
+  (gog process-data))
 
 (define-interface friends gog:friends)
 

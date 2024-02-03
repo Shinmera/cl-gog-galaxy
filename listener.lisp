@@ -15,13 +15,30 @@
 (defmethod free-handle-function ((listener listener) handle)
   (lambda () (gog:free-listener handle)))
 
-(defun warn* (datum &rest args)
-  (let ((condition (etypecase datum
-                     (string (make-condition 'simple-warning :format-control datum :format-arguments args))
-                     (symbol (apply #'make-condition 'datum args))
-                     (condition datum))))
-    (format *error-output* "~&WARNING: ~a~%" condition)
-    (warn condition)))
+(defclass dynamic-listener (listener)
+  ((thunktable :initform (make-hash-table :test 'eq) :accessor thunktable)))
+
+(defmethod initialize-instance ((listener dynamic-listener) &rest args &key)
+  (call-next-method)
+  (loop for (k v) on args by #'cddr
+        do (unless (keywordp k)
+             (setf (gethash k (thunktable listener)) v))))
+
+(defmacro with-listener (listener thunk &body handlers)
+  `(block ,listener
+     (flet ,handlers
+       (let ((,listener (make-instance 'dynamic-listener ,@(loop for (type) in handlers collect `',type collect `#',type))))
+         (unwind-protect ,thunk
+           (free ,listener))))))
+
+(defmacro with-listener* ((listener &optional (timeout 10)) thunk &body handlers)
+  `(with-listener ,listener
+       (progn ,thunk
+         (loop for i from 0 below ,timeout by 0.1
+               do (process-data)
+                  (sleep 0.1)
+               finally (error "Timeout")))
+     ,@handlers))
 
 (defmacro define-callback (name field &body args)
   (let ((callback (intern (format NIL "%~a-~a" (symbol-name name) (symbol-name '#:callback))))
@@ -39,7 +56,13 @@
                     (warn* "Callback for unregistered listener ~a" userptr))))
             
             (defmethod ,name ((,listener listener) ,@(mapcar #'first args))
-              (warn* "Callback ~s to listener ~a is unhandled." ',name ,listener)))))
+              (warn* "Callback ~s to listener ~a is unhandled." ',name ,listener))
+
+            (defmethod ,name ((,listener dynamic-listener) ,@(mapcar #'first args))
+              (let ((thunk (gethash ',name (thunktable ,listener))))
+                (if thunk
+                    (funcall thunk ,@(mapcar #'first args))
+                    (warn* "Callback ~s to listener ~a is unhandled." ',name ,listener)))))))
 
 (define-callback auth-success gog::on-auth-success)
 

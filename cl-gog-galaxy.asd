@@ -8,12 +8,14 @@
   :serial T
   :components ((:file "package")
                (:file "low-level")
+               (:file "conditions")
                (:file "c-object")
                (:file "id")
                (:file "listener")
                (:file "wrapper")
                (:file "apps")
                (:file "stats")
+               (:file "user")
                (:file "utils")
                (:file "documentation"))
   :depends-on (:documentation-utils
