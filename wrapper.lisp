@@ -47,5 +47,3 @@
 (define-interface matchmaking gog:matchmaking)
 
 (define-interface storage gog:storage)
-
-(define-interface telemetry gog:telemetry)
