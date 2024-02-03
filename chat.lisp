@@ -32,7 +32,7 @@
                                              :id message-id
                                              :type :message
                                              :sender (ensure-user T)
-                                             :send-time send-time
+                                             :send-time (to-universal-time send-time)
                                              :text text))))
     (chat-room-message-send-failure (chatroom-id index failure)
       (when (= (id chatroom) chatroom-id)
@@ -50,7 +50,7 @@
                      :id (cffi:mem-ref id 'gog:chat-message-id)
                      :type (cffi:mem-ref type 'gog:chat-message-type)
                      :sender (ensure-user (cffi:mem-ref sender 'gog:id))
-                     :send-time (cffi:mem-ref time :uint32)
+                     :send-time (to-universal-time (cffi:mem-ref time :uint32))
                      :text (cffi:foreign-string-to-lisp buffer :count length)))))
 
 (defmethod members ((chatroom chatroom))

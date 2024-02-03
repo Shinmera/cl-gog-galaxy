@@ -87,26 +87,39 @@
   (or (gethash name *interface-table*)
       (make-instance name)))
 
+(defun recall-arguments (lambda-list)
+  (loop with kargs = NIL
+        for arg in lambda-list
+        if (find arg LAMBDA-LIST-KEYWORDS)
+        do (if (eq arg '&key) (setf kargs T))
+        else
+        append (let ((name (if (listp arg) (first arg) arg)))
+                 (if kargs
+                     (list (intern (symbol-name name) "KEYWORD") name)
+                     (list name)))))
+
 (defmacro define-interface (name init &rest methods)
   `(progn (defclass ,name (interface) ())
           
           (defmethod allocate-handle ((interface ,name) &key)
             (,init))
-          ;; FIXME: recalls for keyword arguments
+          
           ,@(loop for (method args . body) in methods
                   append (if (listp method)
                              `((defmethod ,method (,(first args) (interface (eql T)) ,@(rest args))
-                                 (setf (,(second method) (interface ',name) ,@(loop for arg in (rest args)
-                                                                                    unless (find arg LAMBDA-LIST-KEYWORDS)
-                                                                                    collect (if (listp arg) (first arg) arg)))
+                                 (setf (,(second method) (interface ',name) ,@(recall-arguments (rest args)))
                                        ,(first args)))
                                (defmethod ,method (,(first args) (interface ,name) ,@(rest args))
                                  ,@body))
                              `((defmethod ,method ((interface (eql T)) ,@args)
-                                 (,method (interface ',name) ,@(loop for arg in args
-                                                                     unless (find arg LAMBDA-LIST-KEYWORDS)
-                                                                     collect (if (listp arg) (first arg) arg))))
+                                 (,method (interface ',name) ,@(recall-arguments args)))
                                (defmethod ,method ((interface ,name) ,@args)
                                  ,@body))))))
 
 (trivial-indent:define-indentation define-interface (6 6 &rest (&whole 2 6 &body)))
+
+(defun to-unix-time (universal)
+  (- universal (encode-universal-time 0 0 0 1 1 1970 0)))
+
+(defun to-universal-time (unix)
+  (+ unix (encode-universal-time 0 0 0 1 1 1970 0)))
