@@ -53,5 +53,3 @@
 (define-interface custom-networking gog:custom-networking)
 
 (define-interface telemetry gog:telemetry)
-
-(define-interface cloud-storage gog:cloud-storage)

@@ -1,0 +1,69 @@
+(in-package #:org.shirakumo.fraf.gog-galaxy)
+
+(cffi:defcallback write-file :int ((file :pointer) (data :pointer) (size :int))
+  (cffi:foreign-funcall "fwrite" :pointer data :size 1 :size size :pointer file :size))
+
+(cffi:defcallback read-file :int ((file :pointer) (data :pointer) (size :int))
+  (cffi:foreign-funcall "fread" :pointer data :size 1 :size size :pointer file :size))
+
+(cffi:defcallback rewind-file :int ((file :pointer) (phase gog:read-phase))
+  (cffi:foreign-funcall "fseek" :pointer file :long 0 :int 1 :size))
+
+(defmacro with-file ((file path mode) &body body)
+  `(let ((,file (cffi:foreign-funcall "fopen" :string ,path :string ,mode :pointer)))
+     (when (cffi:null-pointer-p ,file)
+       (error "Failed to open file ~a" ,path))
+     (unwind-protect
+          (let ((,file ,file)) ,@body)
+       (cffi:foreign-funcall "fclose" :pointer ,file))))
+
+(define-interface cloud-storage gog:cloud-storage
+  (get-file (name container path)
+    (with-file (file path "wb")
+      (with-listener* (listener)
+            (gog icloud-storage-get-file-callback interface container name file (cffi:callback write-file) listener)
+        (get-file-success (r-container r-name file-size type id)
+          (when (and (string= container r-container) (string= name r-name))
+            (return-from listener (values file file-size type id))))
+        (get-file-failure (r-container r-name failure)
+          (when (and (string= container r-container) (string= name r-name))
+            (error "Failed to fetch file: ~a" failure))))))
+
+  (list-files (container)
+    (with-listener* (listener)
+          (gog icloud-storage-get-file-list interface container listener)
+      (get-file-list-success (count quota quota-used)
+        (return-from listener
+          (values (loop for i from 0 below count
+                        collect (gog icloud-storage-get-file-name-by-index interface i))
+                  quota quota-used)))
+      (get-file-list-failure (failure)
+        (error "Failed to fetch file list: ~a" failure))))
+
+  (put-file (path container &key (name (file-namestring path)) (type :undefined) (hash (cffi:null-pointer)))
+    (with-file (file path "rb")
+      (with-listener* (listener)
+            (gog icloud-storage-put-file-callback interface container name file (cffi:callback read-file) (cffi:callback rewind-file) listener type
+                 (to-unix-time (file-write-date path)) hash)
+        (put-file-success (r-container r-name)
+          (when (and (string= container r-container) (string= name r-name))
+            (return-from listener T)))
+        (put-file-failure (r-container r-name failure)
+          (when (and (string= container r-container) (string= name r-name))
+            (error "Failed to put file: ~a" failure))))))
+
+  (remove-file (name container &key (hash (cffi:null-pointer)))
+    (with-listener* (listener)
+          (gog icloud-storage-delete-file interface container name listener hash)
+      (put-file-success (r-container r-name)
+        (when (and (string= container r-container) (string= name r-name))
+          (return-from listener T)))
+      (put-file-failure (r-container r-name failure)
+        (when (and (string= container r-container) (string= name r-name))
+          (error "Failed to delete file: ~a" failure)))))
+
+  (open-savegame ()
+    (gog icloud-storage-open-savegame interface))
+
+  (close-savegame ()
+    (gog icloud-storage-close-savegame interface)))

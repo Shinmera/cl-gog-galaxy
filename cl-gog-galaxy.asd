@@ -15,6 +15,7 @@
                (:file "wrapper")
                (:file "apps")
                (:file "chat")
+               (:file "cloud-storage")
                (:file "stats")
                (:file "user")
                (:file "utils")
