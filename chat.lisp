@@ -15,26 +15,30 @@
   (with-listener* (listener)
         (gog ichat-request-chat-room-messages (interface 'chat) (id chatroom) limit reference listener)
     (chat-room-messages-retrieve-success (chatroom-id message-count longest)
-      ;; TODO: ???
-      )
+      (when (= (id chatroom) chatroom-id)
+        (loop for i from 0 below message-count
+              collect (get-message i chatroom))))
     (chat-room-messages-retrieve-failure (chatroom-id failure)
-      (error "Failed to fetch messages: ~a" failure))))
+      (when (= (id chatroom) chatroom-id)
+        (error "Failed to fetch messages: ~a" failure)))))
 
 (defmethod send-message ((text string) (chatroom chatroom))
   (with-listener* (listener)
         (gog ichat-send-chat-room-message (interface 'chat) (id chatroom) text listener)
     (chat-room-message-send-success (chatroom-id index message-id send-time)
-      (return-from listener (make-instance 'chat-message
-                                           :chatroom chatroom
-                                           :id message-id
-                                           :type :message
-                                           :sender (ensure-user T)
-                                           :send-time send-time
-                                           :text text)))
+      (when (= (id chatroom) chatroom-id)
+        (return-from listener (make-instance 'chat-message
+                                             :chatroom chatroom
+                                             :id message-id
+                                             :type :message
+                                             :sender (ensure-user T)
+                                             :send-time send-time
+                                             :text text))))
     (chat-room-message-send-failure (chatroom-id index failure)
-      (error "Failed to send message: ~a" failure))))
+      (when (= (id chatroom) chatroom-id)
+        (error "Failed to send message: ~a" failure)))))
 
-(defmethod message (i (chatroom chatroom))
+(defmethod get-message (i (chatroom chatroom))
   (cffi:with-foreign-objects ((id 'gog:chat-message-id)
                               (type 'gog:chat-message-type)
                               (sender 'gog:id)
@@ -63,9 +67,13 @@
   (gog ichat-mark-chat-room-as-read (interface 'chat) (id chatroom)))
 
 (define-interface chat gog:chat
-  (invite (user)
-    (gog ichat-request-chat-room-with-user interface user (cffi:null-pointer))
-    ;; TODO: listener
-    )
-  (get-chatroom (id)
-    (make-instance 'chatroom :id id)))
+  (get-chatroom (user)
+    (let ((user (ensure-user user)))
+      (with-listener* (listener)
+            (gog ichat-request-chat-room-with-user interface (id user) listener)
+        (chat-room-with-user-retrieve-success (r-user chatroom-id)
+          (when (eq user r-user)
+            (return-from listener (make-instance 'chatroom :id chatroom-id))))
+        (chat-room-with-user-retrieve-failure (r-user failure)
+          (when (eq user r-user)
+            (error "Failed to retrieve chatroom: ~a" failure)))))))
