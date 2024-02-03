@@ -15,9 +15,9 @@
    #:send-invitation-failure-reason
    #:user-find-failure-reason
    #:chat-message-type
-   #:chatuserretrieve-failure-reason
-   #:chatmessagesend-failure-reason
-   #:chatmessageretrieve-failure-reason
+   #:chat-user-retrieve-failure-reason
+   #:chat-message-send-failure-reason
+   #:chat-message-retrieve-failure-reason
    #:lobby-type
    #:lobby-topology-type
    #:lobby-member-state-change
@@ -36,7 +36,7 @@
    #:leaderboard-score-update-failure-reason
    #:overlay-state
    #:services-connection-state
-   #:dlc-check-failure-reason{
+   #:dlc-check-failure-reason
    #:connection-open-failure-reason
    #:close-reason
    #:telemetry-event-failure-reason
@@ -181,6 +181,10 @@
    #:listener-on-put-file-failure
    #:listener-on-delete-file-success
    #:listener-on-delete-file-failure
+   #:id-from-real-id
+   #:id-real-id
+   #:id-type
+   #:id-valid-p
    #:make-allocator
    #:free-allocator
    #:make-thread-factory

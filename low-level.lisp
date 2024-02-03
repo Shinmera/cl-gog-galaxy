@@ -91,17 +91,17 @@
   :chat-message
   :game-invitation)
 
-(cffi:defcenum chatuserretrieve-failure-reason
+(cffi:defcenum chat-user-retrieve-failure-reason
   :undefined
   :forbidden
   :connection-failure)
 
-(cffi:defcenum chatmessagesend-failure-reason
+(cffi:defcenum chat-message-send-failure-reason
   :undefined
   :forbidden
   :connection-failure)
 
-(cffi:defcenum chatmessageretrieve-failure-reason
+(cffi:defcenum chat-message-retrieve-failure-reason
   :undefined
   :forbidden
   :connection-failure)
@@ -215,7 +215,7 @@
   :disconnected
   :auth-lost)
 
-(cffi:defcenum dlc-check-failure-reason{
+(cffi:defcenum dlc-check-failure-reason
   :undefined
   :galaxy-service-not-signed-in
   :connection-failure
@@ -503,6 +503,18 @@
   (on-delete-file-success :pointer)
   (on-delete-file-failure :pointer))
 
+(defun id-from-real-id (type value)
+  (logior value (ash (cffi:foreign-enum-value 'id-type type) 56)))
+
+(defun id-real-id (id)
+  (logand id #xFFFFFFFFFFFFFF))
+
+(defun id-type (id)
+  (cffi:foreign-enum-keyword 'id-type (ash id -56)))
+
+(defun id-valid-p (id)
+  (/= 0 id))
+
 (cffi:defcfun (make-allocator "gog_MakeAllocator") :pointer 
   (malloc :pointer)
   (realloc :pointer)
@@ -514,7 +526,7 @@
 (cffi:defcfun (make-thread-factory "gog_MakeThreadFactory") :pointer 
   (creator :pointer))
 
-(cffi:defcfun (free-thread-factor "gog_FreeThreadFactor") :void 
+(cffi:defcfun (free-thread-factory "gog_FreeThreadFactory") :void 
   (factory :pointer))
 
 (cffi:defcfun (init "gog_Init") :void 

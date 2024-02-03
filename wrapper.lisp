@@ -48,7 +48,38 @@
       (setf (gog:shutdown-options-preserve-static-objects options) preserve-static-objects)
       (gog:shutdown-ex options)
       (check-error)
+      (clrhash *interface-table*)
+      (clrhash *c-object-table*)
       (setf *init* NIL))))
 
 (defun initialized-p ()
   *init*)
+
+(defun process-data ()
+  (gog:process-data))
+
+(define-interface user gog:user)
+
+(define-interface friends gog:friends)
+
+(define-interface chat gog:chat)
+
+(define-interface matchmaking gog:matchmaking)
+
+(define-interface networking gog:networking)
+
+(define-interface stats gog:stats)
+
+(define-interface utils gog:utils)
+
+(define-interface apps gog:apps)
+
+(define-interface storage gog:storage)
+
+(define-interface custom-networking gog:custom-networking)
+
+(define-interface logger gog:logger)
+
+(define-interface telemetry gog:telemetry)
+
+(define-interface cloud-storage gog:cloud-storage)
