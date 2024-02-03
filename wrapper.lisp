@@ -44,8 +44,6 @@
 
 (define-interface friends gog:friends)
 
-(define-interface chat gog:chat)
-
 (define-interface matchmaking gog:matchmaking)
 
 (define-interface networking gog:networking)

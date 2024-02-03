@@ -31,6 +31,8 @@
          (unwind-protect ,thunk
            (free ,listener))))))
 
+(trivial-indent:define-indentation with-listener (6 6 &rest (&whole 2 6 &body)))
+
 (defmacro with-listener* ((listener &optional (timeout 10)) thunk &body handlers)
   `(with-listener ,listener
        (progn ,thunk
@@ -39,6 +41,8 @@
                   (sleep 0.1)
                finally (error "Timeout")))
      ,@handlers))
+
+(trivial-indent:define-indentation with-listener* (6 6 &rest (&whole 2 6 &body)))
 
 (defmacro define-callback (name field &body args)
   (let ((callback (intern (format NIL "%~a-~a" (symbol-name name) (symbol-name '#:callback))))

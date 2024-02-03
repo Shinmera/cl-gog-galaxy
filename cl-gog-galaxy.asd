@@ -14,6 +14,7 @@
                (:file "listener")
                (:file "wrapper")
                (:file "apps")
+               (:file "chat")
                (:file "stats")
                (:file "user")
                (:file "utils")
