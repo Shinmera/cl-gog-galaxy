@@ -202,40 +202,40 @@ enum gog_PersonaStateChange {
 };
 
 enum gog_FriendInvitationFailureReason {
-  GOG_FRIENDINVITATION_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_FRIENDINVITATION_FAILURE_REASON_USER_DOES_NOT_EXIST, ///< User does not exist.
-  GOG_FRIENDINVITATION_FAILURE_REASON_USER_ALREADY_INVITED, ///< Friend invitation already sent to the user.
-  GOG_FRIENDINVITATION_FAILURE_REASON_USER_ALREADY_FRIEND, ///< User already on the friend list.
-  GOG_FRIENDINVITATION_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_FRIENDINVITATION_FAILURE_REASON_UNDEFINED,
+  GOG_FRIENDINVITATION_FAILURE_REASON_USER_DOES_NOT_EXIST,
+  GOG_FRIENDINVITATION_FAILURE_REASON_USER_ALREADY_INVITED,
+  GOG_FRIENDINVITATION_FAILURE_REASON_USER_ALREADY_FRIEND,
+  GOG_FRIENDINVITATION_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 enum gog_FriendInvitationRespondFailureReason {
-  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_USER_DOES_NOT_EXIST, ///< User does not exist.
-  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_FRIEND_INVITATION_DOES_NOT_EXIST, ///< Friend invitation does not exist.
-  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_USER_ALREADY_FRIEND, ///< User already on the friend list.
-  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_UNDEFINED,
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_USER_DOES_NOT_EXIST,
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_FRIEND_INVITATION_DOES_NOT_EXIST,
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_USER_ALREADY_FRIEND,
+  GOG_FRIENDINVITATIONRESPOND_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 enum gog_InvitationDirection{
-  GOG_INVITATION_DIRECTION_INCOMING, ///< The user indicated in the notification was the inviter.
-  GOG_INVITATION_DIRECTION_OUTGOING ///< The user indicated in the notification was the invitee.
+  GOG_INVITATION_DIRECTION_INCOMING,
+  GOG_INVITATION_DIRECTION_OUTGOING
 };
 
 enum gog_SendInvitationFailureReason{
-  GOG_SENDINVITATION_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_SENDINVITATION_FAILURE_REASON_USER_DOES_NOT_EXIST, ///< Receiver does not exist.
-  GOG_SENDINVITATION_FAILURE_REASON_RECEIVER_DOES_NOT_ALLOW_INVITING, ///< Receiver does not allow inviting
-  GOG_SENDINVITATION_FAILURE_REASON_SENDER_DOES_NOT_ALLOW_INVITING, ///< Sender does not allow inviting
-  GOG_SENDINVITATION_FAILURE_REASON_RECEIVER_BLOCKED, ///< Receiver blocked by sender.
-  GOG_SENDINVITATION_FAILURE_REASON_SENDER_BLOCKED, ///< Sender blocked by receiver. Will also occur if both users blocked each other.
-  GOG_SENDINVITATION_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_SENDINVITATION_FAILURE_REASON_UNDEFINED,
+  GOG_SENDINVITATION_FAILURE_REASON_USER_DOES_NOT_EXIST,
+  GOG_SENDINVITATION_FAILURE_REASON_RECEIVER_DOES_NOT_ALLOW_INVITING,
+  GOG_SENDINVITATION_FAILURE_REASON_SENDER_DOES_NOT_ALLOW_INVITING,
+  GOG_SENDINVITATION_FAILURE_REASON_RECEIVER_BLOCKED,
+  GOG_SENDINVITATION_FAILURE_REASON_SENDER_BLOCKED,
+  GOG_SENDINVITATION_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 enum gog_UserFindFailureReason {
-  GOG_USERFIND_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_USERFIND_FAILURE_REASON_USER_NOT_FOUND, ///< Specified user was not found.
-  GOG_USERFIND_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_USERFIND_FAILURE_REASON_UNDEFINED,
+  GOG_USERFIND_FAILURE_REASON_USER_NOT_FOUND,
+  GOG_USERFIND_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 GOG_EXPORT gog_AvatarCriteria gog_IFriends_GetDefaultAvatarCriteria(gog_Interface _friend);
@@ -284,27 +284,27 @@ typedef uint64_t gog_ChatRoomID;
 typedef uint64_t gog_ChatMessageID;
 
 enum gog_ChatMessageType {
-  GOG_CHAT_MESSAGE_TYPE_UNKNOWN, ///< Unknown message type.
-  GOG_CHAT_MESSAGE_TYPE_CHAT_MESSAGE, ///< Chat message.
-  GOG_CHAT_MESSAGE_TYPE_GAME_INVITATION ///< Game invitation.
+  GOG_CHAT_MESSAGE_TYPE_UNKNOWN,
+  GOG_CHAT_MESSAGE_TYPE_CHAT_MESSAGE,
+  GOG_CHAT_MESSAGE_TYPE_GAME_INVITATION
 };
 
 enum gog_ChatUserRetrieveFailureReason {
-  GOG_CHATUSERRETRIEVE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_CHATUSERRETRIEVE_FAILURE_REASON_FORBIDDEN, ///< Communication with a specified user is not allowed.
-  GOG_CHATUSERRETRIEVE_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_CHATUSERRETRIEVE_FAILURE_REASON_UNDEFINED,
+  GOG_CHATUSERRETRIEVE_FAILURE_REASON_FORBIDDEN,
+  GOG_CHATUSERRETRIEVE_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 enum gog_ChatMessageSendFailureReason {
-  GOG_CHATMESSAGESEND_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_CHATMESSAGESEND_FAILURE_REASON_FORBIDDEN, ///< Sending messages to the chat room is forbidden for the user.
-  GOG_CHATMESSAGESEND_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_CHATMESSAGESEND_FAILURE_REASON_UNDEFINED,
+  GOG_CHATMESSAGESEND_FAILURE_REASON_FORBIDDEN,
+  GOG_CHATMESSAGESEND_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 enum gog_ChatMessageRetrieveFailureReason {
-  FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  FAILURE_REASON_FORBIDDEN, ///< Retrieving messages from the chat room is forbidden for the user.
-  FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  FAILURE_REASON_UNDEFINED,
+  FAILURE_REASON_FORBIDDEN,
+  FAILURE_REASON_CONNECTION_FAILURE
 };
 
 GOG_EXPORT void gog_IChat_RequestChatRoomWithUser(gog_Interface chat, gog_ID userID, gog_Interface listener);
@@ -318,74 +318,74 @@ GOG_EXPORT void gog_IChat_MarkChatRoomAsRead(gog_Interface chat, gog_ChatRoomID 
 
 //// IMatchmaking.h
 enum gog_LobbyType {
-  GOG_LOBBY_TYPE_PRIVATE, ///< Only invited users are able to join the lobby.
-  GOG_LOBBY_TYPE_FRIENDS_ONLY, ///< Visible only to friends or invitees, but not in lobby list. Forbidden for the Game Server.
-  GOG_LOBBY_TYPE_PUBLIC, ///< Visible for friends and in lobby list.
-  GOG_LOBBY_TYPE_INVISIBLE_TO_FRIENDS ///< Returned by search, but not visible to friends. Forbidden for the Game Server.
+  GOG_LOBBY_TYPE_PRIVATE,
+  GOG_LOBBY_TYPE_FRIENDS_ONLY,
+  GOG_LOBBY_TYPE_PUBLIC,
+  GOG_LOBBY_TYPE_INVISIBLE_TO_FRIENDS
 };
 
 enum gog_LobbyTopologyType {
-  GOG_DEPRECATED_LOBBY_TOPOLOGY_TYPE_FCM_HOST_MIGRATION, ///< All users are connected with each other. Disconnection of lobby owner results in choosing a new one. Deprecated: use LOBBY_TOPOLOGY_TYPE_FCM_OWNERSHIP_TRANSITION instead.
-  GOG_LOBBY_TOPOLOGY_TYPE_FCM, ///< All users are connected with each other. Disconnection of lobby owner results in closing the lobby.
-  GOG_LOBBY_TOPOLOGY_TYPE_STAR, ///< All users are connected with lobby owner. Disconnection of lobby owner results in closing the lobby.
-  GOG_LOBBY_TOPOLOGY_TYPE_CONNECTIONLESS, ///< All users are connected only with server. Disconnection of lobby owner results in choosing a new one. Forbidden for the Game Server.
-  GOG_LOBBY_TOPOLOGY_TYPE_FCM_OWNERSHIP_TRANSITION ///< All users are connected with each other. Disconnection of lobby owner results in choosing a new one. Forbidden for the Game Server.
+  GOG_DEPRECATED_LOBBY_TOPOLOGY_TYPE_FCM_HOST_MIGRATION,
+  GOG_LOBBY_TOPOLOGY_TYPE_FCM,
+  GOG_LOBBY_TOPOLOGY_TYPE_STAR,
+  GOG_LOBBY_TOPOLOGY_TYPE_CONNECTIONLESS,
+  GOG_LOBBY_TOPOLOGY_TYPE_FCM_OWNERSHIP_TRANSITION
 };
 
 enum gog_LobbyMemberStateChange {
-  GOG_LOBBY_MEMBER_STATE_CHANGED_ENTERED = 0x0001, ///< The user joined the lobby.
-  GOG_LOBBY_MEMBER_STATE_CHANGED_LEFT = 0x0002, ///< The user left the lobby having announced it first.
-  GOG_LOBBY_MEMBER_STATE_CHANGED_DISCONNECTED = 0x0004, ///< The user disconnected without leaving the lobby first.
-  GOG_LOBBY_MEMBER_STATE_CHANGED_KICKED = 0x0008, ///< User was kicked from the lobby.
-  GOG_LOBBY_MEMBER_STATE_CHANGED_BANNED = 0x0010 ///< User was kicked and banned from the lobby.
+  GOG_LOBBY_MEMBER_STATE_CHANGED_ENTERED = 0x0001,
+  GOG_LOBBY_MEMBER_STATE_CHANGED_LEFT = 0x0002,
+  GOG_LOBBY_MEMBER_STATE_CHANGED_DISCONNECTED = 0x0004,
+  GOG_LOBBY_MEMBER_STATE_CHANGED_KICKED = 0x0008,
+  GOG_LOBBY_MEMBER_STATE_CHANGED_BANNED = 0x0010
 };
 
 enum gog_LobbyComparisonType {
-  GOG_LOBBY_COMPARISON_TYPE_EQUAL, ///< The lobby should have a property of a value that is equal to the one specified.
-  GOG_LOBBY_COMPARISON_TYPE_NOT_EQUAL, ///< The lobby should have a property of a value that is not equal to the one specified.
-  GOG_LOBBY_COMPARISON_TYPE_GREATER, ///< The lobby should have a property of a value that is greater than the one specified.
-  GOG_LOBBY_COMPARISON_TYPE_GREATER_OR_EQUAL, ///< The lobby should have a property of a value that is greater than or equal to the one specified.
-  GOG_LOBBY_COMPARISON_TYPE_LOWER, ///< The lobby should have a property of a value that is lower than the one specified.
-  GOG_LOBBY_COMPARISON_TYPE_LOWER_OR_EQUAL ///< The lobby should have a property of a value that is lower than or equal to the one specified.
+  GOG_LOBBY_COMPARISON_TYPE_EQUAL,
+  GOG_LOBBY_COMPARISON_TYPE_NOT_EQUAL,
+  GOG_LOBBY_COMPARISON_TYPE_GREATER,
+  GOG_LOBBY_COMPARISON_TYPE_GREATER_OR_EQUAL,
+  GOG_LOBBY_COMPARISON_TYPE_LOWER,
+  GOG_LOBBY_COMPARISON_TYPE_LOWER_OR_EQUAL
 };
 
 enum gog_LobbyCreateResult {
-  GOG_LOBBY_CREATE_RESULT_SUCCESS, ///< Lobby was created.
-  GOG_LOBBY_CREATE_RESULT_ERROR, ///< Unexpected error.
-  GOG_LOBBY_CREATE_RESULT_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_LOBBY_CREATE_RESULT_SUCCESS,
+  GOG_LOBBY_CREATE_RESULT_ERROR,
+  GOG_LOBBY_CREATE_RESULT_CONNECTION_FAILURE
 };
 
 enum gog_LobbyEnterResult {
-  GOG_LOBBY_ENTER_RESULT_SUCCESS, ///< The user has entered the lobby.
-  GOG_LOBBY_ENTER_RESULT_LOBBY_DOES_NOT_EXIST, ///< Specified lobby does not exist.
-  GOG_LOBBY_ENTER_RESULT_LOBBY_IS_FULL, ///< Specified lobby is full.
-  GOG_LOBBY_ENTER_RESULT_ERROR, ///< Unexpected error.
-  GOG_LOBBY_ENTER_RESULT_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_LOBBY_ENTER_RESULT_SUCCESS,
+  GOG_LOBBY_ENTER_RESULT_LOBBY_DOES_NOT_EXIST,
+  GOG_LOBBY_ENTER_RESULT_LOBBY_IS_FULL,
+  GOG_LOBBY_ENTER_RESULT_ERROR,
+  GOG_LOBBY_ENTER_RESULT_CONNECTION_FAILURE
 };
 
 enum gog_LobbyListResult {
-  GOG_LOBBY_LIST_RESULT_SUCCESS, ///< The list of lobbies retrieved successfully.
-  GOG_LOBBY_LIST_RESULT_ERROR, ///< Unexpected error.
-  GOG_LOBBY_LIST_RESULT_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_LOBBY_LIST_RESULT_SUCCESS,
+  GOG_LOBBY_LIST_RESULT_ERROR,
+  GOG_LOBBY_LIST_RESULT_CONNECTION_FAILURE
 };
 
 enum gog_LobbyLeaveReason {
-  GOG_LOBBY_LEAVE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_LOBBY_LEAVE_REASON_USER_LEFT, ///< The user has left the lobby as a result of calling IMatchmaking::LeaveLobby().
-  GOG_LOBBY_LEAVE_REASON_LOBBY_CLOSED, ///< The lobby has been closed (e.g. the owner has left the lobby without host migration).
-  GOG_LOBBY_LEAVE_REASON_CONNECTION_LOST ///< The Peer has lost the connection.
+  GOG_LOBBY_LEAVE_REASON_UNDEFINED,
+  GOG_LOBBY_LEAVE_REASON_USER_LEFT,
+  GOG_LOBBY_LEAVE_REASON_LOBBY_CLOSED,
+  GOG_LOBBY_LEAVE_REASON_CONNECTION_LOST
 };
 
 enum gog_LobbyDataUpdateFailureReason {
-  GOG_LOBBYDATAUPDATE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_LOBBYDATAUPDATE_FAILURE_REASON_LOBBY_DOES_NOT_EXIST, ///< Specified lobby does not exist.
-  GOG_LOBBYDATAUPDATE_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_LOBBYDATAUPDATE_FAILURE_REASON_UNDEFINED,
+  GOG_LOBBYDATAUPDATE_FAILURE_REASON_LOBBY_DOES_NOT_EXIST,
+  GOG_LOBBYDATAUPDATE_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 enum gog_LobbyDataRetrieveFailureReason {
-  GOG_LOBBYDATARETRIEVE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_LOBBYDATARETRIEVE_FAILURE_REASON_LOBBY_DOES_NOT_EXIST, ///< Specified lobby does not exist.
-  GOG_LOBBYDATARETRIEVE_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_LOBBYDATARETRIEVE_FAILURE_REASON_UNDEFINED,
+  GOG_LOBBYDATARETRIEVE_FAILURE_REASON_LOBBY_DOES_NOT_EXIST,
+  GOG_LOBBYDATARETRIEVE_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 GOG_EXPORT void gog_IMatchmaking_CreateLobby(gog_Interface matchmaking, enum gog_LobbyType lobbyType, uint32_t maxMembers, bool joinable, enum gog_LobbyTopologyType lobbyTopologyType, gog_Interface created, gog_Interface entered);
@@ -424,25 +424,25 @@ GOG_EXPORT uint32_t gog_IMatchmaking_GetLobbyMessage(gog_Interface matchmaking, 
 
 //// INetworking.h
 enum gog_NatType {
-  GOG_NAT_TYPE_NONE, ///< There is no NAT at all.
-  GOG_NAT_TYPE_FULL_CONE, ///< Accepts any datagrams to a port that has been previously used.
-  GOG_NAT_TYPE_ADDRESS_RESTRICTED, ///< Accepts datagrams to a port if the datagram source IP address belongs to a system that has been sent to.
-  GOG_NAT_TYPE_PORT_RESTRICTED, ///< Accepts datagrams to a port if the datagram source IP address and port belongs a system that has been sent to.
-  GOG_NAT_TYPE_SYMMETRIC, ///< A different port is chosen for every remote destination.
-  GOG_NAT_TYPE_UNKNOWN ///< NAT type has not been determined.
+  GOG_NAT_TYPE_NONE,
+  GOG_NAT_TYPE_FULL_CONE,
+  GOG_NAT_TYPE_ADDRESS_RESTRICTED,
+  GOG_NAT_TYPE_PORT_RESTRICTED,
+  GOG_NAT_TYPE_SYMMETRIC,
+  GOG_NAT_TYPE_UNKNOWN
 };
 
 enum gog_P2PSendType {
-  GOG_P2P_SEND_UNRELIABLE, ///< UDP-like packet transfer. The packet will be sent during the next call to ProcessData().
-  GOG_P2P_SEND_RELIABLE, ///< TCP-like packet transfer. The packet will be sent during the next call to ProcessData().
-  GOG_P2P_SEND_UNRELIABLE_IMMEDIATE, ///< UDP-like packet transfer. The packet will be sent instantly.
-  GOG_P2P_SEND_RELIABLE_IMMEDIATE ///< TCP-like packet transfer. The packet will be sent instantly.
+  GOG_P2P_SEND_UNRELIABLE,
+  GOG_P2P_SEND_RELIABLE,
+  GOG_P2P_SEND_UNRELIABLE_IMMEDIATE,
+  GOG_P2P_SEND_RELIABLE_IMMEDIATE
 };
 
 enum gog_ConnectionType {
-  GOG_CONNECTION_TYPE_NONE, ///< User is connected only with server.
-  GOG_CONNECTION_TYPE_DIRECT, ///< User is connected directly.
-  GOG_CONNECTION_TYPE_PROXY ///< User is connected through a proxy.
+  GOG_CONNECTION_TYPE_NONE,
+  GOG_CONNECTION_TYPE_DIRECT,
+  GOG_CONNECTION_TYPE_PROXY
 };
 
 GOG_EXPORT bool gog_INetworking_SendP2PPacket(gog_Interface networking, gog_ID galaxyID, const void* data, uint32_t dataSize, enum gog_P2PSendType sendType, uint8_t channel);
@@ -457,22 +457,22 @@ GOG_EXPORT enum gog_ConnectionType gog_INetworking_GetConnectionType(gog_Interfa
 
 //// IStats.h
 enum gog_LeaderboardSortMethod {
-  GOG_LEADERBOARD_SORT_METHOD_NONE, ///< No sorting method specified.
-  GOG_LEADERBOARD_SORT_METHOD_ASCENDING, ///< Top score is lowest number.
-  GOG_LEADERBOARD_SORT_METHOD_DESCENDING ///< Top score is highest number.
+  GOG_LEADERBOARD_SORT_METHOD_NONE,
+  GOG_LEADERBOARD_SORT_METHOD_ASCENDING,
+  GOG_LEADERBOARD_SORT_METHOD_DESCENDING
 };
 
 enum gog_LeaderboardDisplayType {
-  GOG_LEADERBOARD_DISPLAY_TYPE_NONE, ///< Not display type specified.
-  GOG_LEADERBOARD_DISPLAY_TYPE_NUMBER, ///< Simple numerical score.
-  GOG_LEADERBOARD_DISPLAY_TYPE_TIME_SECONDS, ///< The score represents time, in seconds.
-  GOG_LEADERBOARD_DISPLAY_TYPE_TIME_MILLISECONDS ///< The score represents time, in milliseconds.
+  GOG_LEADERBOARD_DISPLAY_TYPE_NONE,
+  GOG_LEADERBOARD_DISPLAY_TYPE_NUMBER,
+  GOG_LEADERBOARD_DISPLAY_TYPE_TIME_SECONDS,
+  GOG_LEADERBOARD_DISPLAY_TYPE_TIME_MILLISECONDS
 };
 
 enum gog_LeaderboardScoreUpdateFailureReason {
-  GOG_LEADERBOARDSCOREUPDATE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_LEADERBOARDSCOREUPDATE_FAILURE_REASON_NO_IMPROVEMENT, ///< Previous score was better and the update operation was not forced.
-  GOG_LEADERBOARDSCOREUPDATE_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_LEADERBOARDSCOREUPDATE_FAILURE_REASON_UNDEFINED,
+  GOG_LEADERBOARDSCOREUPDATE_FAILURE_REASON_NO_IMPROVEMENT,
+  GOG_LEADERBOARDSCOREUPDATE_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 GOG_EXPORT void gog_IStats_RequestUserStatsAndAchievements(gog_Interface stats, gog_ID userID, gog_Interface listener);
@@ -514,18 +514,18 @@ GOG_EXPORT uint32_t gog_IStats_GetUserTimePlayed(gog_Interface stats, gog_ID use
 typedef uint64_t gog_NotificationID;
 
 enum gog_OverlayState {
-  GOG_OVERLAY_STATE_UNDEFINED, ///< Overlay state is undefined.
-  GOG_OVERLAY_STATE_NOT_SUPPORTED, ///< Overlay is not supported.
-  GOG_OVERLAY_STATE_DISABLED, ///< Overlay is disabled by the user in the Galaxy Client.
-  GOG_OVERLAY_STATE_FAILED_TO_INITIALIZE, ///< Galaxy Client failed to initialize the overlay or inject it into the game.
-  GOG_OVERLAY_STATE_INITIALIZED ///< Overlay has been successfully injected into the game.
+  GOG_OVERLAY_STATE_UNDEFINED,
+  GOG_OVERLAY_STATE_NOT_SUPPORTED,
+  GOG_OVERLAY_STATE_DISABLED,
+  GOG_OVERLAY_STATE_FAILED_TO_INITIALIZE,
+  GOG_OVERLAY_STATE_INITIALIZED
 };
 
 enum gog_ServicesConnectionState {
-  GOG_SERVICES_CONNECTION_STATE_UNDEFINED, ///< Connection state is undefined.
-  GOG_SERVICES_CONNECTION_STATE_CONNECTED, ///< Connection to the GOG services has been established.
-  GOG_SERVICES_CONNECTION_STATE_DISCONNECTED, ///< Connection to the GOG services has been lost.
-  GOG_SERVICES_CONNECTION_STATE_AUTH_LOST ///< Connection to the GOG services has been lost due to lose of peer authentication.
+  GOG_SERVICES_CONNECTION_STATE_UNDEFINED,
+  GOG_SERVICES_CONNECTION_STATE_CONNECTED,
+  GOG_SERVICES_CONNECTION_STATE_DISCONNECTED,
+  GOG_SERVICES_CONNECTION_STATE_AUTH_LOST
 };
 
 GOG_EXPORT void gog_IUtils_GetImageSize(gog_Interface utils, uint32_t imageID, int32_t *width, int32_t *height);
@@ -542,10 +542,10 @@ GOG_EXPORT enum gog_ServicesConnectionState gog_IUtils_GetGogServicesConnectionS
 typedef uint64_t gog_ProductID;
 
 enum gog_DlcCheckFailureReason{
-  GOG_DLCCHECK_FAILURE_REASON_UNDEFINED, ///< Undefined error.
-  GOG_DLCCHECK_FAILURE_REASON_GALAXY_SERVICE_NOT_SIGNED_IN, ///< Galaxy Service is not signed in properly.
-  GOG_DLCCHECK_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
-  GOG_DLCCHECK_FAILURE_REASON_EXTERNAL_SERVICE_FAILURE ///< Unable to communicate with external service.
+  GOG_DLCCHECK_FAILURE_REASON_UNDEFINED,
+  GOG_DLCCHECK_FAILURE_REASON_GALAXY_SERVICE_NOT_SIGNED_IN,
+  GOG_DLCCHECK_FAILURE_REASON_CONNECTION_FAILURE,
+  GOG_DLCCHECK_FAILURE_REASON_EXTERNAL_SERVICE_FAILURE
 };
 
 GOG_EXPORT bool gog_IApps_IsDlcInstalled(gog_Interface apps, gog_ProductID productID);
@@ -582,13 +582,13 @@ GOG_EXPORT gog_SharedFileID gog_IStorage_GetDownloadedSharedFileByIndex(gog_Inte
 typedef uint64_t gog_ConnectionID;
 
 enum gog_ConnectionOpenFailureReason {
-  GOG_CONNECTIONOPEN_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_CONNECTIONOPEN_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
-  GOG_CONNECTIONOPEN_FAILURE_REASON_UNAUTHORIZED ///< Client is unauthorized.
+  GOG_CONNECTIONOPEN_FAILURE_REASON_UNDEFINED,
+  GOG_CONNECTIONOPEN_FAILURE_REASON_CONNECTION_FAILURE,
+  GOG_CONNECTIONOPEN_FAILURE_REASON_UNAUTHORIZED
 };
 
 enum gog_CloseReason {
-  CLOSE_REASON_UNDEFINED ///< Unspecified reason.
+  CLOSE_REASON_UNDEFINED
 };
 
 GOG_EXPORT void gog_ICustomNetworking_OpenConnection(gog_Interface customnetworking, const char* connectionString, gog_Interface listener);
@@ -609,15 +609,15 @@ GOG_EXPORT void gog_ILogger_Fatal(gog_Interface logger, const char* format, ...)
 
 //// ITelemetry.h
 enum gog_TelemetryEventFailureReason {
-  GOG_TELEMETRYEVENT_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_TELEMETRYEVENT_FAILURE_REASON_CLIENT_FORBIDDEN, ///< Sending telemetry events is forbidden for this application.
-  GOG_TELEMETRYEVENT_FAILURE_REASON_INVALID_DATA, ///< The event of given type and form does not match specification.
-  GOG_TELEMETRYEVENT_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
-  GOG_TELEMETRYEVENT_FAILURE_REASON_NO_SAMPLING_CLASS_IN_CONFIG, ///< The event sampling class not present in configuration.
-  GOG_TELEMETRYEVENT_FAILURE_REASON_SAMPLING_CLASS_FIELD_MISSING, ///< Sampling class' field not present in the event.
-  GOG_TELEMETRYEVENT_FAILURE_REASON_EVENT_SAMPLED_OUT, ///< The event did not match sampling criteria.
-  GOG_TELEMETRYEVENT_FAILURE_REASON_SAMPLING_RESULT_ALREADY_EXIST, ///< The event already contains a field defined as "dry_run_result_path".
-  GOG_TELEMETRYEVENT_FAILURE_REASON_SAMPLING_INVALID_RESULT_PATH ///< "dry_run_result_path" has an invalid value (doesn't start with "data" or "meta" or one of the intermediate elements isn't an object).
+  GOG_TELEMETRYEVENT_FAILURE_REASON_UNDEFINED,
+  GOG_TELEMETRYEVENT_FAILURE_REASON_CLIENT_FORBIDDEN,
+  GOG_TELEMETRYEVENT_FAILURE_REASON_INVALID_DATA,
+  GOG_TELEMETRYEVENT_FAILURE_REASON_CONNECTION_FAILURE,
+  GOG_TELEMETRYEVENT_FAILURE_REASON_NO_SAMPLING_CLASS_IN_CONFIG,
+  GOG_TELEMETRYEVENT_FAILURE_REASON_SAMPLING_CLASS_FIELD_MISSING,
+  GOG_TELEMETRYEVENT_FAILURE_REASON_EVENT_SAMPLED_OUT,
+  GOG_TELEMETRYEVENT_FAILURE_REASON_SAMPLING_RESULT_ALREADY_EXIST,
+  GOG_TELEMETRYEVENT_FAILURE_REASON_SAMPLING_INVALID_RESULT_PATH
 };
 
 GOG_EXPORT void gog_ITelemetry_AddStringParam(gog_Interface telemetry, const char* name, const char* value);
@@ -637,62 +637,62 @@ GOG_EXPORT void gog_ITelemetry_ResetVisitID(gog_Interface telemetry);
 
 //// ICloudStorage.h
 enum gog_SavegameType {
-  GOG_SAVEGAME_TYPE_UNDEFINED, ///< Not defined savegame type.
-  GOG_SAVEGAME_TYPE_AUTO, ///< Auto savegame, triggered automatically over time.
-  GOG_SAVEGAME_TYPE_QUICK, ///< Quick savegame.
-  GOG_SAVEGAME_TYPE_MANUAL, ///< Manual savegame.
-  GOG_SAVEGAME_TYPE_POINT_OF_NO_RETURN, ///< Savegame at the point of no return.
-  GOG_SAVEGAME_TYPE_ENDGAME_SAVE, ///< Savegame at the end of the game.
-  GOG_SAVEGAME_TYPE_CHECKPOINT ///< Savegame at a certain in-game event, e.g. quest completion.
+  GOG_SAVEGAME_TYPE_UNDEFINED,
+  GOG_SAVEGAME_TYPE_AUTO,
+  GOG_SAVEGAME_TYPE_QUICK,
+  GOG_SAVEGAME_TYPE_MANUAL,
+  GOG_SAVEGAME_TYPE_POINT_OF_NO_RETURN,
+  GOG_SAVEGAME_TYPE_ENDGAME_SAVE,
+  GOG_SAVEGAME_TYPE_CHECKPOINT
 };
 
 enum gog_GetFileListFailureReason {
-  GOG_GETFILELIST_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_GETFILELIST_FAILURE_REASON_UNAUTHORIZED, ///< Authorization lost.
-  GOG_GETFILELIST_FAILURE_REASON_FORBIDDEN, ///< No access to specified container.
-  GOG_GETFILELIST_FAILURE_REASON_NOT_FOUND, ///< Container not found.
-  GOG_GETFILELIST_FAILURE_REASON_UNAVAILABLE, ///< Service unavailable.
-  GOG_GETFILELIST_FAILURE_REASON_ABORTED, ///< Request aborted.
-  GOG_GETFILELIST_FAILURE_REASON_CONNECTION_FAILURE ///< Unable to communicate with backend services.
+  GOG_GETFILELIST_FAILURE_REASON_UNDEFINED,
+  GOG_GETFILELIST_FAILURE_REASON_UNAUTHORIZED,
+  GOG_GETFILELIST_FAILURE_REASON_FORBIDDEN,
+  GOG_GETFILELIST_FAILURE_REASON_NOT_FOUND,
+  GOG_GETFILELIST_FAILURE_REASON_UNAVAILABLE,
+  GOG_GETFILELIST_FAILURE_REASON_ABORTED,
+  GOG_GETFILELIST_FAILURE_REASON_CONNECTION_FAILURE
 };
 
 enum gog_GetFileFailureReason {
-  GOG_GETFILE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_GETFILE_FAILURE_REASON_UNAUTHORIZED, ///< Authorization lost.
-  GOG_GETFILE_FAILURE_REASON_FORBIDDEN, ///< No access to specified container.
-  GOG_GETFILE_FAILURE_REASON_NOT_FOUND, ///< Container not found.
-  GOG_GETFILE_FAILURE_REASON_UNAVAILABLE, ///< Service unavailable.
-  GOG_GETFILE_FAILURE_REASON_ABORTED, ///< Request aborted.
-  GOG_GETFILE_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
-  GOG_GETFILE_FAILURE_REASON_BUFFER_TOO_SMALL, ///< Buffer passed to ICloudStorage::GetFile() is too small to fit the file content.
-  GOG_GETFILE_FAILURE_REASON_WRITE_FUNC_ERROR ///< Function writeFunc passed to ICloudStorage::GetFile() returned an error.
+  GOG_GETFILE_FAILURE_REASON_UNDEFINED,
+  GOG_GETFILE_FAILURE_REASON_UNAUTHORIZED,
+  GOG_GETFILE_FAILURE_REASON_FORBIDDEN,
+  GOG_GETFILE_FAILURE_REASON_NOT_FOUND,
+  GOG_GETFILE_FAILURE_REASON_UNAVAILABLE,
+  GOG_GETFILE_FAILURE_REASON_ABORTED,
+  GOG_GETFILE_FAILURE_REASON_CONNECTION_FAILURE,
+  GOG_GETFILE_FAILURE_REASON_BUFFER_TOO_SMALL,
+  GOG_GETFILE_FAILURE_REASON_WRITE_FUNC_ERROR
 };
 
 enum gog_PutFileFailureReason {
-  GGOG_PUTFILE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GGOG_PUTFILE_FAILURE_REASON_UNAUTHORIZED, ///< Authorization lost.
-  GGOG_PUTFILE_FAILURE_REASON_FORBIDDEN, ///< No access to specified container.
-  GGOG_PUTFILE_FAILURE_REASON_UNAVAILABLE, ///< Service unavailable.
-  GGOG_PUTFILE_FAILURE_REASON_ABORTED, ///< Request aborted.
-  GGOG_PUTFILE_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
-  GGOG_PUTFILE_FAILURE_REASON_READ_FUNC_ERROR, ///< Function readFunc passed to ICloudStorage::PutFile() returned an error.
-  GGOG_PUTFILE_FAILURE_REASON_QUOTA_EXCEEDED ///< Unable to upload the file because there is no free space on cloud storage.
+  GOG_PUTFILE_FAILURE_REASON_UNDEFINED,
+  GOG_PUTFILE_FAILURE_REASON_UNAUTHORIZED,
+  GOG_PUTFILE_FAILURE_REASON_FORBIDDEN,
+  GOG_PUTFILE_FAILURE_REASON_UNAVAILABLE,
+  GOG_PUTFILE_FAILURE_REASON_ABORTED,
+  GOG_PUTFILE_FAILURE_REASON_CONNECTION_FAILURE,
+  GOG_PUTFILE_FAILURE_REASON_READ_FUNC_ERROR,
+  GOG_PUTFILE_FAILURE_REASON_QUOTA_EXCEEDED
 };
 
 enum gog_DeleteFileFailureReason {
-  GOG_DELETEFILE_FAILURE_REASON_UNDEFINED, ///< Unspecified error.
-  GOG_DELETEFILE_FAILURE_REASON_UNAUTHORIZED, ///< Authorization lost.
-  GOG_DELETEFILE_FAILURE_REASON_FORBIDDEN, ///< No access to specified container.
-  GOG_DELETEFILE_FAILURE_REASON_NOT_FOUND, ///< Container not found.
-  GOG_DELETEFILE_FAILURE_REASON_UNAVAILABLE, ///< Service unavailable.
-  GOG_DELETEFILE_FAILURE_REASON_ABORTED, ///< Request aborted.
-  GOG_DELETEFILE_FAILURE_REASON_CONNECTION_FAILURE, ///< Unable to communicate with backend services.
-  GOG_DELETEFILE_FAILURE_REASON_CONFLICT /// < Expected hash parameter doesn't match the hash in the container.
+  GOG_DELETEFILE_FAILURE_REASON_UNDEFINED,
+  GOG_DELETEFILE_FAILURE_REASON_UNAUTHORIZED,
+  GOG_DELETEFILE_FAILURE_REASON_FORBIDDEN,
+  GOG_DELETEFILE_FAILURE_REASON_NOT_FOUND,
+  GOG_DELETEFILE_FAILURE_REASON_UNAVAILABLE,
+  GOG_DELETEFILE_FAILURE_REASON_ABORTED,
+  GOG_DELETEFILE_FAILURE_REASON_CONNECTION_FAILURE,
+  GOG_DELETEFILE_FAILURE_REASON_CONFLICT
 };
 
 enum gog_ReadPhase {
-  GOG_CHECKSUM_CALCULATING, ///< Checksum calculating phase.
-  GOG_UPLOADING ///< Uploading phase.
+  GOG_CHECKSUM_CALCULATING,
+  GOG_UPLOADING
 };
 
 typedef int (*gog_WriteFunc)(void* userParam, const char* data, int size);
@@ -774,8 +774,8 @@ enum gog_ListenerType {
   GOG_USER_FIND_LISTENER, 
   GOG_NAT_TYPE_DETECTION, 
   GOG_SENT_FRIEND_INVITATION_LIST_RETRIEVE_LISTENER, 
-  GOG_LOBBY_DATA_UPDATE_LISTENER, /// < Used by ILobbyDataUpdateListener.
-  GOG_LOBBY_MEMBER_DATA_UPDATE_LISTENER, /// < Used by ILobbyDataUpdateListener.
+  GOG_LOBBY_DATA_UPDATE_LISTENER,
+  GOG_LOBBY_MEMBER_DATA_UPDATE_LISTENER,
   GOG_USER_INFORMATION_RETRIEVE_LISTENER, 
   GOG_RICH_PRESENCE_RETRIEVE_LISTENER, 
   GOG_GOG_SERVICES_CONNECTION_STATE_LISTENER, 
@@ -789,7 +789,7 @@ enum gog_ListenerType {
   GOG_PLAYFAB_LOGIN_WITH_OPENID_CONNECT, 
   GOG_LISTENER_TYPE_END 
 };
-
+<
 enum gog_FailureReason {
   GOG_BASIC_FAILURE_REASON_UNDEFINED, 
   GOG_BASIC_FAILURE_REASON_CONNECTION_FAILURE 
