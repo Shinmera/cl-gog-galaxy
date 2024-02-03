@@ -27,7 +27,7 @@ extern "C" {
 typedef void* (*gog_GalaxyMalloc)(uint32_t size, char* typeName);
 typedef void* (*gog_GalaxyRealloc)(void* ptr, uint32_t newSize, char* typeName);
 typedef void (*gog_GalaxyFree)(void* ptr);
-GOG_EXPORT void *gog_MakeAllocator(gog_GalaxyMalloc malloc, gog_GalaxyRealloc realloc, gog_GalaxyFree free);
+GOG_EXPORT void* gog_MakeAllocator(gog_GalaxyMalloc malloc, gog_GalaxyRealloc realloc, gog_GalaxyFree free);
 GOG_EXPORT void gog_FreeAllocator(void *allocator);
 
 //// GalaxyThread.h
@@ -40,7 +40,7 @@ struct gog_Thread{
 
 typedef void (*gog_ThreadEntryFunction)(void *user);
 typedef struct gog_Thread* (*gog_ThreadCreationFunction)(gog_ThreadEntryFunction, void *user);
-GOG_EXPORT void *gog_MakeThreadFactory(gog_ThreadCreationFunction creator);
+GOG_EXPORT void* gog_MakeThreadFactory(gog_ThreadCreationFunction creator);
 GOG_EXPORT void gog_FreeThreadFactor(void *factory);
 
 //// GalaxyID.h
@@ -789,13 +789,13 @@ enum gog_ListenerType {
   GOG_PLAYFAB_LOGIN_WITH_OPENID_CONNECT, 
   GOG_LISTENER_TYPE_END 
 };
-<
+
 enum gog_FailureReason {
   GOG_BASIC_FAILURE_REASON_UNDEFINED, 
   GOG_BASIC_FAILURE_REASON_CONNECTION_FAILURE 
 };
 
-GOG_EXPORT struct gog_listener {
+struct gog_listener {
   void *userptr;
   void (*OnAuthSuccess)(void *userptr);
   void (*OnAuthFailure)(void *userptr, enum gog_AuthFailureReason reason);
