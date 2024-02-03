@@ -39,4 +39,38 @@
       (when (gog inetworking-is-p2p-packet-available interface read channel)
         (cffi:mem-ref read :uint32)))))
 
-(define-interface custom-networking gog:custom-networking)
+(defclass connection ()
+  ((id :initarg :id :reader id)))
+
+(defmethod close ((connection connection) &key abort)
+  (declare (ignore abort))
+  (gog:icustom-networking-close-connection (interface 'custom-networking) (id connection)))
+
+(defmethod send-data ((connection connection) data)
+  (cffi:with-pointer-to-vector-data (ptr data)
+    (gog icustom-networking-send-data (interface 'custom-networking) (id connection) ptr (length data))))
+
+(defmethod read-data ((connection connection) data)
+  (cffi:with-pointer-to-vector-data (ptr data)
+    (gog icustom-networking-read-data (interface 'custom-networking) (id connection) ptr (length data))))
+
+(defmethod peek-data ((connection connection) data)
+  (cffi:with-pointer-to-vector-data (ptr data)
+    (gog icustom-networking-peek-data (interface 'custom-networking) (id connection) ptr (length data))))
+
+(defmethod pop-data ((connection connection) size)
+  (gog icustom-networking-pop-data (interface 'custom-networking) (id connection) size))
+
+(defmethod available-data ((connection connection))
+  (gog icustom-networking-get-available-data-size (interface 'custom-networking) (id connection)))
+
+(define-interface custom-networking gog:custom-networking
+  (open-connection (string)
+    (with-listener* (listener)
+          (gog:icustom-networking-open-connection interface string listener)
+      (connection-open-success (r-string id)
+        (when (string= string r-string)
+          (return-from listener (make-instance 'connection :id id))))
+      (connection-open-failure (r-string failure)
+        (when (string= string r-string)
+          (error "Failed to open connection: ~a" failure))))))
