@@ -87,16 +87,26 @@
   (or (gethash name *interface-table*)
       (make-instance name)))
 
-(defmacro define-interface (name init &body methods)
+(defmacro define-interface (name init &rest methods)
   `(progn (defclass ,name (interface) ())
           
           (defmethod allocate-handle ((interface ,name) &key)
             (,init))
 
           ,@(loop for (method args . body) in methods
-                  collect `(defmethod ,method ((interface (eql T)) ,@args)
-                             (,method (interface ',name) ,@(loop for arg in args
-                                                                 unless (find arg LAMBDA-LIST-KEYWORDS)
-                                                                 collect (if (listp arg) (first arg) arg))))
-                  collect `(defmethod ,method ((interface ,name) ,@args)
-                             ,@body))))
+                  append (if (listp method)
+                             `((defmethod ,method (,(first args) (interface (eql T)) ,@(rest args))
+                                 (setf (,(second method) (interface ',name) ,@(loop for arg in (rest args)
+                                                                                    unless (find arg LAMBDA-LIST-KEYWORDS)
+                                                                                    collect (if (listp arg) (first arg) arg)))
+                                       ,(first args)))
+                               (defmethod ,method (,(first args) (interface ,name) ,@(rest args))
+                                 ,@body))
+                             `((defmethod ,method ((interface (eql T)) ,@args)
+                                 (,method (interface ',name) ,@(loop for arg in args
+                                                                     unless (find arg LAMBDA-LIST-KEYWORDS)
+                                                                     collect (if (listp arg) (first arg) arg))))
+                               (defmethod ,method ((interface ,name) ,@args)
+                                 ,@body))))))
+
+(trivial-indent:define-indentation define-interface (6 6 &rest (&whole 2 6 &body)))

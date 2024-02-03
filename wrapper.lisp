@@ -7,13 +7,14 @@
   (:report (lambda (c s) (format s "GOG Galaxy API failed with ~a (~a):~%  ~a"
                                  (name c) (kind c) (message c)))))
 
-(defun check-error ()
+(defun check-error (&optional value)
   (let ((err (gog:get-error)))
-    (unless (cffi:null-pointer-p err)
-      (error 'gog-error
-             :name (gog:ierror-get-name err)
-             :message (gog:ierror-get-msg err)
-             :type (gog:ierror-get-type err)))))
+    (if (cffi:null-pointer-p err)
+        value
+        (error 'gog-error
+               :name (gog:ierror-get-name err)
+               :message (gog:ierror-get-msg err)
+               :type (gog:ierror-get-type err)))))
 
 (defvar *init* NIL)
 
@@ -69,17 +70,9 @@
 
 (define-interface networking gog:networking)
 
-(define-interface stats gog:stats)
-
-(define-interface utils gog:utils)
-
-(define-interface apps gog:apps)
-
 (define-interface storage gog:storage)
 
 (define-interface custom-networking gog:custom-networking)
-
-(define-interface logger gog:logger)
 
 (define-interface telemetry gog:telemetry)
 

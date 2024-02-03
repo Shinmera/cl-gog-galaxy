@@ -12,7 +12,11 @@
                (:file "id")
                (:file "listener")
                (:file "wrapper")
+               (:file "apps")
+               (:file "stats")
+               (:file "utils")
                (:file "documentation"))
   :depends-on (:documentation-utils
                :trivial-features
+               :trivial-indent
                :cffi))
