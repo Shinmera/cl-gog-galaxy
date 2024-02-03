@@ -92,7 +92,7 @@
           
           (defmethod allocate-handle ((interface ,name) &key)
             (,init))
-
+          ;; FIXME: recalls for keyword arguments
           ,@(loop for (method args . body) in methods
                   append (if (listp method)
                              `((defmethod ,method (,(first args) (interface (eql T)) ,@(rest args))
