@@ -1209,7 +1209,7 @@
   (dest :pointer)
   (dest-size :uint32)
   (out-msg-size :pointer)
-  (out-galaxy-id ID)
+  (out-galaxy-id :pointer)
   (channel :uint8))
 
 (cffi:defcfun (inetworking-is-p2p-packet-available "gog_INetworkingIsP2PPacketAvailable") :bool 
@@ -1222,7 +1222,7 @@
   (dest :pointer)
   (dest-size :uint32)
   (out-msg-size :pointer)
-  (out-galaxy-id ID)
+  (out-galaxy-id :pointer)
   (channel :uint8))
 
 (cffi:defcfun (inetworking-pop-p2p-packet "gog_INetworkingPopP2PPacket") :void 

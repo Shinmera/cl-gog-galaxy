@@ -446,9 +446,9 @@ enum gog_ConnectionType {
 };
 
 GOG_EXPORT bool gog_INetworking_SendP2PPacket(gog_Interface networking, gog_ID galaxyID, const void* data, uint32_t dataSize, enum gog_P2PSendType sendType, uint8_t channel);
-GOG_EXPORT bool gog_INetworking_PeekP2PPacket(gog_Interface networking, void* dest, uint32_t destSize, uint32_t* outMsgSize, gog_ID outGalaxyID, uint8_t channel);
+GOG_EXPORT bool gog_INetworking_PeekP2PPacket(gog_Interface networking, void* dest, uint32_t destSize, uint32_t* outMsgSize, gog_ID* outGalaxyID, uint8_t channel);
 GOG_EXPORT bool gog_INetworking_IsP2PPacketAvailable(gog_Interface networking, uint32_t* outMsgSize, uint8_t channel);
-GOG_EXPORT bool gog_INetworking_ReadP2PPacket(gog_Interface networking, void* dest, uint32_t destSize, uint32_t* outMsgSize, gog_ID outGalaxyID, uint8_t channel);
+GOG_EXPORT bool gog_INetworking_ReadP2PPacket(gog_Interface networking, void* dest, uint32_t destSize, uint32_t* outMsgSize, gog_ID* outGalaxyID, uint8_t channel);
 GOG_EXPORT void gog_INetworking_PopP2PPacket(gog_Interface networking, uint8_t channel);
 GOG_EXPORT int gog_INetworking_GetPingWith(gog_Interface networking, gog_ID galaxyID);
 GOG_EXPORT void gog_INetworking_RequestNatTypeDetection(gog_Interface networking);

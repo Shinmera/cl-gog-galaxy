@@ -16,6 +16,7 @@
                (:file "apps")
                (:file "chat")
                (:file "cloud-storage")
+               (:file "networking")
                (:file "stats")
                (:file "user")
                (:file "utils")

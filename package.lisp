@@ -328,11 +328,11 @@
    #:imatchmaking-get-lobby-owner
    #:imatchmaking-send-lobby-message
    #:imatchmaking-get-lobby-message
-   #:inetworking-send-p2-ppacket
-   #:inetworking-peek-p2-ppacket
-   #:inetworking-is-p2-ppacket-available
-   #:inetworking-read-p2-ppacket
-   #:inetworking-pop-p2-ppacket
+   #:inetworking-send-p2p-packet
+   #:inetworking-peek-p2p-packet
+   #:inetworking-is-p2p-packet-available
+   #:inetworking-read-p2p-packet
+   #:inetworking-pop-p2p-packet
    #:inetworking-get-ping-with
    #:inetworking-request-nat-type-detection
    #:inetworking-get-nat-type

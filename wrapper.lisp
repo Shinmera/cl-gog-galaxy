@@ -46,10 +46,6 @@
 
 (define-interface matchmaking gog:matchmaking)
 
-(define-interface networking gog:networking)
-
 (define-interface storage gog:storage)
-
-(define-interface custom-networking gog:custom-networking)
 
 (define-interface telemetry gog:telemetry)
