@@ -559,7 +559,7 @@
 (cffi:defcfun (ierror-get-msg "gog_IErrorGetMsg") :string 
   (error interface))
 
-(cffi:defcfun (ierror-get-type "gog_IErrorGetType") (:enum error-type) 
+(cffi:defcfun (ierror-get-type "gog_IErrorGetType") error-type
   (error interface))
 
 (cffi:defcfun (get-error "gog_GetError") interface)
@@ -778,7 +778,7 @@
   (buffer :string)
   (buffer-length :uint32))
 
-(cffi:defcfun (ifriends-get-persona-state "gog_IFriendsGetPersonaState") (:enum persona-state) 
+(cffi:defcfun (ifriends-get-persona-state "gog_IFriendsGetPersonaState") persona-state 
   (friend interface))
 
 (cffi:defcfun (ifriends-get-friend-persona-name "gog_IFriendsGetFriendPersonaName") :string 
@@ -791,38 +791,38 @@
   (buffer :string)
   (buffer-length :uint32))
 
-(cffi:defcfun (ifriends-get-friend-persona-state "gog_IFriendsGetFriendPersonaState") (:enum persona-state) 
+(cffi:defcfun (ifriends-get-friend-persona-state "gog_IFriendsGetFriendPersonaState") persona-state 
   (friend interface)
   (user-id ID))
 
 (cffi:defcfun (ifriends-get-friend-avatar-url "gog_IFriendsGetFriendAvatarUrl") :string 
   (friend interface)
   (user-id ID)
-  (avatar-type (:enum avatar-type)))
+  (avatar-type avatar-type))
 
 (cffi:defcfun (ifriends-get-friend-avatar-url-copy "gog_IFriendsGetFriendAvatarUrlCopy") :void 
   (friend interface)
   (user-id ID)
-  (avatar-type (:enum avatar-type))
+  (avatar-type avatar-type)
   (buffer :string)
   (buffer-length :uint32))
 
 (cffi:defcfun (ifriends-get-friend-avatar-image-id "gog_IFriendsGetFriendAvatarImageID") :uint32 
   (friend interface)
   (user-id ID)
-  (avatar-type (:enum avatar-type)))
+  (avatar-type avatar-type))
 
 (cffi:defcfun (ifriends-get-friend-avatar-image-rgba "gog_IFriendsGetFriendAvatarImageRGBA") :void 
   (friend interface)
   (user-id ID)
-  (avatar-type (:enum avatar-type))
+  (avatar-type avatar-type)
   (buffer :pointer)
   (buffer-length :uint32))
 
 (cffi:defcfun (ifriends-is-friend-avatar-image-rgbaavailable "gog_IFriendsIsFriendAvatarImageRGBAAvailable") :bool 
   (friend interface)
   (user-id ID)
-  (avatar-type (:enum avatar-type)))
+  (avatar-type avatar-type))
 
 (cffi:defcfun (ifriends-request-friend-list "gog_IFriendsRequestFriendList") :void 
   (friend interface)
@@ -995,10 +995,10 @@
 
 (cffi:defcfun (imatchmaking-create-lobby "gog_IMatchmakingCreateLobby") :void 
   (matchmaking interface)
-  (lobby-type (:enum lobby-type))
+  (lobby-type lobby-type)
   (max-members :uint32)
   (joinable :bool)
-  (lobby-topology-type (:enum lobby-topology-type))
+  (lobby-topology-type lobby-topology-type)
   (created interface)
   (entered interface))
 
@@ -1015,13 +1015,13 @@
   (matchmaking interface)
   (key-to-match :string)
   (value-to-match :string)
-  (comparison-type (:enum lobby-comparison-type)))
+  (comparison-type lobby-comparison-type))
 
 (cffi:defcfun (imatchmaking-add-request-lobby-list-numerical-filter "gog_IMatchmakingAddRequestLobbyListNumericalFilter") :void 
   (matchmaking interface)
   (key-to-match :string)
   (value-to-match :int32)
-  (comparison-type (:enum lobby-comparison-type)))
+  (comparison-type lobby-comparison-type))
 
 (cffi:defcfun (imatchmaking-add-request-lobby-list-near-value-filter "gog_IMatchmakingAddRequestLobbyListNearValueFilter") :void 
   (matchmaking interface)
@@ -1064,10 +1064,10 @@
 (cffi:defcfun (imatchmaking-set-lobby-type "gog_IMatchmakingSetLobbyType") :void 
   (matchmaking interface)
   (lobby-id ID)
-  (lobby-type (:enum lobby-type))
+  (lobby-type lobby-type)
   (listener interface))
 
-(cffi:defcfun (imatchmaking-get-lobby-type "gog_IMatchmakingGetLobbyType") (:enum lobby-type) 
+(cffi:defcfun (imatchmaking-get-lobby-type "gog_IMatchmakingGetLobbyType") lobby-type 
   (matchmaking interface)
   (lobby-id ID))
 
@@ -1184,15 +1184,15 @@
   (msg :string)
   (msg-length :uint32))
 
-(cffi:defcfun (inetworking-send-p2-ppacket "gog_INetworkingSendP2PPacket") :bool 
+(cffi:defcfun (inetworking-send-p2p-packet "gog_INetworkingSendP2PPacket") :bool 
   (networking interface)
   (galaxy-id ID)
   (data :pointer)
   (data-size :uint32)
-  (send-type (:enum p2-psend-type))
+  (send-type p2p-send-type)
   (channel :uint8))
 
-(cffi:defcfun (inetworking-peek-p2-ppacket "gog_INetworkingPeekP2PPacket") :bool 
+(cffi:defcfun (inetworking-peek-p2p-packet "gog_INetworkingPeekP2PPacket") :bool 
   (networking interface)
   (dest :pointer)
   (dest-size :uint32)
@@ -1200,12 +1200,12 @@
   (out-galaxy-id ID)
   (channel :uint8))
 
-(cffi:defcfun (inetworking-is-p2-ppacket-available "gog_INetworkingIsP2PPacketAvailable") :bool 
+(cffi:defcfun (inetworking-is-p2p-packet-available "gog_INetworkingIsP2PPacketAvailable") :bool 
   (networking interface)
   (out-msg-size :pointer)
   (channel :uint8))
 
-(cffi:defcfun (inetworking-read-p2-ppacket "gog_INetworkingReadP2PPacket") :bool 
+(cffi:defcfun (inetworking-read-p2p-packet "gog_INetworkingReadP2PPacket") :bool 
   (networking interface)
   (dest :pointer)
   (dest-size :uint32)
@@ -1213,7 +1213,7 @@
   (out-galaxy-id ID)
   (channel :uint8))
 
-(cffi:defcfun (inetworking-pop-p2-ppacket "gog_INetworkingPopP2PPacket") :void 
+(cffi:defcfun (inetworking-pop-p2p-packet "gog_INetworkingPopP2PPacket") :void 
   (networking interface)
   (channel :uint8))
 
@@ -1224,10 +1224,10 @@
 (cffi:defcfun (inetworking-request-nat-type-detection "gog_INetworkingRequestNatTypeDetection") :void 
   (networking interface))
 
-(cffi:defcfun (inetworking-get-nat-type "gog_INetworkingGetNatType") (:enum nat-type) 
+(cffi:defcfun (inetworking-get-nat-type "gog_INetworkingGetNatType") nat-type 
   (networking interface))
 
-(cffi:defcfun (inetworking-get-connection-type "gog_INetworkingGetConnectionType") (:enum connection-type) 
+(cffi:defcfun (inetworking-get-connection-type "gog_INetworkingGetConnectionType") connection-type 
   (networking interface)
   (user-id ID))
 
@@ -1327,11 +1327,11 @@
   (buffer :string)
   (buffer-length :uint32))
 
-(cffi:defcfun (istats-get-leaderboard-sort-method "gog_IStatsGetLeaderboardSortMethod") (:enum leaderboard-sort-method) 
+(cffi:defcfun (istats-get-leaderboard-sort-method "gog_IStatsGetLeaderboardSortMethod") leaderboard-sort-method 
   (stats interface)
   (name :string))
 
-(cffi:defcfun (istats-get-leaderboard-display-type "gog_IStatsGetLeaderboardDisplayType") (:enum leaderboard-display-type) 
+(cffi:defcfun (istats-get-leaderboard-display-type "gog_IStatsGetLeaderboardDisplayType") leaderboard-display-type 
   (stats interface)
   (name :string))
 
@@ -1403,8 +1403,8 @@
   (stats interface)
   (name :string)
   (display-name :string)
-  (sort-method (:enum leaderboard-sort-method))
-  (display-type (:enum leaderboard-display-type))
+  (sort-method leaderboard-sort-method)
+  (display-type leaderboard-display-type)
   (listener interface))
 
 (cffi:defcfun (istats-request-user-time-played "gog_IStatsRequestUserTimePlayed") :void 
@@ -1448,14 +1448,14 @@
 (cffi:defcfun (iutils-is-overlay-visible "gog_IUtilsIsOverlayVisible") :bool 
   (utils interface))
 
-(cffi:defcfun (iutils-get-overlay-state "gog_IUtilsGetOverlayState") (:enum overlay-state) 
+(cffi:defcfun (iutils-get-overlay-state "gog_IUtilsGetOverlayState") overlay-state 
   (utils interface))
 
 (cffi:defcfun (iutils-disable-overlay-popups "gog_IUtilsDisableOverlayPopups") :void 
   (utils interface)
   (popup-group :string))
 
-(cffi:defcfun (iutils-get-gog-services-connection-state "gog_IUtilsGetGogServicesConnectionState") (:enum services-connection-state) 
+(cffi:defcfun (iutils-get-gog-services-connection-state "gog_IUtilsGetGogServicesConnectionState") services-connection-state 
   (utils interface))
 
 (cffi:defcfun (iapps-is-dlc-installed "gog_IAppsIsDlcInstalled") :bool 
@@ -1721,7 +1721,7 @@
   (read-func :pointer)
   (rewind-func :pointer)
   (listener interface)
-  (savegame-type (:enum savegame-type))
+  (savegame-type savegame-type)
   (time-stamp :uint32)
   (hash :string))
 
@@ -1732,7 +1732,7 @@
   (buffer :pointer)
   (buffer-length :uint32)
   (listener interface)
-  (savegame-type (:enum savegame-type))
+  (savegame-type savegame-type)
   (time-stamp :uint32)
   (hash :string))
 
@@ -1766,12 +1766,12 @@
 
 (cffi:defcfun (ilistener-registrar-register "gog_IListenerRegistrarRegister") :void 
   (registrar interface)
-  (type (:enum listener-type))
+  (type listener-type)
   (listener interface))
 
 (cffi:defcfun (ilistener-registrar-unregister "gog_IListenerRegistrarUnregister") :void 
   (registrar interface)
-  (type (:enum listener-type))
+  (type listener-type)
   (listener interface))
 
 (cffi:defcfun (listener-registrar "gog_ListenerRegistrar") interface)
