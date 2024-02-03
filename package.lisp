@@ -1,6 +1,7 @@
 (defpackage #:org.shirakumo.fraf.gog-galaxy.cffi
   (:use #:cl)
   (:export
+   #:galaxy
    #:id-type
    #:error-type
    #:auth-failure-reason
