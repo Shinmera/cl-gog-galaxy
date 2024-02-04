@@ -45,7 +45,7 @@
   :offline
   :online)
 
-(cffi:defcenum persona-state-change
+(cffi:defbitfield persona-state-change
   (:none #x0000)
   (:name #x0001)
   (:avatar #x0002)
@@ -365,10 +365,15 @@
   :undefined
   :connection-failure)
 
+(cffi:defbitfield avatar-criteria
+  :none
+  :small
+  :medium
+  :large)
+
 (cffi:defctype id :uint64)
 (cffi:defctype interface :pointer)
 (cffi:defctype session-id :uint64)
-(cffi:defctype avatar-criteria :uint32)
 (cffi:defctype chat-room-id :uint64)
 (cffi:defctype chat-message-id :uint64)
 (cffi:defctype notification-id :uint64)

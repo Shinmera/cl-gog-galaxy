@@ -42,6 +42,4 @@
 (defun process-data ()
   (gog process-data))
 
-(define-interface friends gog:friends)
-
 (define-interface matchmaking gog:matchmaking)
