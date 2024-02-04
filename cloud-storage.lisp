@@ -18,7 +18,7 @@
        (cffi:foreign-funcall "fclose" :pointer ,file))))
 
 (define-interface cloud-storage gog:cloud-storage
-  (get-file (name container path)
+  (get-file (path &key (name (file-namestring path)) (container "default"))
     (with-file (file path "wb")
       (with-listener* (listener)
             (gog icloud-storage-get-file-callback interface container name file (cffi:callback write-file) listener)
@@ -29,7 +29,7 @@
           (when (and (string= container r-container) (string= name r-name))
             (error "Failed to fetch file: ~a" failure))))))
 
-  (list-files (container)
+  (list-files (&key (container "default"))
     (with-listener* (listener)
           (gog icloud-storage-get-file-list interface container listener)
       (get-file-list-success (count quota quota-used)
@@ -40,7 +40,7 @@
       (get-file-list-failure (failure)
         (error "Failed to fetch file list: ~a" failure))))
 
-  (put-file (path container &key (name (file-namestring path)) (type :undefined) (hash (cffi:null-pointer)))
+  (put-file (path &key (container "default") (name (file-namestring path)) (type :undefined) (hash (cffi:null-pointer)))
     (with-file (file path "rb")
       (with-listener* (listener)
             (gog icloud-storage-put-file-callback interface container name file (cffi:callback read-file) (cffi:callback rewind-file) listener type
@@ -52,7 +52,7 @@
           (when (and (string= container r-container) (string= name r-name))
             (error "Failed to put file: ~a" failure))))))
 
-  (remove-file (name container &key (hash (cffi:null-pointer)))
+  (remove-file (name &key (container "default") (hash (cffi:null-pointer)))
     (with-listener* (listener)
           (gog icloud-storage-delete-file interface container name listener hash)
       (put-file-success (r-container r-name)

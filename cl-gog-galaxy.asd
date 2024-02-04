@@ -18,6 +18,7 @@
                (:file "cloud-storage")
                (:file "networking")
                (:file "stats")
+               (:file "storage")
                (:file "telemetry")
                (:file "user")
                (:file "utils")

@@ -45,5 +45,3 @@
 (define-interface friends gog:friends)
 
 (define-interface matchmaking gog:matchmaking)
-
-(define-interface storage gog:storage)

@@ -1,0 +1,77 @@
+(in-package #:org.shirakumo.fraf.gog-galaxy)
+
+(defclass shared-file ()
+  ((id :initarg :id :reader id)))
+
+(defmethod file-name ((file shared-file))
+  (gog istorage-get-shared-file-name (interface 'storage) (id file)))
+
+(defmethod file-size ((file shared-file))
+  (gog istorage-get-shared-file-size (interface 'storage) (id file)))
+
+(defmethod owner ((file shared-file))
+  (ensure-user (gog istorage-get-shared-file-owner (interface 'storage) (id file))))
+
+(defmethod get-file ((file shared-file) (path pathname) &key)
+  (let ((interface (interface 'storage))
+        (id (id file)))
+    (with-open-file (stream path :direction :output :if-exists :supersede :element-type '(unsigned-byte 8))
+      (with-listener* (listener)
+            (gog istorage-download-shared-file interface id listener)
+        (shared-file-download-success (r-id name)
+          (when (= id r-id)
+            (let ((buf (make-array 4096 :element-type '(unsigned-byte 8)))
+                  (max (file-size file)))
+              (cffi:with-pointer-to-vector-data (ptr buf)
+                (loop for start from 0 below max
+                      for read = (gog:istorage-shared-file-read interface id ptr 4096 start)
+                      do (incf start read)
+                         (write-sequence buf stream :end read))))
+            (return-from listener path)))
+        (shared-file-download-failure (r-id failure)
+          (when (= id r-id)
+            (error "Failed to download file: ~a" failure)))))))
+
+(define-interface storage gog:storage
+  (put-file ((path pathname) &key (name (file-namestring path)))
+    (with-open-file (stream path :direction :input :element-type '(unsigned-byte 8))
+      (let* ((size (file-length stream))
+             (buf (make-array size :element-type '(unsigned-byte 8))))
+        (read-sequence buf stream)
+        (cffi:with-pointer-to-vector-data (ptr buf)
+          (gog istorage-file-write interface name ptr size))))
+    path)
+
+  (get-file ((path pathname) &key (name (file-namestring path)))
+    (let* ((size (gog istorage-get-file-size interface name))
+           (buf (make-array size :element-type '(unsigned-byte 8))))
+      (cffi:with-pointer-to-vector-data (ptr buf)
+        (when (< (gog istorage-file-read interface name buf size) size)
+          (error "Failed to read file: too small!")))
+      (with-open-file (stream path :direction :output :if-exists :supersede :element-type '(unsigned-byte 8))
+        (write-sequence buf stream))
+      (values path (to-universal-time (gog istorage-get-file-timestamp interface name)))))
+
+  (list-files (&key)
+    (loop for i from 0 below (gog istorage-get-file-count interface)
+          collect (gog istorage-get-file-name-by-index interface i)))
+
+  (file-exists-p (name)
+    (gog istorage-file-exists interface name))
+
+  (remove-file (name &key)
+    (gog istorage-file-delete interface name))
+
+  (share-file (name)
+    (with-listener* (listener)
+          (gog:istorage-file-share interface name listener)
+      (file-share-success (r-name id)
+        (when (string= name r-name)
+          (return-from listener (make-instance 'shared-file :id id))))
+      (file-share-failure (r-name failure)
+        (when (string= name r-name)
+          (error "Failed to share file: ~a" failure)))))
+
+  (list-shared-files ()
+    (loop for i from 0 below (gog istorage-get-downloaded-shared-file-count interface)
+          collect (make-instance 'shared-file :id (gog istorage-get-downloaded-shared-file-by-index interface i)))))
