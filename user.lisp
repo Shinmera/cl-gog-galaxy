@@ -1,6 +1,6 @@
 (in-package #:org.shirakumo.fraf.gog-galaxy)
 
-(define-interface user gog:user
+(define-interface users gog:user
   (signed-in-p ()
     (gog iuser-signed-in handle))
 

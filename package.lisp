@@ -730,7 +730,7 @@
    #:send-event)
   ;; user.lisp
   (:export
-   #:user
+   #:users
    #:signed-in-p
    #:sign-in
    #:sign-out
