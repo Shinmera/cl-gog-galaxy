@@ -1,0 +1,47 @@
+## About cl-gog-galaxy
+This is a wrapper library for the "Good Old Games" ''(GOG) Galaxy SDK''(https://docs.gog.com/galaxyapi/index.html). It provides both a C wrapper library around the C++ library the SDK provides, a low-level direct bindings wrapper to that, and a high-level convenient-to-use Lisp library.
+
+Currently the Galaxy API is only available on Windows and MacOS.
+
+## How To
+Load cl-gog-galaxy and call ``init`` with the API tokens you were provided in the backend. If this returns true, the initialisation succeeded and you can use the API. If it returns NIL, it did not and you cannot use any of the API functions. You may call ``initialized-p`` at any time to check for this.
+
+If successfully initialised you should call ``process-data`` in regular intervals to allow the GOG API time to process things. Various calls in the high-level wrapper will also spin on ``process-data`` automatically to retrieve results synchronously.
+
+When you are done with the API you should call ``shutdown``.
+
+## Wrapper Objects
+The API provides several wrapper objects that neatly encapsulate API resources:
+
+- ``user`` (IUser, IFriends)
+- ``lobby`` (IMatchmaking)
+- ``chat-message`` (IChat)
+- ``chatroom`` (IChat)
+- ``connection`` (ICustomNetworking)
+- ``achievement`` (IStats)
+- ``shared-file`` (IStorage)
+
+As well as wrappers for each of the interfaces:
+
+- ``apps``
+- ``chat``
+- ``cloud-storage``
+- ``friends``
+- ``networking``
+- ``custom-networking``
+- ``stats``
+- ``storage``
+- ``telemetry``
+- ``users``
+- ``utils``
+
+Every one of the interface functions accepts the interface instance as the first argument, or ``T`` which fetches the interface instance for you. If you want to get access to the interface instance, you can use the ``interface`` function.
+
+Lifetimes of these objects are handled for you, though it is an error to access any instance of the wrapper objects after ``shutdown`` was called.
+
+## Event Listeners
+To register for events, you'll most likely want to use ``define-global-listener``. That way you can react to any event that might be going through the GOG API after it's been initialised. The listener is also automatically managed for you during init and shutdown. You must pass which events you want to listen for, and define methods for each of the events to actually handle them.
+
+You can also create dynamic listeners with ``with-listener``/``with-listener*``. This is useful if you only need a listener for a specific API call, though the wrapper should already catch most of those cases for you.
+
+When a listener receives an event it has no specific handler for, a warning is signalled.
