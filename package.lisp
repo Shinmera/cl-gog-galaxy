@@ -702,11 +702,25 @@
    #:visible-p
    #:display-name
    #:description
+   #:leaderboard-entry
+   #:leaderboard
+   #:rank
+   #:score
+   #:details
+   #:user
+   #:leaderboard
+   #:name
+   #:display-name
+   #:sort-method
+   #:display-type
+   #:update
+   #:list-entries
    #:stats
    #:achievement
    #:stat
    #:store
-   #:reset)
+   #:reset
+   #:find-leaderboard)
   ;; storage.lisp
   (:export
    #:shared-file
