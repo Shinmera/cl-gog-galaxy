@@ -595,7 +595,7 @@
   (:export
    #:init
    #:shutdown
-   #:inithialized-p
+   #:initialized-p
    #:process-data)
   ;; apps.lisp
   (:export
