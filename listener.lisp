@@ -1,10 +1,15 @@
 (in-package #:org.shirakumo.fraf.gog-galaxy)
 
 (defvar *callback-funs* (make-hash-table :test 'eql))
+(defvar *global-listeners* (make-hash-table :test 'eql))
 (defvar *listener-timeout* 10)
 
 (defclass listener (c-registered-object)
-  ())
+  ((listen-on :initarg :listen-on :initform NIL :reader listen-on)))
+
+(defmethod initialize-instance :after ((listener listener) &key)
+  (dolist (event (listen-on listener))
+    (register-for event listener)))
 
 (defmethod allocate-handle ((listener listener) &key)
   (cffi:with-foreign-object (listener '(:struct gog:listener))
@@ -14,7 +19,71 @@
     (gog:make-listener listener)))
 
 (defmethod free-handle-function ((listener listener) handle)
-  (lambda () (gog:free-listener handle)))
+  (let ((listen-on (listen-on listener))
+        (registrar (gog:listener-registrar)))
+    (lambda ()
+      (dolist (event listen-on)
+        (gog:ilistener-registrar-unregister registrar event handle))
+      (gog:free-listener handle))))
+
+(defmethod register-for ((events list) (listener listener))
+  (dolist (event events events)
+    (register-for event listener)))
+
+(defmethod register-for ((event symbol) (listener listener))
+  (unless (member event (listen-on listener))
+    (gog ilistener-registrar-register (gog:listener-registrar) event (handle listener))
+    (push event (slot-value listener 'listen-on))))
+
+(defmethod unregister-from ((events (eql T)) (listener listener))
+  (unregister-from (listen-on listener) listener))
+
+(defmethod unregister-from ((events list) (listener listener))
+  (dolist (event events events)
+    (unregister-from event listener)))
+
+(defmethod unregister-from ((event symbol) (listener listener))
+  (when (member event (listen-on listener))
+    (gog ilistener-registrar-unregister (gog:listener-registrar) event (handle listener))
+    (setf (slot-value listener 'listen-on) (remove event (slot-value listener 'listen-on)))))
+
+(defclass global-listener (listener)
+  ())
+
+(defmethod initialize-instance :before ((listener global-listener) &key)
+  (when (gethash (type-of listener) *global-listeners*)
+    (error "An instance of ~s already exists!" (type-of listener))))
+
+(defmethod initialize-instance :after ((listener global-listener) &key)
+  (setf (gethash (type-of listener) *global-listeners*) listener))
+
+(defmethod register-for ((events (eql T)) (listener global-listener))
+  (register-for (listen-on listener) listener))
+
+(defmethod free-handle-function ((listener global-listener) handle)
+  (let ((fun (call-next-method)))
+    (lambda ()
+      (setf (gethash (type-of listener) *global-listeners*) NIL)
+      (funcall fun))))
+
+(defmacro define-global-listener (name types &body handlers)
+  `(progn
+     (unless (gethash name *global-listeners*)
+       (setf (gethash name *global-listeners*) NIL))
+
+     (defclass ,name (listener)
+       ())
+
+     (defmethod listen-on ((listener ,name))
+       ',(etypecase types
+           ((eql T) (cffi:foreign-enum-keyword-list 'gog:listener-type))
+           (keyword (list types))
+           (list types)))
+
+     ,@(loop for (name args . body) in handlers
+             collect `(defmethod ,name ((interface ,name) ,@args)
+                        (let ((handle (handle interface)))
+                          ,@body)))))
 
 (defclass dynamic-listener (listener)
   ((thunktable :initform (make-hash-table :test 'eq) :accessor thunktable)))

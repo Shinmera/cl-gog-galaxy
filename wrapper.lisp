@@ -23,13 +23,19 @@
         (setf (gog:init-option-host options) (or host (cffi:null-pointer)))
         (setf (gog:init-option-port options) (or port 0))
         (gog init options)
-        (setf *init* T))))
+        (setf *init* T)))
+    (loop for class being the hash-keys of *global-listeners* using (hash-value instance)
+          do (if instance
+                 (register-for T instance)
+                 (make-instance class))))
   #-(or windows darwin)
   NIL)
 
 (defun shutdown (&key preserve-static-objects)
   (when *init*
     (cffi:with-foreign-object (options '(:struct gog:shutdown-options))
+      (loop for v being the hash-values of *global-listeners*
+            do (when v (free v)))
       (setf (gog:shutdown-options-preserve-static-objects options) preserve-static-objects)
       (gog shutdown-ex options)
       (clrhash *interface-table*)
