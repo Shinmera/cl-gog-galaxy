@@ -2,6 +2,7 @@
   (:use #:cl)
   (:export
    #:galaxy
+   #:galaxy-c
    #:id-type
    #:error-type
    #:auth-failure-reason

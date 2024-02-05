@@ -12,6 +12,8 @@
                (pathname (uiop:native-namestring path)))))
       (unless (cffi:foreign-library-loaded-p 'gog:galaxy)
         (cffi:load-foreign-library 'gog:galaxy))
+      (unless (cffi:foreign-library-loaded-p 'gog:galaxy-c)
+        (cffi:load-foreign-library 'gog:galaxy-c))
       (cffi:with-foreign-object (options '(:struct gog:init-options))
         (setf (gog:init-options-client-id options) client-id)
         (setf (gog:init-options-client-secret options) client-secret)

@@ -5,6 +5,12 @@
 (pushnew *static* cffi:*foreign-library-directories*)
 
 (cffi:define-foreign-library galaxy
+  (:darwin (:or "libGalaxy64.dylib"))
+  (:linux (:or "libGalaxy64.so"))
+  (:windows (:or "Galaxy64.dll"))
+  (T (:default "Galaxy64")))
+
+(cffi:define-foreign-library galaxy-c
   (:darwin (:or "mac-amd64-galaxy-c.dylib"))
   (:linux (:or "lin-amd64-galaxy-c.so"))
   (:windows (:or "win-amd64-galaxy-c.dll"))
