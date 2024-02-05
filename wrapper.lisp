@@ -37,9 +37,10 @@
       (loop for v being the hash-values of *global-listeners*
             do (when v (free v)))
       (setf (gog:shutdown-options-preserve-static-objects options) preserve-static-objects)
-      (gog shutdown-ex options)
+      (loop for v being the hash-values of *c-object-table*
+            do (free v))
       (clrhash *interface-table*)
-      (clrhash *c-object-table*)
+      (gog shutdown-ex options)
       (setf *init* NIL))))
 
 (defun initialized-p ()
