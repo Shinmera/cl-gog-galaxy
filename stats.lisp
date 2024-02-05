@@ -28,19 +28,41 @@
 
 (define-interface stats gog:stats
   (achievement (name &optional (user T))
-    (cffi:with-foreign-objects ((unlocked-p :bool) (unlock-time :uint32))
-      (gog istats-get-achievement handle name unlocked-p unlock-time (id (ensure-user user)))
-      (make-instance 'achievement :name name :achieved-p (cffi:mem-ref unlocked-p :bool))))
+    (let ((user (id (ensure-user user))))
+      (with-listener* (listener)
+            (gog:istats-request-user-stats-and-achievements handle user listener)
+        (user-stats-and-achievements-retrieve-success (r-user)
+          (when (= user (id r-user))
+            (cffi:with-foreign-objects ((unlocked-p :bool) (unlock-time :uint32))
+              (gog istats-get-achievement handle name unlocked-p unlock-time (id (ensure-user user)))
+              (return-from listener
+                (make-instance 'achievement :name name :achieved-p (cffi:mem-ref unlocked-p :bool))))))
+        (user-stats-and-achievements-retrieve-failure (r-user failure)
+          (when (= user (id r-user)) (gog-error failure))))))
 
   (stat (name &optional (user T))
-    (gog istats-get-stat-float handle name (id (ensure-user user))))
+    (let ((user (id (ensure-user user))))
+      (with-listener* (listener)
+            (gog:istats-request-user-stats-and-achievements handle user listener)
+        (user-stats-and-achievements-retrieve-success (r-user)
+          (when (= user (id r-user))
+            (return-from listener
+              (gog istats-get-stat-float handle name (id (ensure-user user))))))
+        (user-stats-and-achievements-retrieve-failure (r-user failure)
+          (when (= user (id r-user)) (gog-error failure))))))
 
   ((setf stat) (value name)
     (gog istats-set-stat-float handle name (float value 0f0))
     value)
 
   (store ()
-    (gog istats-store-stats-and-achievements handle (cffi:null-pointer)))
+    (with-listener* (listener)
+          (gog istats-store-stats-and-achievements handle listener)
+      (user-stats-and-achievements-store-success () (return-from listener T))
+      (user-stats-and-achievements-store-failure (failure) (gog-error failure))))
 
   (reset ()
-    (gog istats-reset-stats-and-achievements handle (cffi:null-pointer))))
+    (with-listener* (listener)
+          (gog istats-reset-stats-and-achievements handle listener)
+      (user-stats-and-achievements-store-success () (return-from listener T))
+      (user-stats-and-achievements-store-failure (failure) (gog-error failure)))))
