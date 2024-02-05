@@ -73,4 +73,4 @@
           (return-from listener (make-instance 'connection :id id))))
       (connection-open-failure (r-string failure)
         (when (string= string r-string)
-          (error "Failed to open connection: ~a" failure))))))
+          (gog-error failure))))))

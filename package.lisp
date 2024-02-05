@@ -457,7 +457,7 @@
    #:gog-error
    #:name
    #:message
-   #:type
+   #:kind
    #:check-error)
   ;; c-object.lisp
   (:export

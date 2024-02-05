@@ -28,7 +28,7 @@
       (user-information-retrieve-success (r-user)
         (when (eq user r-user) (return-from listener)))
       (user-information-retrieve-failure (r-user failure)
-        (when (eq user r-user) (error "Failed to get user avatar: ~a" failure)))))
+        (when (eq user r-user) (gog-error failure)))))
   (unless buffer
     (setf buffer (make-array (* 512 512 4) :element-type '(unsigned-byte 8))))
   (cffi:with-pointer-to-vector-data (ptr buffer)
@@ -41,7 +41,7 @@
     (friend-invitation-send-success (r-user)
       (when (eq user r-user) (return-from listener user)))
     (friend-invitation-send-failure (r-user failure)
-      (when (eq user r-user) (error "Failed to send friend request: ~a" failure)))))
+      (when (eq user r-user) (gog-error failure)))))
 
 (defmethod unfriend ((user user))
   (with-listener* (listener)
@@ -49,7 +49,7 @@
     (friend-delete-success (r-user)
       (when (eq user r-user) (return-from listener user)))
     (friend-delete-failure (r-user failure)
-      (when (eq user r-user) (error "Failed to delete friend: ~a" failure)))))
+      (when (eq user r-user) (gog-error failure)))))
 
 (defmethod rich-presence ((user user) &optional key)
   (let ((interface (handle 'friends)))
@@ -64,7 +64,7 @@
                     for val = (gog ifriends-get-rich-presence interface key (id user))
                     collect (cons key val)))))
       (rich-presence-retrieve-failure (r-user failure)
-        (when (eq user r-user) (error "Failed to retrieve rich presence: ~a" failure))))))
+        (when (eq user r-user) (gog-error failure))))))
 
 (defmethod invite ((user user) connection-string)
   (with-listener* (listener)
@@ -74,7 +74,7 @@
         (return-from listener user)))
     (invitation-send-failure (r-user r-connection failure)
       (when (and (eq user r-user) (string= connection-string r-connection))
-        (error "Failed to send invite: ~a" failure)))))
+        (gog-error failure)))))
 
 (defclass friend-request ()
   ((id :initarg :id :reader id)
@@ -86,7 +86,7 @@
     (friend-invitation-respond-to-success (user accept)
       (when (= (id user) (id request)) (return-from listener user)))
     (friend-invitation-respond-to-failure (user failure)
-      (when (= (id user) (id request)) (error "Failed to accept friend request: ~a" failure)))))
+      (when (= (id user) (id request)) (gog-error failure)))))
 
 (defmethod reject ((request friend-request))
   (with-listener* (listener)
@@ -94,7 +94,7 @@
     (friend-invitation-respond-to-success (user accept)
       (when (= (id user) (id request)) (return-from listener user)))
     (friend-invitation-respond-to-failure (user failure)
-      (when (= (id user) (id request)) (error "Failed to reject friend request: ~a" failure)))))
+      (when (= (id user) (id request)) (gog-error failure)))))
 
 (define-interface friends gog:friends
   (default-avatar-sizes ()
@@ -111,7 +111,7 @@
         (loop for i from 0 below (gog ifriends-get-friend-count handle)
               collect (ensure-user (gog ifriends-get-friend-by-index handle i))))
       (friend-list-retrieve-failure (failure)
-        (error "Failed to retrieve friend list: ~a" failure))))
+        (gog-error failure))))
 
   (list-friend-requests ()
     (with-listener* (listener)
@@ -123,7 +123,7 @@
                         (make-instance 'friend-request :id (cffi::mem-ref id 'gog:id)
                                                        :send-time (to-universal-time (cffi:mem-ref time :uint32))))))
       (friend-invitation-list-retrieve-failure (failure)
-        (error "Failed to retrieve friend request list: ~a" failure))))
+        (gog-error failure))))
 
   (rich-presence (&optional key)
     (rich-presence (ensure-user T) key))
@@ -136,7 +136,7 @@
       (rich-presence-change-success ()
         (return-from listener value))
       (rich-presence-change-failure (failure)
-        (error "Failed to update rich presence: ~a" failure))))
+        (gog-error failure))))
 
   (find-user (name)
     (with-listener* (listener)
@@ -144,7 +144,7 @@
       (user-find-success (r-name user)
         (when (string= name r-name) (return-from listener user)))
       (user-find-failure (r-name failure)
-        (when (string= name r-name) (error "Failed to find user: ~a" failure)))))
+        (when (string= name r-name) (gog-error failure)))))
 
   (show-invite-overlay (connection-string)
     (gog ifriends-show-overlay-invite-dialog handle connection-string)))

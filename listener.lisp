@@ -5,7 +5,7 @@
 (defvar *listener-timeout* 10)
 
 (defclass listener (c-registered-object)
-  ((listen-on :initarg :listen-on :initform NIL :reader listen-on)))
+  ((listen-on :initarg :register-for :initform NIL :reader listen-on)))
 
 (defmethod initialize-instance :after ((listener listener) &key)
   (dolist (event (listen-on listener))
@@ -81,9 +81,8 @@
            (list types)))
 
      ,@(loop for (name args . body) in handlers
-             collect `(defmethod ,name ((interface ,name) ,@args)
-                        (let ((handle (handle interface)))
-                          ,@body)))))
+             collect `(defmethod ,name ((listener ,name) ,@args)
+                        ,@body))))
 
 (defclass dynamic-listener (listener)
   ((thunktable :initform (make-hash-table :test 'eq) :accessor thunktable)))
@@ -107,13 +106,14 @@
 (trivial-indent:define-indentation with-listener (6 6 &rest (&whole 2 6 &body)))
 
 (defmacro with-listener* ((listener &optional (timeout '*listener-timeout*)) thunk &body handlers)
-  `(with-listener ,listener
-       (progn ,thunk
-         (loop for i from 0 below ,timeout by 0.1
-               do (process-data)
-                  (sleep 0.1)
-               finally (error "Timeout")))
-     ,@handlers))
+  (let ((interval 0.01))
+    `(with-listener ,listener
+           (progn ,thunk
+                  (loop for i from 0 below ,timeout by ,interval
+                        do (process-data)
+                           (sleep ,interval)
+                        finally (error "Timeout")))
+       ,@handlers)))
 
 (trivial-indent:define-indentation with-listener* (6 6 &rest (&whole 2 6 &body)))
 

@@ -42,4 +42,4 @@
             (return-from listener index)))
         (telemetry-event-send-failure (r-event-type r-index failure)
           (when (and (string= event-type r-event-type) (= index r-index))
-            (error "Failed to send telemetry: ~a" failure)))))))
+            (gog-error failure)))))))

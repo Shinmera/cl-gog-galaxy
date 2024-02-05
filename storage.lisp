@@ -30,7 +30,7 @@
             (return-from listener path)))
         (shared-file-download-failure (r-id failure)
           (when (= id r-id)
-            (error "Failed to download file: ~a" failure)))))))
+            (gog-error failure)))))))
 
 (define-interface storage gog:storage
   (put-file ((path pathname) &key (name (file-namestring path)))
@@ -47,7 +47,7 @@
            (buf (make-array size :element-type '(unsigned-byte 8))))
       (cffi:with-pointer-to-vector-data (ptr buf)
         (when (< (gog istorage-file-read handle name ptr size) size)
-          (error "Failed to read file: too small!")))
+          (gog-error NIL "Failed to read file: too small!")))
       (with-open-file (stream path :direction :output :if-exists :supersede :element-type '(unsigned-byte 8))
         (write-sequence buf stream))
       (values path (to-universal-time (gog istorage-get-file-timestamp handle name)))))
@@ -70,7 +70,7 @@
           (return-from listener (make-instance 'shared-file :id id))))
       (file-share-failure (r-name failure)
         (when (string= name r-name)
-          (error "Failed to share file: ~a" failure)))))
+          (gog-error failure)))))
 
   (list-shared-files ()
     (loop for i from 0 below (gog istorage-get-downloaded-shared-file-count handle)

@@ -9,7 +9,7 @@
     (lobby-data-update-success (r-lobby)
       (when (eq lobby r-lobby) (return-from listener value)))
     (lobby-data-update-failure (r-lobby failure)
-      (when (eq lobby r-lobby) (error "Failed to set joinable status: ~a" failure)))))
+      (when (eq lobby r-lobby) (gog-error failure)))))
 
 (defmethod kind ((lobby lobby))
   (gog imatchmaking-get-lobby-type (handle 'matchmaking) (id lobby)))
@@ -20,7 +20,7 @@
     (lobby-data-update-success (r-lobby)
       (when (eq lobby r-lobby) (return-from listener kind)))
     (lobby-data-update-failure (r-lobby failure)
-      (when (eq lobby r-lobby) (error "Failed to set lobby type: ~a" failure)))))
+      (when (eq lobby r-lobby) (gog-error failure)))))
 
 (defmethod join ((lobby lobby))
   (with-listener* (listener)
@@ -29,7 +29,7 @@
       (when (eq lobby r-lobby)
         (case result
           (:success (return-from listener lobby))
-          (T (error "Failed to join lobby: ~a" result)))))))
+          (T (gog-error result)))))))
 
 (defmethod leave ((lobby lobby))
   (with-listener* (listener)
@@ -38,7 +38,7 @@
       (when (eq lobby r-lobby)
         (case result
           (:success (return-from listener lobby))
-          (T (error "Failed to leave lobby: ~a" result)))))))
+          (T (gog-error result)))))))
 
 (defmethod max-members ((lobby lobby))
   (gog imatchmaking-get-max-num-lobby-members (handle 'matchmaking) (id lobby)))
@@ -49,7 +49,7 @@
     (lobby-data-update-success (r-lobby)
       (when (eq lobby r-lobby) (return-from listener max)))
     (lobby-data-update-failure (r-lobby failure)
-      (when (eq lobby r-lobby) (error "Failed to set max members: ~a" failure)))))
+      (when (eq lobby r-lobby) (gog-error failure)))))
 
 (defmethod member-count ((lobby lobby))
   (gog imatchmaking-get-num-lobby-members (handle 'matchmaking) (id lobby)))
@@ -67,7 +67,7 @@
   (cffi:with-foreign-string ((ptr len) text)
     (if (gog imatchmaking-send-lobby-message (handle 'matchmaking) (id lobby) ptr len)
         lobby
-        (error "Failed to send message."))))
+        (gog-error))))
 
 (defmethod get-message (i (lobby lobby))
   (cffi:with-foreign-objects ((sender 'gog:id)
@@ -75,7 +75,7 @@
     (let ((len (gog:imatchmaking-get-lobby-message (handle 'matchmaking) (id lobby) i sender buffer 512)))
       (if (< 0 len)
           (cffi:foreign-string-to-lisp buffer :count len)
-          (error "Failed to get message.")))))
+          (gog-error)))))
 
 (defmethod data ((lobby lobby))
   (let ((interface (handle 'matchmaking))
@@ -88,10 +88,10 @@
             (return-from listener
               (loop for i from 0 below (gog:imatchmaking-get-lobby-data-count interface id)
                     do (unless (gog:imatchmaking-get-lobby-data-by-index interface id i key 512 val 512)
-                         (error "Failed to retrieve lobby data."))
+                         (gog-error))
                     collect (cons (cffi:mem-ref key :string) (cffi:mem-ref val :string))))))
         (lobby-data-retrieve-failure (r-lobby failure)
-          (when (eq lobby r-lobby) (error "Failed to retrieve lobby data: ~a" failure)))))))
+          (when (eq lobby r-lobby) (gog-error failure)))))))
 
 (defmethod (setf data) (data (lobby lobby))
   (loop for (key . val) in data
@@ -109,7 +109,7 @@
     (lobby-data-update-success (r-lobby)
       (when (eq lobby r-lobby) (return-from listener value)))
     (lobby-data-update-failure (r-lobby failure)
-      (when (eq lobby r-lobby) (error "Failed to update lobby data: ~a" failure)))))
+      (when (eq lobby r-lobby) (gog-error failure)))))
 
 (defmethod member-data ((lobby lobby) (member user))
   (let ((interface (handle 'matchmaking))
@@ -123,10 +123,10 @@
             (return-from listener
               (loop for i from 0 below (gog:imatchmaking-get-lobby-member-data-count interface id mid)
                     do (unless (gog:imatchmaking-get-lobby-member-data-by-index interface id mid i key 512 val 512)
-                         (error "Failed to retrieve lobby data."))
+                         (gog-error))
                     collect (cons (cffi:mem-ref key :string) (cffi:mem-ref val :string))))))
         (lobby-data-retrieve-failure (r-lobby failure)
-          (when (eq lobby r-lobby) (error "Failed to retrieve lobby data: ~a" failure)))))))
+          (when (eq lobby r-lobby) (gog-error failure)))))))
 
 (defmethod (setf member-data) (data (lobby lobby) (member user))
   (loop for (key . val) in data
@@ -137,7 +137,7 @@
   (gog:imatchmaking-get-lobby-member-data (handle 'matchmaking) (id lobby) (id member) key))
 
 (defmethod (setf member-data-field) (value key (lobby lobby) (member user))
-  (unless (self-p member) (error "Can only set member data for yourself."))
+  (unless (self-p member) (gog-error))
   (with-listener* (listener)
         (if value
             (gog:imatchmaking-set-lobby-member-data (handle 'matchmaking) (id lobby) key value listener)
@@ -145,7 +145,7 @@
     (lobby-member-data-update-success (r-lobby r-member)
       (when (and (eq lobby r-lobby) (eq member r-member)) (return-from listener value)))
     (lobby-member-data-update-failure (r-lobby r-member failure)
-      (when (and (eq lobby r-lobby) (eq member r-member)) (error "Failed to update lobby data: ~a" failure)))))
+      (when (and (eq lobby r-lobby) (eq member r-member)) (gog-error failure)))))
 
 (define-interface matchmaking gog:matchmaking
   (create-lobby (&key (type :private) (max-members 16) (joinable T) (topology-type :fcm) enter-listener)
@@ -155,7 +155,7 @@
         (case result
           (:success
            (return-from listener (ensure-lobby lobby)))
-          (T (error "Failed to create lobby: ~a" result))))))
+          (T (gog-error result))))))
 
   (list-lobbies (&key (allow-full T) limit filters)
     (when limit (gog imatchmaking-add-request-lobby-list-result-count-filter handle limit))
@@ -171,4 +171,4 @@
            (return-from listener
              (loop for i from 0 below count
                    collect (ensure-lobby (gog imatchmaking-get-lobby-by-index handle i)))))
-          (T (error "Failed to list lobbies: ~a" result)))))))
+          (T (gog-error result)))))))

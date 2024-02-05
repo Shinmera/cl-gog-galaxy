@@ -2,10 +2,13 @@
 
 (define-condition gog-error (error)
   ((name :initarg :name :reader name)
-   (message :initarg :message :reader message)
-   (type :initarg :type :reader kind))
-  (:report (lambda (c s) (format s "GOG Galaxy API failed with ~a (~a):~%  ~a"
+   (message :initarg :message :initform NIL :reader message)
+   (type :initarg :type :initform NIL :reader kind))
+  (:report (lambda (c s) (format s "GOG Galaxy API failed with~@[ ~a~]~@[ (~a)~]~@[:~%  ~a~]"
                                  (name c) (kind c) (message c)))))
+
+(defun gog-error (name &optional message &rest format-args)
+  (error 'gog-error :name name :message (when message (format NIL "~?" message format-args))))
 
 (defun check-error (&optional value)
   (let ((err (gog:get-error)))

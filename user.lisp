@@ -30,9 +30,9 @@
               (authorization-code
                (gog iuser-sign-in-authorization-code handle authorization-code (cffi:null-pointer) listener))
               (T
-               (error "Must specify a login method.")))
+               (gog-error NIL "Must specify a login method.")))
       (auth-success () (return-from listener T))
-      (auth-failure (failure) (error "Authentication failed: ~a" failure))))
+      (auth-failure (failure) (gog-error failure))))
 
   (sign-out ()
     (gog iuser-sign-out handle))

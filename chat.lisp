@@ -20,7 +20,7 @@
               collect (get-message i chatroom))))
     (chat-room-messages-retrieve-failure (chatroom-id failure)
       (when (= (id chatroom) chatroom-id)
-        (error "Failed to fetch messages: ~a" failure)))))
+        (gog-error failure)))))
 
 (defmethod send-message ((text string) (chatroom chatroom))
   (with-listener* (listener)
@@ -36,7 +36,7 @@
                                              :text text))))
     (chat-room-message-send-failure (chatroom-id index failure)
       (when (= (id chatroom) chatroom-id)
-        (error "Failed to send message: ~a" failure)))))
+        (gog-error failure)))))
 
 (defmethod get-message (i (chatroom chatroom))
   (cffi:with-foreign-objects ((id 'gog:chat-message-id)
@@ -76,4 +76,4 @@
             (return-from listener (make-instance 'chatroom :id chatroom-id))))
         (chat-room-with-user-retrieve-failure (r-user failure)
           (when (eq user r-user)
-            (error "Failed to retrieve chatroom: ~a" failure)))))))
+            (gog-error failure)))))))

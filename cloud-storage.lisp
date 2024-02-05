@@ -12,7 +12,7 @@
 (defmacro with-file ((file path mode) &body body)
   `(let ((,file (cffi:foreign-funcall "fopen" :string ,path :string ,mode :pointer)))
      (when (cffi:null-pointer-p ,file)
-       (error "Failed to open file ~a" ,path))
+       (gog-error NIL "Failed to open file ~a" ,path))
      (unwind-protect
           (let ((,file ,file)) ,@body)
        (cffi:foreign-funcall "fclose" :pointer ,file))))
@@ -27,7 +27,7 @@
             (return-from listener (values file file-size type id))))
         (get-file-failure (r-container r-name failure)
           (when (and (string= container r-container) (string= name r-name))
-            (error "Failed to fetch file: ~a" failure))))))
+            (gog-error failure))))))
 
   (list-files (&key (container "default"))
     (with-listener* (listener)
@@ -38,7 +38,7 @@
                         collect (gog icloud-storage-get-file-name-by-index handle i))
                   quota quota-used)))
       (get-file-list-failure (failure)
-        (error "Failed to fetch file list: ~a" failure))))
+        (gog-error failure))))
 
   (put-file (path &key (container "default") (name (file-namestring path)) (type :undefined) (hash (cffi:null-pointer)))
     (with-file (file path "rb")
@@ -50,7 +50,7 @@
             (return-from listener T)))
         (put-file-failure (r-container r-name failure)
           (when (and (string= container r-container) (string= name r-name))
-            (error "Failed to put file: ~a" failure))))))
+            (gog-error failure))))))
 
   (remove-file (name &key (container "default") (hash (cffi:null-pointer)))
     (with-listener* (listener)
@@ -60,7 +60,7 @@
           (return-from listener T)))
       (put-file-failure (r-container r-name failure)
         (when (and (string= container r-container) (string= name r-name))
-          (error "Failed to delete file: ~a" failure)))))
+          (gog-error failure)))))
 
   (open-savegame ()
     (gog icloud-storage-open-savegame handle))
