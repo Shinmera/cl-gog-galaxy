@@ -1,6 +1,7 @@
 (in-package #:org.shirakumo.fraf.gog-galaxy)
 
 (defvar *callback-funs* (make-hash-table :test 'eql))
+(defvar *listener-timeout* 10)
 
 (defclass listener (c-registered-object)
   ())
@@ -33,7 +34,7 @@
 
 (trivial-indent:define-indentation with-listener (6 6 &rest (&whole 2 6 &body)))
 
-(defmacro with-listener* ((listener &optional (timeout 10)) thunk &body handlers)
+(defmacro with-listener* ((listener &optional (timeout '*listener-timeout*)) thunk &body handlers)
   `(with-listener ,listener
        (progn ,thunk
          (loop for i from 0 below ,timeout by 0.1
