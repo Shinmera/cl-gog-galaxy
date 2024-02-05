@@ -4,7 +4,9 @@
   :author "Yukari Hafner <shinmera@tymoon.eu>"
   :maintainer "Yukari Hafner <shinmera@tymoon.eu>"
   :description "A wrapper for the GOG Galaxy SDK"
-  :homepage "https://github.com/Shinmera/cl-gog-galaxy"
+  :homepage "https://shinmera.github.io/cl-gog-galaxy"
+  :bug-tracker "https://github.com/Shinmera/cl-gog-galaxy/issues"
+  :source-control (:git "https://github.com/Shinmera/cl-gog-galaxy.git")
   :serial T
   :components ((:file "package")
                (:file "low-level")
