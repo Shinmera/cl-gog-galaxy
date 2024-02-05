@@ -398,8 +398,8 @@
   (client-secret :string)
   (config-file-path :string)
   (storage-path :string)
-  (galaxy-allocator :pointer)
-  (galaxy-thread-factory :pointer)
+  (allocator :pointer)
+  (thread-factory :pointer)
   (host :string)
   (port :uint16))
 

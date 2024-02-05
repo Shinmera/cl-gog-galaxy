@@ -71,8 +71,8 @@
    #:init-options-client-secret
    #:init-options-config-file-path
    #:init-options-storage-path
-   #:init-options-galaxy-allocator
-   #:init-options-galaxy-thread-factory
+   #:init-options-allocator
+   #:init-options-thread-factory
    #:init-options-host
    #:init-options-port
    #:shutdown-options-preserve-static-objects
