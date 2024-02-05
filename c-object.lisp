@@ -87,6 +87,9 @@
   (or (gethash name *interface-table*)
       (make-instance name)))
 
+(defmethod handle ((name symbol))
+  (handle (interface name)))
+
 (defun recall-arguments (lambda-list)
   (loop with kargs = NIL
         for arg in lambda-list

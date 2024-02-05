@@ -5,18 +5,18 @@
    (achieved-p :initarg :achieved-p :accessor achieved-p)))
 
 (defmethod visible-p ((achievement achievement))
-  (gog istats-is-achievement-visible (interface 'stats) (name achievement)))
+  (gog istats-is-achievement-visible (handle 'stats) (name achievement)))
 
 (defmethod display-name ((achievement achievement))
-  (gog istats-get-achievement-display-name (interface 'stats) (name achievement)))
+  (gog istats-get-achievement-display-name (handle 'stats) (name achievement)))
 
 (defmethod description ((achievement achievement))
-  (gog istats-get-achievement-description (interface 'stats) (name achievement)))
+  (gog istats-get-achievement-description (handle 'stats) (name achievement)))
 
 (defmethod (setf achieved-p) :before (value (achievement achievement))
   (if value
-      (gog istats-set-achievement (interface 'stats) (name achievement))
-      (gog istats-clear-achievement (interface 'stats) (name achievement))))
+      (gog istats-set-achievement (handle 'stats) (name achievement))
+      (gog istats-clear-achievement (handle 'stats) (name achievement))))
 
 (define-interface stats gog:stats
   (achievement (name &optional (user T))

@@ -13,7 +13,7 @@
 
 (defmethod messages ((chatroom chatroom) &key (limit 100) reference)
   (with-listener* (listener)
-        (gog ichat-request-chat-room-messages (interface 'chat) (id chatroom) limit reference listener)
+        (gog ichat-request-chat-room-messages (handle 'chat) (id chatroom) limit reference listener)
     (chat-room-messages-retrieve-success (chatroom-id message-count longest)
       (when (= (id chatroom) chatroom-id)
         (loop for i from 0 below message-count
@@ -24,7 +24,7 @@
 
 (defmethod send-message ((text string) (chatroom chatroom))
   (with-listener* (listener)
-        (gog ichat-send-chat-room-message (interface 'chat) (id chatroom) text listener)
+        (gog ichat-send-chat-room-message (handle 'chat) (id chatroom) text listener)
     (chat-room-message-send-success (chatroom-id index message-id send-time)
       (when (= (id chatroom) chatroom-id)
         (return-from listener (make-instance 'chat-message
@@ -44,7 +44,7 @@
                               (sender 'gog:id)
                               (time :uint32)
                               (buffer :char 512))
-    (let ((length (gog ichat-get-chat-room-message-by-index (interface 'chat) i id type sender time buffer 512)))
+    (let ((length (gog ichat-get-chat-room-message-by-index (handle 'chat) i id type sender time buffer 512)))
       (make-instance 'chat-message
                      :chatroom chatroom
                      :id (cffi:mem-ref id 'gog:chat-message-id)
@@ -54,17 +54,17 @@
                      :text (cffi:foreign-string-to-lisp buffer :count length)))))
 
 (defmethod members ((chatroom chatroom))
-  (let* ((interface (interface 'chat))
+  (let* ((interface (handle 'chat))
          (count (gog ichat-get-chat-room-member-count interface (id chatroom))))
     (loop for i from 0 below count
           for id = (gog ichat-get-chat-room-member-user-idby-index interface (id chatroom) i)
           collect (ensure-user id))))
 
 (defmethod unread-messages ((chatroom chatroom))
-  (gog ichat-get-chat-room-unread-message-count (interface 'chat) (id chatroom)))
+  (gog ichat-get-chat-room-unread-message-count (handle 'chat) (id chatroom)))
 
 (defmethod mark-read ((chatroom chatroom))
-  (gog ichat-mark-chat-room-as-read (interface 'chat) (id chatroom)))
+  (gog ichat-mark-chat-room-as-read (handle 'chat) (id chatroom)))
 
 (define-interface chat gog:chat
   (get-chatroom (user)

@@ -4,16 +4,16 @@
   ((id :initarg :id :reader id)))
 
 (defmethod file-name ((file shared-file))
-  (gog istorage-get-shared-file-name (interface 'storage) (id file)))
+  (gog istorage-get-shared-file-name (handle 'storage) (id file)))
 
 (defmethod file-size ((file shared-file))
-  (gog istorage-get-shared-file-size (interface 'storage) (id file)))
+  (gog istorage-get-shared-file-size (handle 'storage) (id file)))
 
 (defmethod owner ((file shared-file))
-  (ensure-user (gog istorage-get-shared-file-owner (interface 'storage) (id file))))
+  (ensure-user (gog istorage-get-shared-file-owner (handle 'storage) (id file))))
 
 (defmethod get-file ((file shared-file) (path pathname) &key)
-  (let ((interface (interface 'storage))
+  (let ((interface (handle 'storage))
         (id (id file)))
     (with-open-file (stream path :direction :output :if-exists :supersede :element-type '(unsigned-byte 8))
       (with-listener* (listener)
