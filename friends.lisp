@@ -18,8 +18,8 @@
 (defmethod persona-state ((user user))
   (gog ifriends-get-friend-persona-state (handle 'friends) (id user)))
 
-(defmethod avatar-url ((user user))
-  (gog ifriends-get-friend-avatar-url (handle 'friends) (id user)))
+(defmethod avatar-url ((user user) &key (size :medium))
+  (gog ifriends-get-friend-avatar-url (handle 'friends) (id user) size))
 
 (defmethod avatar ((user user) &key (size :medium) buffer)
   (unless (gog ifriends-is-friend-avatar-image-rgbaavailable (handle 'friends) (id user) size)
@@ -32,7 +32,7 @@
   (unless buffer
     (setf buffer (make-array (* 512 512 4) :element-type '(unsigned-byte 8))))
   (cffi:with-pointer-to-vector-data (ptr buffer)
-    (gog ifriends-get-friend-avatar-image-rgba (handle 'friends) (id user) size ptr (length buf)))
+    (gog ifriends-get-friend-avatar-image-rgba (handle 'friends) (id user) size ptr (length buffer)))
   buffer)
 
 (defmethod befriend ((user user))
