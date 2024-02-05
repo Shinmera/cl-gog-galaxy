@@ -41,5 +41,3 @@
 
 (defun process-data ()
   (gog process-data))
-
-(define-interface matchmaking gog:matchmaking)

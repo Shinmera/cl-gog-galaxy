@@ -420,7 +420,7 @@ GOG_EXPORT bool gog_IMatchmaking_GetLobbyMemberDataByIndex(gog_Interface matchma
 GOG_EXPORT void gog_IMatchmaking_DeleteLobbyMemberData(gog_Interface matchmaking, gog_ID lobbyID, char* key, gog_Interface listener);
 GOG_EXPORT gog_ID gog_IMatchmaking_GetLobbyOwner(gog_Interface matchmaking, gog_ID lobbyID);
 GOG_EXPORT bool gog_IMatchmaking_SendLobbyMessage(gog_Interface matchmaking, gog_ID lobbyID, void* data, uint32_t dataSize);
-GOG_EXPORT uint32_t gog_IMatchmaking_GetLobbyMessage(gog_Interface matchmaking, gog_ID lobbyID, uint32_t messageID, gog_ID senderID, char* msg, uint32_t msgLength);
+GOG_EXPORT uint32_t gog_IMatchmaking_GetLobbyMessage(gog_Interface matchmaking, gog_ID lobbyID, uint32_t messageID, gog_ID* senderID, char* msg, uint32_t msgLength);
 
 //// INetworking.h
 enum gog_NatType {

@@ -17,6 +17,7 @@
                (:file "chat")
                (:file "cloud-storage")
                (:file "friends")
+               (:file "matchmaking")
                (:file "networking")
                (:file "stats")
                (:file "storage")

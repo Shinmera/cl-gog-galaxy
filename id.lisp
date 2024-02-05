@@ -29,6 +29,9 @@
     (string
      (find-user T id))))
 
+(defmethod self-p ((user user))
+  (= (id user) (gog iuser-get-galaxy-id (gog:user))))
+
 (defclass lobby (id-registered-object)
   ())
 

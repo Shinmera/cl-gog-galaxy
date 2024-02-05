@@ -1197,8 +1197,8 @@
   (matchmaking interface)
   (lobby-id ID)
   (message-id :uint32)
-  (sender-id ID)
-  (msg :string)
+  (sender-id :pointer)
+  (msg :pointer)
   (msg-length :uint32))
 
 (cffi:defcfun (inetworking-send-p2p-packet "gog_INetworkingSendP2PPacket") :bool 

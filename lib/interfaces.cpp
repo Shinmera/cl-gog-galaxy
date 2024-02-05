@@ -473,7 +473,7 @@ bool gog_IMatchmaking_SendLobbyMessage(gog_Interface matchmaking, gog_ID lobbyID
   return (bool)((galaxy::api::IMatchmaking*)matchmaking)->SendLobbyMessage((GalaxyID)lobbyID, (const void*)data, (uint32_t)dataSize);
 }
 
-uint32_t gog_IMatchmaking_GetLobbyMessage(gog_Interface matchmaking, gog_ID lobbyID, uint32_t messageID, gog_ID senderID, char* msg, uint32_t msgLength){
+uint32_t gog_IMatchmaking_GetLobbyMessage(gog_Interface matchmaking, gog_ID lobbyID, uint32_t messageID, gog_ID* senderID, char* msg, uint32_t msgLength){
   return (uint32_t)((galaxy::api::IMatchmaking*)matchmaking)->GetLobbyMessage((GalaxyID)lobbyID, (uint32_t)messageID, (GalaxyID&)senderID, (char*)msg, (uint32_t)msgLength);
 }
 

@@ -28,7 +28,10 @@
 (defmacro with-listener (listener thunk &body handlers)
   `(block ,listener
      (flet ,handlers
-       (let ((,listener (make-instance 'dynamic-listener ,@(loop for (type) in handlers collect `',type collect `#',type))))
+       (let ((,listener (make-instance 'dynamic-listener ,@(loop for (type) in handlers
+                                                                 do (unless (fboundp type)
+                                                                      (error "Not a callback: ~a" type))
+                                                                 collect `',type collect `#',type))))
          (unwind-protect ,thunk
            (free ,listener))))))
 
