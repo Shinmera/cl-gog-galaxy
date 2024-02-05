@@ -2,65 +2,65 @@
 
 (define-interface user gog:user
   (signed-in-p ()
-    (check-error (gog:iuser-signed-in interface)))
+    (gog iuser-signed-in handle))
 
   (sign-in (&key username password refresh-token launcher steam-app-ticket galaxy ps4-client-id xbox-one-user-id xbox-id anonymous server-key authorization-code)
     (with-listener* (listener)
         (cond ((and username password)
-               (gog iuser-sign-in-credentials interface username password listener))
+               (gog iuser-sign-in-credentials handle username password listener))
               (refresh-token
-               (gog iuser-sign-in-token interface refresh-token listener))
+               (gog iuser-sign-in-token handle refresh-token listener))
               (launcher
-               (gog iuser-sign-in-launcher interface listener))
+               (gog iuser-sign-in-launcher handle listener))
               (steam-app-ticket
                (cffi:with-foreign-array (app-ticket steam-app-ticket '(:array :uint8))
-                 (gog iuser-sign-in-steam interface app-ticket (length steam-app-ticket) username listener)))
+                 (gog iuser-sign-in-steam handle app-ticket (length steam-app-ticket) username listener)))
               (galaxy
-               (gog iuser-sign-in-galaxy interface NIL 30 listener))
+               (gog iuser-sign-in-galaxy handle NIL 30 listener))
               (ps4-client-id
-               (gog iuser-sign-in-ps4 interface ps4-client-id listener))
+               (gog iuser-sign-in-ps4 handle ps4-client-id listener))
               (xbox-one-user-id
-               (gog iuser-sign-in-xb1 interface xbox-one-user-id listener))
+               (gog iuser-sign-in-xb1 handle xbox-one-user-id listener))
               (xbox-id
-               (gog iuser-sign-in-xbox interface xbox-id listener))
+               (gog iuser-sign-in-xbox handle xbox-id listener))
               (anonymous
-               (gog iuser-sign-in-anonymous interface listener))
+               (gog iuser-sign-in-anonymous handle listener))
               (server-key
-               (gog iuser-sign-in-server-key interface server-key listener))
+               (gog iuser-sign-in-server-key handle server-key listener))
               (authorization-code
-               (gog iuser-sign-in-authorization-code interface authorization-code (cffi:null-pointer) listener))
+               (gog iuser-sign-in-authorization-code handle authorization-code (cffi:null-pointer) listener))
               (T
                (error "Must specify a login method.")))
       (auth-success () (return-from listener T))
       (auth-failure (failure) (error "Authentication failed: ~a" failure))))
 
   (sign-out ()
-    (gog iuser-sign-out interface))
+    (gog iuser-sign-out handle))
 
   (logged-on-p ()
-    (gog iuser-is-logged-on interface))
+    (gog iuser-is-logged-on handle))
 
   (session-id ()
-    (gog iuser-get-session-id interface))
+    (gog iuser-get-session-id handle))
 
   (access-token ()
-    (gog iuser-get-access-token interface))
+    (gog iuser-get-access-token handle))
 
   (refresh-token ()
-    (gog iuser-get-refresh-token interface))
+    (gog iuser-get-refresh-token handle))
 
   (id-token ()
-    (gog iuser-get-idtoken interface))
+    (gog iuser-get-idtoken handle))
 
   (user-data (key &optional (user T))
     (let ((id (id (ensure-user user))))
-      (unless (gog iuser-is-user-data-available interface id)
+      (unless (gog iuser-is-user-data-available handle id)
         (with-listener* (listener)
-            (gog iuser-request-user-data interface id (cffi:null-pointer))
+            (gog iuser-request-user-data handle id (cffi:null-pointer))
           (specific-user-data-updated (user) (when (= id (id user)) (return-from listener T)))))
-      (gog iuser-get-user-data interface key id)))
+      (gog iuser-get-user-data handle key id)))
 
   ((setf user-data) (value key)
     (etypecase value
-      (string (gog iuser-set-user-data interface key value (cffi:null-pointer)))
-      (null (gog iuser-delete-user-data interface key (cffi:null-pointer))))))
+      (string (gog iuser-set-user-data handle key value (cffi:null-pointer)))
+      (null (gog iuser-delete-user-data handle key (cffi:null-pointer))))))

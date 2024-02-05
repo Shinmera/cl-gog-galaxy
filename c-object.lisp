@@ -113,11 +113,15 @@
                                  (setf (,(second method) (interface ',name) ,@(recall-arguments (rest args)))
                                        ,(first args)))
                                (defmethod ,method (,(first args) (interface ,name) ,@(rest args))
-                                 ,@body))
+                                 (let ((handle (handle interface)))
+                                   (declare (ignorable handle))
+                                   ,@body)))
                              `((defmethod ,method ((interface (eql T)) ,@args)
                                  (,method (interface ',name) ,@(recall-arguments args)))
                                (defmethod ,method ((interface ,name) ,@args)
-                                 ,@body))))))
+                                 (let ((handle (handle interface)))
+                                   (declare (ignorable handle))
+                                   ,@body)))))))
 
 (trivial-indent:define-indentation define-interface (6 6 &rest (&whole 2 6 &body)))
 

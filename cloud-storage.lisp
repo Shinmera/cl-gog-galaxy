@@ -21,7 +21,7 @@
   (get-file (path &key (name (file-namestring path)) (container "default"))
     (with-file (file path "wb")
       (with-listener* (listener)
-            (gog icloud-storage-get-file-callback interface container name file (cffi:callback write-file) listener)
+            (gog icloud-storage-get-file-callback handle container name file (cffi:callback write-file) listener)
         (get-file-success (r-container r-name file-size type id)
           (when (and (string= container r-container) (string= name r-name))
             (return-from listener (values file file-size type id))))
@@ -31,11 +31,11 @@
 
   (list-files (&key (container "default"))
     (with-listener* (listener)
-          (gog icloud-storage-get-file-list interface container listener)
+          (gog icloud-storage-get-file-list handle container listener)
       (get-file-list-success (count quota quota-used)
         (return-from listener
           (values (loop for i from 0 below count
-                        collect (gog icloud-storage-get-file-name-by-index interface i))
+                        collect (gog icloud-storage-get-file-name-by-index handle i))
                   quota quota-used)))
       (get-file-list-failure (failure)
         (error "Failed to fetch file list: ~a" failure))))
@@ -43,7 +43,7 @@
   (put-file (path &key (container "default") (name (file-namestring path)) (type :undefined) (hash (cffi:null-pointer)))
     (with-file (file path "rb")
       (with-listener* (listener)
-            (gog icloud-storage-put-file-callback interface container name file (cffi:callback read-file) (cffi:callback rewind-file) listener type
+            (gog icloud-storage-put-file-callback handle container name file (cffi:callback read-file) (cffi:callback rewind-file) listener type
                  (to-unix-time (file-write-date path)) hash)
         (put-file-success (r-container r-name)
           (when (and (string= container r-container) (string= name r-name))
@@ -54,7 +54,7 @@
 
   (remove-file (name &key (container "default") (hash (cffi:null-pointer)))
     (with-listener* (listener)
-          (gog icloud-storage-delete-file interface container name listener hash)
+          (gog icloud-storage-delete-file handle container name listener hash)
       (put-file-success (r-container r-name)
         (when (and (string= container r-container) (string= name r-name))
           (return-from listener T)))
@@ -63,7 +63,7 @@
           (error "Failed to delete file: ~a" failure)))))
 
   (open-savegame ()
-    (gog icloud-storage-open-savegame interface))
+    (gog icloud-storage-open-savegame handle))
 
   (close-savegame ()
-    (gog icloud-storage-close-savegame interface)))
+    (gog icloud-storage-close-savegame handle)))

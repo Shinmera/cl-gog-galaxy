@@ -70,7 +70,7 @@
   (get-chatroom (user)
     (let ((user (ensure-user user)))
       (with-listener* (listener)
-            (gog ichat-request-chat-room-with-user interface (id user) listener)
+            (gog ichat-request-chat-room-with-user handle (id user) listener)
         (chat-room-with-user-retrieve-success (r-user chatroom-id)
           (when (eq user r-user)
             (return-from listener (make-instance 'chatroom :id chatroom-id))))

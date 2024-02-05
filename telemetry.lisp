@@ -2,41 +2,41 @@
 
 (define-interface telemetry gog:telemetry
   (visit-id ()
-    (gog itelemetry-get-visit-id interface))
+    (gog itelemetry-get-visit-id handle))
 
   (reset-visit-id ()
-    (gog itelemetry-reset-visit-id interface))
+    (gog itelemetry-reset-visit-id handle))
 
   (send-event (data event-type &key anonymous sampling-class)
-    (gog:itelemetry-clear-params interface)
+    (gog:itelemetry-clear-params handle)
     (labels ((process (data &optional (key (cffi:null-pointer)))
                (etypecase data
                  (string
-                  (gog:itelemetry-add-string-param interface key data))
+                  (gog:itelemetry-add-string-param handle key data))
                  (integer
-                  (gog:itelemetry-add-int-param interface key data))
+                  (gog:itelemetry-add-int-param handle key data))
                  (rational
-                  (gog:itelemetry-add-float-param interface key (float data 0d0)))
+                  (gog:itelemetry-add-float-param handle key (float data 0d0)))
                  ((member NIL T)
-                  (gog:itelemetry-add-bool-param interface key data))
+                  (gog:itelemetry-add-bool-param handle key data))
                  (hash-table
-                  (gog:itelemetry-add-object-param interface key)
+                  (gog:itelemetry-add-object-param handle key)
                   (loop for key being the hash-keys of data using (hash-value value)
                         do (process value key))
-                  (gog:itelemetry-close-param interface))
+                  (gog:itelemetry-close-param handle))
                  (vector
-                  (gog:itelemetry-add-array-param interface key)
+                  (gog:itelemetry-add-array-param handle key)
                   (loop for value across data
                         do (process value))
-                  (gog:itelemetry-close-param interface)))))
+                  (gog:itelemetry-close-param handle)))))
       (process data))
     (when sampling-class
-      (gog itelemetry-set-sampling-class interface sampling-class))
+      (gog itelemetry-set-sampling-class handle sampling-class))
     (let ((index NIL))
       (with-listener* (listener)
             (setf index (if anonymous
-                            (gog itelemetry-send-anonymous-telemetry-event interface event-type listener)
-                            (gog itelemetry-send-telemetry-event interface event-type listener)))
+                            (gog itelemetry-send-anonymous-telemetry-event handle event-type listener)
+                            (gog itelemetry-send-telemetry-event handle event-type listener)))
         (telemetry-event-send-success (r-event-type r-index)
           (when (and (string= event-type r-event-type) (= index r-index))
             (return-from listener index)))
