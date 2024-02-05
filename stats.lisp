@@ -18,6 +18,14 @@
       (gog istats-set-achievement (handle 'stats) (name achievement))
       (gog istats-clear-achievement (handle 'stats) (name achievement))))
 
+(defmethod achieved-p ((name string))
+  (cffi:with-foreign-objects ((unlocked-p :bool) (unlock-time :uint32))
+    (gog istats-get-achievement (handle 'stats) name unlocked-p unlock-time 0)
+    (cffi:mem-ref unlocked-p :bool)))
+
+(defmethod (setf achieved-p) (value (name string))
+  (setf (achieved-p (achievement T name)) value))
+
 (define-interface stats gog:stats
   (achievement (name &optional (user T))
     (cffi:with-foreign-objects ((unlocked-p :bool) (unlock-time :uint32))
