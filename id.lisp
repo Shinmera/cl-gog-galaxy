@@ -25,7 +25,9 @@
     (user
      id)
     ((eql T)
-     (ensure-user (gog:iuser-get-galaxy-id (gog:user))))))
+     (ensure-user (gog iuser-get-galaxy-id (gog:user))))
+    (string
+     (find-user T id))))
 
 (defclass lobby (id-registered-object)
   ())
