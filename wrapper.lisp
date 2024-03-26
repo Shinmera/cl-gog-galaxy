@@ -7,7 +7,7 @@
   (unless *init*
     (flet ((coerce-path (path)
              (etypecase path
-               (NIL (cffi:null-pointer))
+               (null (cffi:null-pointer))
                (string path)
                (pathname (uiop:native-namestring path)))))
       (unless (cffi:foreign-library-loaded-p 'gog:galaxy)
