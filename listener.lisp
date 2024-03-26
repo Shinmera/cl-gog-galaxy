@@ -8,8 +8,10 @@
   ((listen-on :initarg :register-for :initform NIL :reader listen-on)))
 
 (defmethod initialize-instance :after ((listener listener) &key)
-  (dolist (event (listen-on listener))
-    (register-for event listener)))
+  (let ((events (listen-on listener)))
+    ;; We have to clear out to avoid the check in the method.
+    (setf (slot-value listener 'listen-on) ())
+    (register-for events listener)))
 
 (defmethod allocate-handle ((listener listener) &key)
   (cffi:with-foreign-object (listener '(:struct gog:listener))
@@ -104,9 +106,7 @@
                                                do (unless (fboundp type)
                                                     (error "Not a callback: ~a" type))
                                                collect `',type collect `#',type))))
-         (unwind-protect
-              (let ((,listener (handle ,listener)))
-                ,thunk)
+         (unwind-protect ,thunk
            (free ,listener))))))
 
 (trivial-indent:define-indentation with-listener (6 6 &rest (&whole 2 6 &body)))

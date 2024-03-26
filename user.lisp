@@ -4,31 +4,31 @@
   (signed-in-p ()
     (gog iuser-signed-in handle))
 
-  (sign-in (&key username password refresh-token launcher steam-app-ticket galaxy ps4-client-id xbox-one-user-id xbox-id anonymous server-key authorization-code)
+  (sign-in (&key username password refresh-token (launcher T) steam-app-ticket galaxy ps4-client-id xbox-one-user-id xbox-id anonymous server-key authorization-code)
     (with-listener* (listener)
         (cond ((and username password)
-               (gog iuser-sign-in-credentials handle username password listener))
+               (gog iuser-sign-in-credentials handle username password (cffi:null-pointer)))
               (refresh-token
-               (gog iuser-sign-in-token handle refresh-token listener))
-              (launcher
-               (gog iuser-sign-in-launcher handle listener))
+               (gog iuser-sign-in-token handle refresh-token (cffi:null-pointer)))
               (steam-app-ticket
                (cffi:with-foreign-array (app-ticket steam-app-ticket '(:array :uint8))
-                 (gog iuser-sign-in-steam handle app-ticket (length steam-app-ticket) username listener)))
+                 (gog iuser-sign-in-steam handle app-ticket (length steam-app-ticket) username (cffi:null-pointer))))
               (galaxy
-               (gog iuser-sign-in-galaxy handle NIL 30 listener))
+               (gog iuser-sign-in-galaxy handle NIL 30 (cffi:null-pointer)))
               (ps4-client-id
-               (gog iuser-sign-in-ps4 handle ps4-client-id listener))
+               (gog iuser-sign-in-ps4 handle ps4-client-id (cffi:null-pointer)))
               (xbox-one-user-id
-               (gog iuser-sign-in-xb1 handle xbox-one-user-id listener))
+               (gog iuser-sign-in-xb1 handle xbox-one-user-id (cffi:null-pointer)))
               (xbox-id
-               (gog iuser-sign-in-xbox handle xbox-id listener))
+               (gog iuser-sign-in-xbox handle xbox-id (cffi:null-pointer)))
               (anonymous
-               (gog iuser-sign-in-anonymous handle listener))
+               (gog iuser-sign-in-anonymous handle (cffi:null-pointer)))
               (server-key
-               (gog iuser-sign-in-server-key handle server-key listener))
+               (gog iuser-sign-in-server-key handle server-key (cffi:null-pointer)))
               (authorization-code
-               (gog iuser-sign-in-authorization-code handle authorization-code (cffi:null-pointer) listener))
+               (gog iuser-sign-in-authorization-code handle authorization-code (cffi:null-pointer) (cffi:null-pointer)))
+              (launcher
+               (gog iuser-sign-in-launcher handle (cffi:null-pointer)))
               (T
                (gog-error NIL "Must specify a login method.")))
       (auth-success () (return-from listener T))

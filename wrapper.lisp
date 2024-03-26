@@ -2,7 +2,7 @@
 
 (defvar *init* NIL)
 
-(defun init (client-id client-secret &key (config-file-path ".") storage-path host port)
+(defun init (client-id client-secret &key (config-file-path ".") storage-path host port (sign-in T))
   #+(or windows darwin)
   (unless *init*
     (flet ((coerce-path (path)
@@ -30,7 +30,12 @@
           do (if instance
                  (register-for T instance)
                  (make-instance class)))
-    (gog process-data))
+    (gog process-data)
+    (cond (sign-in
+           (sign-in T)
+           (persona-name T))
+          (T
+           T)))
   #-(or windows darwin)
   NIL)
 
