@@ -34,7 +34,15 @@ void gog_FreeThreadFactor(void *factory){
 //// GalaxyApi.h
 
 void gog_Init(struct gog_InitOptions *options){
-  galaxy::api::Init((const galaxy::api::InitOptions&)options);
+  galaxy::api::InitOptions opts(options->client_id,
+                                options->client_secret,
+                                options->config_file_path,
+                                (galaxy::api::GalaxyAllocator*)options->galaxy_allocator,
+                                options->storage_path,
+                                options->host,
+                                options->port,
+                                (ThreadFactory*)options->galaxy_thread_factory);
+  galaxy::api::Init(opts);
 }
 
 void gog_Shutdown(){
@@ -42,7 +50,8 @@ void gog_Shutdown(){
 }
 
 void gog_ShutdownEx(struct gog_ShutdownOptions *options){
-  galaxy::api::ShutdownEx((const galaxy::api::ShutdownOptions&)options);
+  galaxy::api::ShutdownOptions opts(options->preserve_static_objects);
+  galaxy::api::ShutdownEx(opts);
 }
 
 gog_Interface gog_User(){
