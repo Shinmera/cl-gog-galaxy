@@ -100,7 +100,9 @@
                                                                  do (unless (fboundp type)
                                                                       (error "Not a callback: ~a" type))
                                                                  collect `',type collect `#',type))))
-         (unwind-protect ,thunk
+         (unwind-protect
+              (let ((,listener (handle ,listener)))
+                ,thunk)
            (free ,listener))))))
 
 (trivial-indent:define-indentation with-listener (6 6 &rest (&whole 2 6 &body)))
