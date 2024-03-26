@@ -29,7 +29,8 @@
     (loop for class being the hash-keys of *global-listeners* using (hash-value instance)
           do (if instance
                  (register-for T instance)
-                 (make-instance class))))
+                 (make-instance class)))
+    (gog process-data))
   #-(or windows darwin)
   NIL)
 
