@@ -2,7 +2,7 @@
 
 (defvar *init* NIL)
 
-(defun init (client-id client-secret &key config-file-path storage-path host port)
+(defun init (client-id client-secret &key (config-file-path ".") storage-path host port)
   #+(or windows darwin)
   (unless *init*
     (flet ((coerce-path (path)
