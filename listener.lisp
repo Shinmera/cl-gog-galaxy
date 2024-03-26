@@ -87,7 +87,7 @@
 (defclass dynamic-listener (listener)
   ((thunktable :initform (make-hash-table :test 'eq) :accessor thunktable)))
 
-(defmethod initialize-instance ((listener dynamic-listener) &rest args &key)
+(defmethod initialize-instance ((listener dynamic-listener) &rest args &key &allow-other-keys)
   (call-next-method)
   (loop for (k v) on args by #'cddr
         do (unless (keywordp k)
