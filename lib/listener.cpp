@@ -74,6 +74,10 @@ class Listener :
 public:
   struct gog_listener listener;
 
+static ListenerType GetListenerType() {
+  return (ListenerType)-1;
+}
+
 void OnAuthSuccess() override {
   if(!this->listener.OnAuthSuccess) return;
   this->listener.OnAuthSuccess(this->listener.userptr);
