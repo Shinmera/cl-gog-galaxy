@@ -5,10 +5,13 @@
 (defvar *listener-timeout* 10)
 
 (defclass listener (c-registered-object)
-  ((listener-type :initarg :listener-type :reader listener-type)))
+  ((listener-type :initarg :listener-type :reader listener-type)
+   (registered :initform NIL :accessor registered)))
 
-(defmethod initialize-instance :after ((listener listener) &key)
-  (gog ilistener-registrar-register (gog:listener-registrar) (listener-type listener) (handle listener)))
+(defmethod initialize-instance :after ((listener listener) &key register)
+  (when register
+    (gog ilistener-registrar-register (gog:listener-registrar) (listener-type listener) (handle listener))
+    (setf (registered listener) T)))
 
 (defmethod allocate-handle ((listener listener) &key)
   (cffi:with-foreign-object (struct '(:struct gog:listener))
@@ -22,7 +25,7 @@
         (registrar (gog:listener-registrar)))
     (lambda ()
       (gog:ilistener-registrar-unregister registrar listener-type handle)
-      (gog:free-listener handle (event-type listener)))))
+      (gog:free-listener handle listener-type))))
 
 (defclass global-listener (listener)
   ())
