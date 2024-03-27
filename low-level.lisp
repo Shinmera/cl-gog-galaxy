@@ -11,9 +11,9 @@
   (T (:default "Galaxy64")))
 
 (cffi:define-foreign-library galaxy-c
-  (:darwin (:or "mac-amd64-galaxy-c.dylib"))
-  (:linux (:or "lin-amd64-galaxy-c.so"))
-  (:windows (:or "win-amd64-galaxy-c.dll"))
+  (:darwin (:or "galaxy-c-mac-amd64.dylib"))
+  (:linux (:or "galaxy-c-lin-amd64.so"))
+  (:windows (:or "galaxy-c-win-amd64.dll"))
   (T (:default "galaxy-c")))
 
 (cffi:defcenum id-type
