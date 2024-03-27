@@ -5,49 +5,24 @@
 (defvar *listener-timeout* 10)
 
 (defclass listener (c-registered-object)
-  ((listen-on :initarg :register-for :initform NIL :reader listen-on)))
+  ((listener-type :initarg :listener-type :reader listener-type)))
 
 (defmethod initialize-instance :after ((listener listener) &key)
-  (let ((events (listen-on listener)))
-    ;; We have to clear out to avoid the check in the method.
-    (setf (slot-value listener 'listen-on) ())
-    (register-for events listener)))
+  (gog ilistener-registrar-register (gog:listener-registrar) (listener-type listener) (handle listener)))
 
 (defmethod allocate-handle ((listener listener) &key)
   (cffi:with-foreign-object (listener '(:struct gog:listener))
     (loop for fun being the hash-keys of *callback-funs* using (hash-value field)
           do (setf (cffi:foreign-slot-value listener '(:struct gog:listener) field) (cffi:get-callback fun)))
     (setf (gog:listener-userptr listener) (cffi:null-pointer))
-    (gog:make-listener listener)))
+    (gog:make-listener listener (listener-type listener))))
 
 (defmethod free-handle-function ((listener listener) handle)
-  (let ((listen-on (listen-on listener))
+  (let ((listener-type (listener-type listener))
         (registrar (gog:listener-registrar)))
     (lambda ()
-      (dolist (event listen-on)
-        (gog:ilistener-registrar-unregister registrar event handle))
-      (gog:free-listener handle))))
-
-(defmethod register-for ((events list) (listener listener))
-  (dolist (event events events)
-    (register-for event listener)))
-
-(defmethod register-for ((event symbol) (listener listener))
-  (unless (member event (listen-on listener))
-    (gog ilistener-registrar-register (gog:listener-registrar) event (handle listener))
-    (push event (slot-value listener 'listen-on))))
-
-(defmethod unregister-from ((events (eql T)) (listener listener))
-  (unregister-from (listen-on listener) listener))
-
-(defmethod unregister-from ((events list) (listener listener))
-  (dolist (event events events)
-    (unregister-from event listener)))
-
-(defmethod unregister-from ((event symbol) (listener listener))
-  (when (member event (listen-on listener))
-    (gog ilistener-registrar-unregister (gog:listener-registrar) event (handle listener))
-    (setf (slot-value listener 'listen-on) (remove event (slot-value listener 'listen-on)))))
+      (gog:ilistener-registrar-unregister registrar listener-type handle)
+      (gog:free-listener handle (event-type listener)))))
 
 (defclass global-listener (listener)
   ())
@@ -59,14 +34,21 @@
 (defmethod initialize-instance :after ((listener global-listener) &key)
   (setf (gethash (type-of listener) *global-listeners*) listener))
 
-(defmethod register-for ((events (eql T)) (listener global-listener))
-  (register-for (listen-on listener) listener))
-
 (defmethod free-handle-function ((listener global-listener) handle)
   (let ((fun (call-next-method)))
     (lambda ()
       (setf (gethash (type-of listener) *global-listeners*) NIL)
       (funcall fun))))
+
+(defun extract-listener-type (handlers)
+  (loop with previous
+        for (name) in handlers
+        for type = (callback-listener-type name)
+        do (cond ((null type) (error "Unknown handler type: ~a" name))
+                 ((null previous) (setf previous type))
+                 ((not (eq type previous)) (error "Cannot define a listener that listens to more than one type of event.
+The GOG Galaxy listener API fucking sucks. SORRY!")))
+        finally (return previous)))
 
 (defmacro define-global-listener (name types &body handlers)
   `(progn
@@ -74,7 +56,7 @@
        (setf (gethash name *global-listeners*) NIL))
 
      (defclass ,name (listener)
-       ())
+       ((listener-type :initform ,(extract-listener-type handlers))))
 
      (defmethod listen-on ((listener ,name))
        ',(etypecase types
@@ -95,18 +77,18 @@
         do (unless (keywordp k)
              (setf (gethash k (thunktable listener)) v))))
 
-(defmacro with-listener ((listener &rest listen-on) thunk &body handlers)
+(defmacro with-listener ((listener) thunk &body handlers)
   `(block ,listener
      (flet ,handlers
-       (let ((,listener (make-instance 'dynamic-listener :register-for (list ,@(or listen-on
-                                                                                   (delete-duplicates
-                                                                                    (loop for (type) in handlers
-                                                                                          collect (callback-listener-type type)))))
+       (let ((,listener (make-instance 'dynamic-listener
+                                       :listener-type ,(extract-listener-type handlers)
                                        ,@(loop for (type) in handlers
                                                do (unless (fboundp type)
                                                     (error "Not a callback: ~a" type))
                                                collect `',type collect `#',type))))
-         (unwind-protect ,thunk
+         (unwind-protect
+              (let ((,listener (handle ,listener)))
+                ,thunk)
            (free ,listener))))))
 
 (trivial-indent:define-indentation with-listener (6 6 &rest (&whole 2 6 &body)))

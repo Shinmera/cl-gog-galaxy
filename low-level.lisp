@@ -1802,7 +1802,9 @@
 (cffi:defcfun (game-server-listener-registrar "gog_GameServerListenerRegistrar") interface)
 
 (cffi:defcfun (make-listener "gog_MakeListener") interface
-  (listener :pointer))
+  (listener :pointer)
+  (type listener-type))
 
 (cffi:defcfun (free-listener "gog_FreeListener") :void
-  (listener interface))
+  (listener interface)
+  (type listener-type))
