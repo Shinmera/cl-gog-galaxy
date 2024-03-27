@@ -11,11 +11,11 @@
   (gog ilistener-registrar-register (gog:listener-registrar) (listener-type listener) (handle listener)))
 
 (defmethod allocate-handle ((listener listener) &key)
-  (cffi:with-foreign-object (listener '(:struct gog:listener))
+  (cffi:with-foreign-object (struct '(:struct gog:listener))
     (loop for fun being the hash-keys of *callback-funs* using (hash-value field)
-          do (setf (cffi:foreign-slot-value listener '(:struct gog:listener) field) (cffi:get-callback fun)))
-    (setf (gog:listener-userptr listener) (cffi:null-pointer))
-    (gog:make-listener listener (listener-type listener))))
+          do (setf (cffi:foreign-slot-value struct '(:struct gog:listener) field) (cffi:get-callback fun)))
+    (setf (gog:listener-userptr struct) (cffi:null-pointer))
+    (gog:make-listener struct (listener-type listener))))
 
 (defmethod free-handle-function ((listener listener) handle)
   (let ((listener-type (listener-type listener))
