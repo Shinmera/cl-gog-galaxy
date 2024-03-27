@@ -908,8 +908,8 @@ GOG_EXPORT void gog_IListenerRegistrar_Register(gog_Interface registrar, enum go
 GOG_EXPORT void gog_IListenerRegistrar_Unregister(gog_Interface registrar, enum gog_ListenerType type, gog_Interface listener);
 GOG_EXPORT gog_Interface gog_ListenerRegistrar();
 GOG_EXPORT gog_Interface gog_GameServerListenerRegistrar();
-GOG_EXPORT gog_Interface gog_MakeListener(struct gog_listener *listener);
-GOG_EXPORT void gog_FreeListener(gog_Interface listener);
+GOG_EXPORT gog_Interface gog_MakeListener(struct gog_listener *listener, enum gog_ListenerType type);
+GOG_EXPORT void gog_FreeListener(gog_Interface listener, enum gog_ListenerType type);
 
 #ifdef __cplusplus
 }
