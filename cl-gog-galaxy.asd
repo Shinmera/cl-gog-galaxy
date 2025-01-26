@@ -28,6 +28,7 @@
                (:file "utils")
                (:file "documentation"))
   :depends-on (:documentation-utils
+               :pathname-utils
                :trivial-features
                :trivial-indent
                :cffi))

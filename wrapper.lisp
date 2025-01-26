@@ -9,7 +9,7 @@
              (etypecase path
                (null (cffi:null-pointer))
                (string path)
-               (pathname (uiop:native-namestring path)))))
+               (pathname (pathname-utils:native-namestring path)))))
       (unless (cffi:foreign-library-loaded-p 'gog:galaxy)
         (cffi:load-foreign-library 'gog:galaxy))
       (unless (cffi:foreign-library-loaded-p 'gog:galaxy-c)
